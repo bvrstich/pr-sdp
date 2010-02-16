@@ -217,7 +217,7 @@ void Matrix::fill_Random(){
 
    for(int i = 0;i < n;++i)
       for(int j = i;j < n;++j)
-         matrix[j][i] = (double) rand()/2147483647.0;
+         matrix[j][i] = (double) rand()/RAND_MAX;
 
    for(int i = 0;i < n;++i)
       for(int j = i + 1;j < n;++j)
