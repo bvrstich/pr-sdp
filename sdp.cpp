@@ -7,25 +7,25 @@ using std::endl;
 using std::ifstream;
 using std::ofstream;
 
-#include "lapack.h"
-#include "Matrix.h"
-#include "TPM.h"
-#include "SPM.h"
+#include "headers/lapack.h"
+#include "headers/Matrix.h"
+#include "headers/TPM.h"
+#include "headers/SPM.h"
 
 #ifndef PQ
 
-#include "PHM.h"
+#include "headers/PHM.h"
 
 #endif
 
 #ifdef T_1
 
-#include "DPM.h"
+#include "headers/DPM.h"
 
 #endif
 
-#include "SUP.h"
-#include "EIG.h"
+#include "headers/SUP.h"
+#include "headers/EIG.h"
 
 int main(void){
 

@@ -4,8 +4,8 @@
 
 using std::ostream;
 
-#include "SUP.h"
-#include "EIG.h"
+#include "headers/SUP.h"
+#include "headers/EIG.h"
 
 //constructor
 SUP::SUP(int M,int N){

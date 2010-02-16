@@ -4,8 +4,8 @@
 using std::ostream;
 using std::endl;
 
-#include "SPM.h"
-#include "lapack.h"
+#include "headers/SPM.h"
+#include "headers/lapack.h"
 
 //constructor:
 SPM::SPM(int M,int N) : Matrix(M) {

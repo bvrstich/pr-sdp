@@ -25,7 +25,7 @@ OBJ	= $(CPPSRC:.cpp=.o)
 
 BRIGHT_ROOT= .
 
-INCLUDE = ./include
+INCLUDE =
 
 LIBS= -llapack -lblas
 
@@ -35,8 +35,8 @@ CXX	= g++
 # -----------------------------------------------------------------------------
 #   Compiler & Linker flags
 # -----------------------------------------------------------------------------
-CFLAGS	= -I$(INCLUDE) -g -Wall -O3
-LDFLAGS	= -g -Wall -O3
+CFLAGS	= -I$(INCLUDE) -g -Wall -O2
+LDFLAGS	= -g -Wall -O2
 
 
 # =============================================================================

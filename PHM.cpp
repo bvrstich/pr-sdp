@@ -5,9 +5,9 @@
 using std::ostream;
 using std::endl;
 
-#include "PHM.h"
-#include "SPM.h"
-#include "lapack.h"
+#include "headers/PHM.h"
+#include "headers/SPM.h"
+#include "headers/lapack.h"
 
 int PHM::counter = 0;
 

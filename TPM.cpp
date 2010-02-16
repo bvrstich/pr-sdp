@@ -7,21 +7,21 @@ using std::ofstream;
 using std::ifstream;
 using std::endl;
 
-#include "TPM.h"
-#include "SPM.h"
-#include "SUP.h"
-#include "EIG.h"
-#include "lapack.h"
+#include "headers/TPM.h"
+#include "headers/SPM.h"
+#include "headers/SUP.h"
+#include "headers/EIG.h"
+#include "headers/lapack.h"
 
 #ifndef PQ
 
-#include "PHM.h"
+#include "headers/PHM.h"
 
 #endif
 
 #ifdef T_1
 
-#include "DPM.h"
+#include "headers/DPM.h"
 
 #endif
 

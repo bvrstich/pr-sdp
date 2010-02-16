@@ -4,9 +4,9 @@
 using std::ostream;
 using std::endl;
 
-#include "EIG.h"
-#include "SUP.h"
-#include "lapack.h"
+#include "headers/EIG.h"
+#include "headers/SUP.h"
+#include "headers/lapack.h"
 
 //constructor:
 EIG::EIG(int M,int N){
