@@ -12,13 +12,13 @@ using std::ofstream;
 #include "headers/TPM.h"
 #include "headers/SPM.h"
 
-#ifndef PQ
+#ifdef PQG
 
 #include "headers/PHM.h"
 
 #endif
 
-#ifdef T_1
+#ifdef PQGT1
 
 #include "headers/DPM.h"
 

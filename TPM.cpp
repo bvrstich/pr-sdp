@@ -13,13 +13,13 @@ using std::endl;
 #include "headers/EIG.h"
 #include "headers/lapack.h"
 
-#ifndef PQ
+#ifdef PQG
 
 #include "headers/PHM.h"
 
 #endif
 
-#ifdef T_1
+#ifdef PQGT1
 
 #include "headers/DPM.h"
 

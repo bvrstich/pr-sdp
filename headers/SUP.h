@@ -1,122 +1,40 @@
 #ifndef SUP_H
 #define SUP_H
 
-#include <iostream> 
-#include <fstream> 
+#include "SUP_PQ.h"
 
-using std::ostream;
+#ifdef PQ
 
-#include "TPM.h"
+class SUP : public SUP_PQ{
 
-#ifndef PQ
+   public :
 
-#include "PHM.h"
+      SUP(int M,int N) : SUP_PQ(M,N) { }
 
-#endif
+      SUP(SUP &SZ) : SUP_PQ(SZ) { }
 
-#ifdef T_1
-
-#include "DPM.h"
-
-#endif
-
-class EIG;
-
-class SUP{
-  
-   friend ostream &operator<<(ostream &,const SUP &);
-
-   public:
-
-      //constructor
-      SUP(int M,int N);
-
-      //copy constructor
-      SUP(SUP &);
-
-      //destructor
-      ~SUP();
-
-      //overload += operator
-      SUP &operator+=(SUP &);
-
-      //overload -= operator
-      SUP &operator-=(SUP &);
-
-      //overload equality operator
-      SUP &operator=(SUP &);
-
-      //overload equality operator
-      SUP &operator=(double &);
-
-      SUP operator*(SUP &);
-
-      TPM &tpm(int i);
-
-      int gN();
-
-      int gM();
-
-      int gn_tp();
-
-#ifndef PQ
-
-      PHM &phm();
-
-      int gn_ph();
-
-#endif
-
-#ifdef T_1
-      
-      DPM &dpm();
-
-      int gn_dp();
-
-#endif
-
-      double ddot(SUP &);
-
-      void invert();
-
-      void dscal(double alpha);
-
-      //positieve of negatieve vierkantswortel uit een supermatrix
-      void sqrt(int option);
-
-      void L_map(SUP &,SUP &);
-
-      void daxpy(double alpha,SUP &);
-
-      double trace();
-
-      void fill(TPM &);
-
-   private:
-
-      TPM **SZ_tp;
-
-      int M;
-      int N;
-
-      int n_tp;
-
-#ifndef PQ
-
-      PHM *SZ_ph;
-
-      int n_ph;
-
-#endif
-
-#ifdef T_1
-   
-      DPM *SZ_dp:
-
-      int n_dp;
-
-#endif
+      ~SUP(){ }
 
 };
+
+#endif
+
+#ifdef PQG
+
+#include "SUP_PQG.h"
+
+class SUP : public SUP_PQG{
+
+   public :
+
+      SUP(int M,int N) : SUP_PQG(M,N) { }
+
+      SUP(SUP &SZ) : SUP_PQG(SZ) { }
+
+      ~SUP(){ }
+
+};
+
+#endif
 
 #endif

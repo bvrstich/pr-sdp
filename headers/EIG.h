@@ -1,71 +1,44 @@
 #ifndef EIG_H
 #define EIG_H
 
-#include <iostream>
-#include <fstream>
+#ifdef PQ
 
-using std::ostream;
+#include "EIG_PQ.h"
 
-#include "SUP.h"
+class EIG : public EIG_PQ { 
 
-class EIG{
+   public :
 
-   friend ostream &operator<<(ostream &,const EIG &);
+      EIG(int M,int N) : EIG_PQ(M,N) { }
 
-   public:
-      
-      //constructor
-      EIG(int M,int N);
+      EIG(EIG &eig) : EIG_PQ(eig) { }
 
-      //copy constructor
-      EIG(EIG &);
+      EIG(SUP &SZ) : EIG_PQ(SZ) { }
 
-      //constructor met initialisatie op 
-      EIG(SUP &);
-
-      //destructor
-      ~EIG();
-
-      int gN();
-
-      int gM();
-
-      int gn_tp();
-
-#ifndef PQ
-
-      int gn_ph();
-
-#endif
-
-      //overload equality operator
-      EIG &operator=(EIG &);
-
-      double *operator[](int);
-
-      //acces to the numbers
-      double &operator()(int block,int index);
-
-      double lsfunc(double );
-
-      double min();
-
-   private:
-
-      double **eig;
-
-      int N;//nr of particles
-      int M;//dim sp space
-      int n_tp;//dim tp space
-
-      int n;//totale dimensie
-
-#ifndef PQ
-
-      int n_ph;//dim ph space
-
-#endif
-
+      ~EIG(){ }
+   
 };
+
+#endif
+
+#ifdef PQG
+
+#include "EIG_PQG.h"
+
+class EIG : public EIG_PQG { 
+
+   public :
+
+      EIG(int M,int N) : EIG_PQG(M,N) { }
+
+      EIG(EIG &eig) : EIG_PQG(eig) { }
+
+      EIG(SUP &SZ) : EIG_PQG(SZ) { }
+
+      ~EIG(){ }
+   
+};
+
+#endif
 
 #endif

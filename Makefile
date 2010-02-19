@@ -14,8 +14,10 @@ CPPSRC	= sdp.cpp\
             SPM.cpp\
             PHM.cpp\
             DPM.cpp\
-            SUP.cpp\
-            EIG.cpp
+            SUP_PQ.cpp\
+            SUP_PQG.cpp\
+            EIG_PQ.cpp\
+            EIG_PQG.cpp
 
 OBJ	= $(CPPSRC:.cpp=.o)
 
@@ -46,7 +48,7 @@ all:
 	@echo
 	@echo '  +++ Building $(BINNAME)...'
 	@echo	
-	$(MAKE) $(BRIGHT_ROOT)/$(BINNAME)
+	$(MAKE) $(BRIGHT_ROOT)/$(BINNAME) DEFS="-DPQG"
 	@if test $?; then \
 	   echo; echo '*************** FAILED! ***************' ; echo; \
 	 else \
@@ -70,11 +72,23 @@ PQ:
 	   echo; \
 	 fi
 
-T_1:
+PQG:
 	@echo
-	@echo '  +++ Building $(BINNAME) with P and Q conditions'
+	@echo '  +++ Building $(BINNAME) with P, Q and G conditions active'
 	@echo	
-	$(MAKE) $(BRIGHT_ROOT)/$(BINNAME) DEFS="-DT_1"
+	$(MAKE) $(BRIGHT_ROOT)/$(BINNAME) DEFS="-DPQG"
+	@if test $?; then \
+	   echo; echo '*************** FAILED! ***************' ; echo; \
+	 else \
+	   echo; echo '  +++ $(BINNAME) has been built with P, Q and G conditions successfully!'; \
+	   echo; \
+	 fi
+
+PQGT1:
+	@echo
+	@echo '  +++ Building $(BINNAME) with P, Q, G and T_1 conditions'
+	@echo	
+	$(MAKE) $(BRIGHT_ROOT)/$(BINNAME) DEFS="-DPQGT1"
 	@if test $?; then \
 	   echo; echo '*************** FAILED! ***************' ; echo; \
 	 else \
