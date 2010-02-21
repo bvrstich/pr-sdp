@@ -3,7 +3,7 @@
 
 #ifdef PQ
 
-#include "EIG_PQ.h"
+#include "EIG/EIG_PQ.h"
 
 class EIG : public EIG_PQ { 
 
@@ -23,7 +23,7 @@ class EIG : public EIG_PQ {
 
 #ifdef PQG
 
-#include "EIG_PQG.h"
+#include "EIG/EIG_PQG.h"
 
 class EIG : public EIG_PQG { 
 

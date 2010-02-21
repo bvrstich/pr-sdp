@@ -6,8 +6,8 @@
 
 using std::ostream;
 
-#include "TPM.h"
-#include "PHM.h"
+#include "../TPM.h"
+#include "../PHM.h"
 #include "SUP_PQ.h"
 
 class EIG;

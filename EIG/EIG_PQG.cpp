@@ -4,9 +4,9 @@
 using std::ostream;
 using std::endl;
 
-#include "headers/EIG_PQG.h"
-#include "headers/SUP.h"
-#include "headers/lapack.h"
+#include "../headers/EIG/EIG_PQG.h"
+#include "../headers/SUP.h"
+#include "../headers/lapack.h"
 
 //constructor:
 EIG_PQG::EIG_PQG(int M,int N) : EIG_PQ(M,N){

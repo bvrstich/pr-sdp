@@ -6,7 +6,7 @@
 
 using std::ostream;
 
-#include "SUP.h"
+#include "../SUP.h"
 #include "EIG_PQ.h"
 
 class EIG_PQG : public EIG_PQ {

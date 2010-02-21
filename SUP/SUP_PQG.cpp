@@ -4,8 +4,8 @@
 
 using std::ostream;
 
-#include "headers/SUP_PQG.h"
-#include "headers/EIG.h"
+#include "../headers/SUP/SUP_PQG.h"
+#include "../headers/EIG.h"
 
 //constructor
 SUP_PQG::SUP_PQG(int M,int N) : SUP_PQ(M,N){

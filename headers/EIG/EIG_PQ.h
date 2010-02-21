@@ -6,7 +6,7 @@
 
 using std::ostream;
 
-#include "SUP.h"
+#include "../SUP.h"
 
 //basisklasse
 class EIG_PQ{

@@ -1,7 +1,7 @@
 #ifndef SUP_H
 #define SUP_H
 
-#include "SUP_PQ.h"
+#include "SUP/SUP_PQ.h"
 
 #ifdef PQ
 
@@ -21,7 +21,7 @@ class SUP : public SUP_PQ{
 
 #ifdef PQG
 
-#include "SUP_PQG.h"
+#include "SUP/SUP_PQG.h"
 
 class SUP : public SUP_PQG{
 

@@ -6,7 +6,7 @@
 
 using std::ostream;
 
-#include "TPM.h"
+#include "../TPM.h"
 
 class EIG;
 

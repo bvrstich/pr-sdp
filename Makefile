@@ -14,10 +14,10 @@ CPPSRC	= sdp.cpp\
             SPM.cpp\
             PHM.cpp\
             DPM.cpp\
-            SUP_PQ.cpp\
-            SUP_PQG.cpp\
-            EIG_PQ.cpp\
-            EIG_PQG.cpp
+            SUP/SUP_PQ.cpp\
+            SUP/SUP_PQG.cpp\
+            EIG/EIG_PQ.cpp\
+            EIG/EIG_PQG.cpp
 
 OBJ	= $(CPPSRC:.cpp=.o)
 
