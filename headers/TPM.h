@@ -12,13 +12,13 @@ using std::string;
 class SPM;
 class SUP;
 
-#ifndef PQ
+#ifdef PQG
 
 class PHM;
 
 #endif
 
-#ifdef T_1
+#ifdef PQGT1
 
 class DPM;
 
@@ -59,13 +59,13 @@ class TPM : public Matrix {
 
       void Q(TPM &);
 
-#ifndef PQ
+#ifdef PQG
 
       void G(PHM &);
 
 #endif
 
-#ifdef T_1
+#ifdef PQGT1
 
       void bar(DPM &);
       

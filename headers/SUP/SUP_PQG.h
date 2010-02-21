@@ -14,6 +14,8 @@ class EIG;
 
 //neemt veel over van SUP_PQ
 class SUP_PQG : public SUP_PQ {
+
+   friend ostream &operator<<(ostream &,SUP_PQG &);
   
    public:
 

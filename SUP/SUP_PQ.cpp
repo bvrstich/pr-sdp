@@ -90,7 +90,7 @@ SUP_PQ &SUP_PQ::operator=(double &a){
 }
 
 //friend function! output stream operator overloaded
-ostream &operator<<(ostream &output,const SUP_PQ &SZ_p){
+ostream &operator<<(ostream &output,SUP_PQ &SZ_p){
 
    for(int i = 0;i < 2;++i)
       output << (*SZ_p.SZ_tp[i]) << std::endl;

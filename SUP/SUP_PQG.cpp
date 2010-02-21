@@ -79,6 +79,18 @@ SUP_PQG &SUP_PQG::operator=(double &a){
 
 }
 
+//friend function! output stream operator overloaded
+ostream &operator<<(ostream &output,SUP_PQG &SZ_p){
+
+   for(int i = 0;i < 2;++i)
+      output << SZ_p.tpm(i) << std::endl;
+
+   output << (*SZ_p.SZ_ph) << std::endl;
+
+   return output;
+
+}
+
 int SUP_PQG::gn_ph(){
 
    return n_ph;

@@ -11,6 +11,8 @@ using std::ostream;
 
 class EIG_PQG : public EIG_PQ {
 
+   friend ostream &operator<<(ostream &,EIG_PQG &);
+
    public:
       
       //constructor

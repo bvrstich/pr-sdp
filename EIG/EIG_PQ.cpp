@@ -107,15 +107,15 @@ EIG_PQ::~EIG_PQ(){
 }
 
 //friend function! output stream operator overloaded
-ostream &operator<<(ostream &output,const EIG_PQ &eig_p){
+ostream &operator<<(ostream &output,EIG_PQ &eig_p){
 
    for(int i = 0;i < eig_p.n_tp;++i)
       std::cout << i << "\t" << eig_p.eig[0][i] << std::endl;
 
-   std::cout << std::endl;
+   output << std::endl;
 
    for(int i = 0;i < eig_p.n_tp;++i)
-      std::cout << i << "\t" << eig_p.eig[1][i] << std::endl;
+      output << i << "\t" << eig_p.eig[1][i] << std::endl;
 
    return output;
 

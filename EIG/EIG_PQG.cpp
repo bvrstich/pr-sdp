@@ -80,6 +80,26 @@ EIG_PQG::~EIG_PQG(){
 
 }
 
+//friend function! output stream operator overloaded
+ostream &operator<<(ostream &output,EIG_PQG &eig_p){
+
+   for(int i = 0;i < eig_p.gn_tp();++i)
+      output << i << "\t" << eig_p[0][i] << std::endl;
+
+   output << std::endl;
+
+   for(int i = 0;i < eig_p.gn_tp();++i)
+      output << i << "\t" << eig_p[1][i] << std::endl;
+
+   output << std::endl;
+
+   for(int i = 0;i < eig_p.gn_ph();++i)
+      output << i << "\t" << eig_p[2][i] << std::endl;
+
+   return output;
+
+}
+
 double EIG_PQG::operator()(int block,int index){
 
    if(block < 2)

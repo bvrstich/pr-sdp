@@ -11,7 +11,7 @@ using std::ostream;
 //basisklasse
 class EIG_PQ{
 
-   friend ostream &operator<<(ostream &,const EIG_PQ &);
+   friend ostream &operator<<(ostream &,EIG_PQ &);
 
    public:
       

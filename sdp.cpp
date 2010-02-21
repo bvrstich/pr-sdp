@@ -111,6 +111,13 @@ int main(void){
 
    }
 
+   SUP P(M,N);
+   P.fill(rdm);
+
+   EIG eig(P);
+
+   cout << eig;
+
    return 0;
 
 }

@@ -13,7 +13,7 @@ class EIG;
 //basisklasse
 class SUP_PQ{
   
-   friend ostream &operator<<(ostream &,const SUP_PQ &);
+   friend ostream &operator<<(ostream &,SUP_PQ &);
 
    public:
 
