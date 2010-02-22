@@ -7,25 +7,7 @@ using std::endl;
 using std::ifstream;
 using std::ofstream;
 
-#include "headers/lapack.h"
-#include "headers/Matrix.h"
-#include "headers/TPM.h"
-#include "headers/SPM.h"
-
-#ifdef PQG
-
-#include "headers/PHM.h"
-
-#endif
-
-#ifdef PQGT1
-
-#include "headers/DPM.h"
-
-#endif
-
-#include "headers/SUP.h"
-#include "headers/EIG.h"
+#include "headers/include.h"
 
 int main(void){
 

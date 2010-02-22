@@ -5,8 +5,7 @@
 using std::endl;
 using std::ostream;
 
-#include "headers/lapack.h"
-#include "headers/Matrix.h"
+#include "headers/include.h"
 
 //constructor:
 Matrix::Matrix(int n){

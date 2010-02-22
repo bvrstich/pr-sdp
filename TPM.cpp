@@ -7,23 +7,7 @@ using std::ofstream;
 using std::ifstream;
 using std::endl;
 
-#include "headers/TPM.h"
-#include "headers/SPM.h"
-#include "headers/SUP.h"
-#include "headers/EIG.h"
-#include "headers/lapack.h"
-
-#ifdef PQG
-
-#include "headers/PHM.h"
-
-#endif
-
-#ifdef PQGT1
-
-#include "headers/DPM.h"
-
-#endif
+#include "headers/include.h"
 
 int TPM::counter = 0;
 
@@ -278,7 +262,7 @@ void TPM::Q(TPM &tpm_d){
 
 }
 
-#ifndef PQ
+#ifdef __G_CON
 
 void TPM::G(PHM &phm){
 
@@ -347,17 +331,33 @@ void TPM::constr_grad(double t,TPM &ham,SUP &P){
    //eerst P conditie 
    *this = P.tpm(0);
 
-   //dan de Q conditie
+   //de Q conditie toevoegen
+
+#ifdef __Q_CON
+
    TPM hulp(M,N);
 
    hulp.Q(P.tpm(1));
 
    *this += hulp;
 
-#ifndef PQ
+#endif
 
-   //tenslotte de G conditie
+   //de G conditie indien nodig
+
+#ifdef __G_CON
+
    hulp.G(P.phm());
+
+   *this += hulp;
+
+#endif
+
+   //de T_1 conditie toevoegen indien nodig
+
+#ifdef __T1_CON
+
+   hulp.T(P.dpm());
 
    *this += hulp;
 
@@ -466,6 +466,13 @@ double TPM::line_search(double t,SUP &P,TPM &ham){
 
 void TPM::H(double t,TPM &b,SUP &P){
 
+   //eerst de P conditie:
+
+   this->L_map(P.tpm(0),b);
+
+   //de Q conditie toevoegen:
+#ifdef __Q_CON
+
    //hulpje
    TPM hulp(M,N);
 
@@ -476,18 +483,19 @@ void TPM::H(double t,TPM &b,SUP &P){
    //stop Q(rdm)^{-1}Q(b)Q(rdm)^{-1} in hulp
    hulp.L_map(P.tpm(1),Q_b);
 
-   //maak Q(hulp) en stop in this 
-   this->Q(hulp);
-
-   //stop rdm^{-1} b rdm^{-1} in hulp
-   hulp.L_map(P.tpm(0),b);
+   //maak Q(hulp) en stop in Q_b
+   Q_b.Q(hulp);
 
    //en tel op bij this
-   *this += hulp;
+   *this += Q_b;
 
-#ifndef PQ
+#endif
 
-   //nu de G conditie:
+   //de G conditie toevoegen:
+   
+#ifdef __G_CON
+
+   //hulpje voor het PHM stuk
    PHM hulp_ph(M,N);
    PHM G_b(M,N);
 
@@ -501,6 +509,25 @@ void TPM::H(double t,TPM &b,SUP &P){
    hulp.G(hulp_ph);
 
    //en optellen bij this
+   *this += hulp;
+
+#endif
+   
+   //de T_1 conditie toevoegen
+
+#ifdef __T1_CON
+
+   //hulpjes voor het DPM stuk
+   DPM hulp_dp(M,N);
+   DPM T1_b(M,N);
+
+   //stop T1(b) in T1_b
+   T1_b.T(b);
+
+   hulp_dp.L_map(P.dpm(),T1_b);
+
+   hulp.T(hulp_dp);
+
    *this += hulp;
 
 #endif
@@ -525,7 +552,7 @@ double TPM::line_search(double t,TPM &rdm,TPM &ham){
 
 }
 
-#ifdef T_1
+#ifdef __T1_CON
 
 void TPM::bar(DPM &dpm){
 
