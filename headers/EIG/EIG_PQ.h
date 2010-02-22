@@ -6,7 +6,7 @@
 
 using std::ostream;
 
-#include "../SUP.h"
+#include "../SUP/SUP_PQ.h"
 
 //basisklasse
 class EIG_PQ{
@@ -22,7 +22,7 @@ class EIG_PQ{
       EIG_PQ(EIG_PQ &);
 
       //constructor met initialisatie op 
-      EIG_PQ(SUP &);
+      EIG_PQ(SUP_PQ &);
 
       //destructor
       ~EIG_PQ();

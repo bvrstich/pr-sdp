@@ -5,7 +5,7 @@
 using std::ostream;
 
 #include "../headers/SUP/SUP_PQ.h"
-#include "../headers/EIG.h"
+#include "../headers/EIG/EIG_PQ.h"
 
 //constructor
 SUP_PQ::SUP_PQ(int M,int N){

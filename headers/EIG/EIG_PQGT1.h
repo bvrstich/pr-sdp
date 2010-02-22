@@ -1,36 +1,36 @@
-#ifndef EIG_PQG_H
-#define EIG_PQG_H
+#ifndef EIG_PQGT1_H
+#define EIG_PQGT1_H
 
 #include <iostream>
 #include <fstream>
 
 using std::ostream;
 
-#include "../SUP/SUP_PQG.h"
-#include "EIG_PQ.h"
+#include "../SUP/SUP_PQGT1.h"
+#include "EIG_PQG.h"
 
-class EIG_PQG : public EIG_PQ {
+class EIG_PQGT1 : public EIG_PQG {
 
-   friend ostream &operator<<(ostream &,EIG_PQG &);
+   friend ostream &operator<<(ostream &,EIG_PQGT1 &);
 
    public:
       
       //constructor
-      EIG_PQG(int M,int N);
+      EIG_PQGT1(int M,int N);
 
       //copy constructor
-      EIG_PQG(EIG_PQG &);
+      EIG_PQGT1(EIG_PQGT1 &);
 
       //constructor met initialisatie op 
-      EIG_PQG(SUP_PQG &);
+      EIG_PQGT1(SUP_PQGT1 &);
 
       //destructor
-      ~EIG_PQG();
+      ~EIG_PQGT1();
 
-      int gn_ph();
+      int gn_dp();
 
       //overload equality operator
-      EIG_PQG &operator=(EIG_PQG &);
+      EIG_PQGT1 &operator=(EIG_PQGT1 &);
 
       double *operator[](int);
 
@@ -43,9 +43,9 @@ class EIG_PQG : public EIG_PQ {
 
    protected:
 
-      double *eig_ph;
+      double *eig_dp;
 
-      int n_ph;//dim ph space
+      int n_dp;//dim three particle space
 
 };
 

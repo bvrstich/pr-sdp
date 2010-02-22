@@ -37,4 +37,22 @@ class SUP : public SUP_PQG{
 
 #endif
 
+#ifdef PQGT1
+
+#include "SUP/SUP_PQGT1.h"
+
+class SUP : public SUP_PQGT1{
+
+   public :
+
+      SUP(int M,int N) : SUP_PQGT1(M,N) { }
+
+      SUP(SUP &SZ) : SUP_PQGT1(SZ) { }
+
+      ~SUP(){ }
+
+};
+
+#endif
+
 #endif

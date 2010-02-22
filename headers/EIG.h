@@ -13,7 +13,7 @@ class EIG : public EIG_PQ {
 
       EIG(EIG &eig) : EIG_PQ(eig) { }
 
-      EIG(SUP &SZ) : EIG_PQ(SZ) { }
+      EIG(SUP_PQ &SZ) : EIG_PQ(SZ) { }
 
       ~EIG(){ }
    
@@ -33,7 +33,27 @@ class EIG : public EIG_PQG {
 
       EIG(EIG &eig) : EIG_PQG(eig) { }
 
-      EIG(SUP &SZ) : EIG_PQG(SZ) { }
+      EIG(SUP_PQG &SZ) : EIG_PQG(SZ) { }
+
+      ~EIG(){ }
+   
+};
+
+#endif
+
+#ifdef PQGT1
+
+#include "EIG/EIG_PQGT1.h"
+
+class EIG : public EIG_PQGT1 { 
+
+   public :
+
+      EIG(int M,int N) : EIG_PQGT1(M,N) { }
+
+      EIG(EIG &eig) : EIG_PQGT1(eig) { }
+
+      EIG(SUP_PQGT1 &SZ) : EIG_PQGT1(SZ) { }
 
       ~EIG(){ }
    

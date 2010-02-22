@@ -5,7 +5,7 @@ using std::ostream;
 using std::endl;
 
 #include "../headers/EIG/EIG_PQG.h"
-#include "../headers/SUP.h"
+#include "../headers/SUP/SUP_PQG.h"
 #include "../headers/lapack.h"
 
 //constructor:
@@ -35,7 +35,7 @@ EIG_PQG::EIG_PQG(EIG_PQG &eig_c) : EIG_PQ(eig_c){
 }
 
 //constructor met initialisatie door SUP matrix:
-EIG_PQG::EIG_PQG(SUP &SZ) : EIG_PQ(SZ){
+EIG_PQG::EIG_PQG(SUP_PQG &SZ) : EIG_PQ(SZ){
 
    this->n_ph = SZ.gn_ph();
    dim += n_ph;
