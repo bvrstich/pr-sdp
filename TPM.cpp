@@ -7,6 +7,7 @@ using std::ofstream;
 using std::ifstream;
 using std::endl;
 
+//include headers files and define some defines for the conditions
 #include "headers/include.h"
 
 int TPM::counter = 0;
@@ -14,7 +15,12 @@ int TPM::counter = 0;
 int **TPM::t2s;
 int **TPM::s2t;
 
-//constructor:
+/**
+ * standard constructor: constructs Matrix object of dimension M*(M - 1)/2 and
+ * if counter == 0, allocates and constructs the lists containing the relationship between sp and tp basis.
+ * @param M nr of sp orbitals
+ * @param N nr of particles
+ */
 TPM::TPM(int M,int N) : Matrix(M*(M - 1)/2){
 
    this->N = N;
@@ -61,7 +67,11 @@ TPM::TPM(int M,int N) : Matrix(M*(M - 1)/2){
 
 }
 
-//copy constructor
+/**
+ * copy constructor: constructs Matrix object of dimension M*(M - 1)/2 and fills it with the content of matrix tpm_c
+ * if counter == 0, the lists containing the relationship between sp and tp basis.
+ * @param tpm_c object that will be copied into this.
+ */
 TPM::TPM(TPM &tpm_c) : Matrix(tpm_c){
 
    this->N = tpm_c.N;
@@ -108,7 +118,10 @@ TPM::TPM(TPM &tpm_c) : Matrix(tpm_c){
 
 }
 
-//destructor
+/**
+ * destructor: if counter == 1 the memory for the static lists t2s en s2t will be deleted.
+ * 
+ */
 TPM::~TPM(){
 
    if(counter == 1){
@@ -127,7 +140,15 @@ TPM::~TPM(){
 
 }
 
-//access the numbers: sp indices
+/**
+ * access the elements of the matrix in sp mode, antisymmetry is automatically accounted for:\n\n
+ * TPM(a,b,c,d) = -TPM(b,a,c,d) = -TPM(a,b,d,c) = TPM(b,a,c,d)
+ * @param a first sp index that forms the tp row index i together with b
+ * @param b second sp index that forms the tp row index i together with a
+ * @param c first sp index that forms the tp column index j together with d
+ * @param d second sp index that forms the tp column index j together with c
+ * @return the number on place TPM(i,j) with the right phase.
+ */
 double TPM::operator()(int a,int b,int c,int d) const{
 
    if( (a == b) || (c == d) )
@@ -150,7 +171,6 @@ double TPM::operator()(int a,int b,int c,int d) const{
 
 }
 
-//friend function! output stream operator overloaded
 ostream &operator<<(ostream &output,const TPM &tpm_p){
 
    for(int i = 0;i < tpm_p.n;++i)
@@ -166,24 +186,37 @@ ostream &operator<<(ostream &output,const TPM &tpm_p){
 
 }
 
+/**
+ * @return the number of particles
+ */
 int TPM::gN(){
 
    return N;
 
 }
 
+/**
+ * @return the dimension of sp space
+ */
 int TPM::gM(){
 
    return M;
 
 }
 
+/**
+ * @return the dimension of tp space and of the matrix
+ */
 int TPM::gn(){
 
    return n;
 
 }
 
+/**
+ * construct the hubbard hamiltonian with on site repulsion U
+ * @param U onsite repulsion term
+ */
 void TPM::hubbard(double U){
 
    int a,b,c,d;//sp orbitals
@@ -225,6 +258,10 @@ void TPM::hubbard(double U){
 
 }
 
+/**
+ * The Q-map, maps a TPM (tpm_d) on a TPM (*this), definition in notes:
+ * @param tpm_d The input TPM
+ */
 void TPM::Q(TPM &tpm_d){
 
    SPM spm(tpm_d);
@@ -264,6 +301,10 @@ void TPM::Q(TPM &tpm_d){
 
 #ifdef __G_CON
 
+/**
+ * The G down map, maps a PHM (phm) on a TPM (*this)
+ * @param phm input PHM
+ */
 void TPM::G(PHM &phm){
 
    SPM spm(phm);
@@ -301,6 +342,9 @@ void TPM::G(PHM &phm){
 
 #endif
 
+/**
+ * Initializes the TPM on the a unit matrix with trace N*(N - 1)/2, i.e. the number of tp pairs
+ */
 void TPM::init(){
 
    double ward = N*(N - 1.0)/(2.0*n);
@@ -316,6 +360,10 @@ void TPM::init(){
 
 }
 
+/**
+ * Project the TPM on a traceless matrix:\n\n
+ * this = this - Tr(this)/n 1
+ */
 void TPM::proj_Tr(){
 
    double ward = (this->trace())/(double)n;
@@ -325,7 +373,13 @@ void TPM::proj_Tr(){
 
 }
 
-//maak de gradient van de barrierefunctie
+/**
+ * Construct the right hand side of the Newton equation for the determination of the search direction, 
+ * the gradient of the potential:
+ * @param t scaling factor of the potential
+ * @param ham Hamiltonian of the current problem
+ * @param P SUP matrix containing the inverse of the constraint matrices (carrier space matrices).
+ */
 void TPM::constr_grad(double t,TPM &ham,SUP &P){
 
    //eerst P conditie 
@@ -371,7 +425,13 @@ void TPM::constr_grad(double t,TPM &ham,SUP &P){
 
 }
 
-//los het Newton stelsel H delta = -G op:
+/**
+ * solve the Newton equations for the determination of the search direction,
+ * @param t scaling factor of the potential
+ * @param P SUP matrix containing the inverse of the constraint matrices (carrier space matrices).
+ * @param b right hand side (the gradient constructed int TPM::constr_grad)
+ * @return nr of iterations needed to converge to the desired accuracy
+ */
 int TPM::solve(double t,SUP &P,TPM &b){
 
    int iter = 0;
@@ -419,6 +479,13 @@ int TPM::solve(double t,SUP &P,TPM &b){
 
 }
 
+/**
+ * perform a line search what step size in along the Newton direction is ideal.
+ * @param t potential scaling factor
+ * @param P SUP matrix containing the inverse of the constraints (carrier space matrices)
+ * @param ham Hamiltonian of the problem
+ * @return the steplength
+ */
 double TPM::line_search(double t,SUP &P,TPM &ham){
 
    double tolerance = 1.0e-5*t;
@@ -464,6 +531,12 @@ double TPM::line_search(double t,SUP &P,TPM &ham){
 
 }
 
+/**
+ * The hessian-map of the Newton system:
+ * @param t potential scaling factor
+ * @param b the TPM on which the hamiltonian will work, the image will be put in (*this)
+ * @param P the SUP matrix containing the constraints, (can be seen as the metric).
+ */
 void TPM::H(double t,TPM &b,SUP &P){
 
    //eerst de P conditie:
@@ -540,6 +613,13 @@ void TPM::H(double t,TPM &b,SUP &P){
 
 }
 
+/**
+ * perform a line search what step size in along the Newton direction is ideal, this one is used for extrapolation.
+ * @param t potential scaling factor
+ * @param rdm TPM containing the current approximation of the rdm.
+ * @param ham Hamiltonian of the problem
+ * @return the steplength
+ */
 double TPM::line_search(double t,TPM &rdm,TPM &ham){
 
    SUP P(M,N);
@@ -554,6 +634,11 @@ double TPM::line_search(double t,TPM &rdm,TPM &ham){
 
 #ifdef __T1_CON
 
+/**
+ * calculate the trace of one pair of sp indices of a DPM an put in (*this):\n\n
+ * TPM(a,b,d,e) = \sum_{c} DPM(a,b,c,d,e,c)
+ * @param dpm input DPM
+ */
 void TPM::bar(DPM &dpm){
 
    int a,b,c,d;
@@ -580,7 +665,10 @@ void TPM::bar(DPM &dpm){
 
 }
 
-//de T_1 down eigenlijk een Q-like afbeelding
+/**
+ * map a DPM (dpm) on a TPM (*this) with T1_down map:
+ * @param dpm The input DPM
+ */
 void TPM::T(DPM &dpm){
 
    double ward = 2.0*dpm.trace()/(N*(N - 1.0));

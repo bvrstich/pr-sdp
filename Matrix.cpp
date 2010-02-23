@@ -7,7 +7,10 @@ using std::ostream;
 
 #include "headers/include.h"
 
-//constructor:
+/**
+ * constructor 
+ * @param n dimension of the matrix
+ */
 Matrix::Matrix(int n){
 
    this->n = n;
@@ -20,7 +23,10 @@ Matrix::Matrix(int n){
 
 }
 
-//copy constructor:
+/**
+ * copy constructor 
+ * @param mat_copy The matrix you want to be copied into the object you are constructing
+ */
 Matrix::Matrix(Matrix &mat_copy){
 
    this->n = mat_copy.n;
@@ -39,7 +45,9 @@ Matrix::Matrix(Matrix &mat_copy){
 
 }
 
-//destructor
+/**
+ * Destructor
+ */
 Matrix::~Matrix(){
 
    delete [] matrix[0];
@@ -47,7 +55,10 @@ Matrix::~Matrix(){
 
 }
 
-//overload equality operator
+/**
+ * overload the equality operator
+ * @param matrix_copy The matrix you want to be copied into this
+ */
 Matrix &Matrix::operator=(Matrix &matrix_copy){
 
    int dim = n*n;
@@ -60,6 +71,10 @@ Matrix &Matrix::operator=(Matrix &matrix_copy){
 
 }
 
+/**
+ * Make all the number in your matrix equal to the number a, e.g. usefull for initialization (Matrix M = 0)
+ * @param a the number
+ */
 Matrix &Matrix::operator=(double a){
 
    for(int i = 0;i < n;++i)
@@ -70,7 +85,10 @@ Matrix &Matrix::operator=(double a){
 
 }
 
-//overload += operator
+/**
+ * overload the += operator for matrices
+ * @param matrix_pl The matrix you want to add to this
+ */
 Matrix &Matrix::operator+=(Matrix &matrix_pl){
 
    int dim = n*n;
@@ -83,7 +101,10 @@ Matrix &Matrix::operator+=(Matrix &matrix_pl){
 
 }
 
-//overload -= operator
+/**
+ * overload the -= operator for matrices
+ * @param matrix_pl The matrix you want to deduct from this
+ */
 Matrix &Matrix::operator-=(Matrix &matrix_pl){
 
    int dim = n*n;
@@ -96,7 +117,11 @@ Matrix &Matrix::operator-=(Matrix &matrix_pl){
 
 }
 
-//+= times a constant 
+/**
+ * add the matrix matrix_pl times the constant alpha to this
+ * @param alpha the constant to multiply the matrix_pl with
+ * @param matrix_pl the Matrix to be multiplied by alpha and added to this
+ */
 Matrix &Matrix::daxpy(double alpha,Matrix &matrix_pl){
 
    int dim = n*n;
@@ -107,8 +132,10 @@ Matrix &Matrix::daxpy(double alpha,Matrix &matrix_pl){
    return *this;
 
 }
-
-// divide by a constant
+/**
+ * /= operator overloaded: divide by a constant
+ * @param c the number to divide your matrix through
+ */
 Matrix &Matrix::operator/=(double c){
 
    int dim = n*n;
@@ -122,33 +149,53 @@ Matrix &Matrix::operator/=(double c){
 
 }
 
-//change the numbers
+/**
+ * write access to your matrix, change the number on row i and column j
+ * remark that for the conversion to lapack functions the double pointer is transposed!
+ * @param i row number
+ * @param j column number
+ * @return the entry on place i,j
+ */
 double &Matrix::operator()(int i,int j){
 
    return matrix[j][i];
 
 }
 
-//access the numbers
+/**
+ * read access to your matrix, view the number on row i and column j
+ * remark that for the conversion to lapack functions the double pointer is transposed!
+ * @param i row number
+ * @param j column number
+ * @return the entry on place i,j
+ */
 double Matrix::operator()(int i,int j) const {
 
    return matrix[j][i];
 
 }
 
-//get pointer to matrix matrix
+/**
+ * @return the underlying pointer to matrix, useful for mkl applications
+ */
 double **Matrix::gMatrix(){
 
    return matrix;
 
 }
 
+/**
+ * @return the dimension of the matrix
+ */
 int Matrix::gn(){
 
    return n;
 
 }
 
+/**
+ * @return the trace of the matrix:
+ */
 double Matrix::trace(){
 
    double ward = 0;
@@ -160,6 +207,12 @@ double Matrix::trace(){
 
 }
 
+/**
+ * Diagonalizes symmetric matrices. Watch out! The current matrix (*this) is destroyed, in it
+ * the eigenvectors will be stored (one in every column).
+ * @param eigenvalues the pointer of doubles in which the eigenvalues will be storen, Watch out, its memory
+ * has to be allocated on the dimension of the matrix before you call the function.
+ */
 void Matrix::diagonalize(double *eigenvalues){
 
    char jobz = 'V';
@@ -177,6 +230,10 @@ void Matrix::diagonalize(double *eigenvalues){
 
 }
 
+/**
+ * @return inproduct of (*this) matrix with matrix_i, defined as Tr (A B)
+ * @param matrix_i input matrix
+ */
 double Matrix::ddot(Matrix &matrix_i){
 
    int dim = n*n;
@@ -186,6 +243,9 @@ double Matrix::ddot(Matrix &matrix_i){
 
 }
 
+/**
+ * Invert positive semidefinite symmetric matrix is stored in (*this), original matrix (*this) is destroyed
+ */
 void Matrix::invert(){
 
    char uplo = 'U';
@@ -201,6 +261,10 @@ void Matrix::invert(){
 
 }
 
+/**
+ * Scale the matrix (*this) with parameter alpha
+ * @param alpha scalefactor
+ */
 void Matrix::dscal(double alpha){
 
    int dim = n*n;
@@ -210,6 +274,9 @@ void Matrix::dscal(double alpha){
 
 }
 
+/**
+ * Fill the matrix with random numbers.
+ */
 void Matrix::fill_Random(){
 
    srand(time(NULL));
@@ -224,7 +291,10 @@ void Matrix::fill_Random(){
 
 }
 
-//^{1/2} of ^{-1/2}
+/**
+ * Take the square root out of the positive semidefinite matrix, destroys original matrix, square root will be put in (*this)
+ * @param option = 1, positive square root, = -1, negative square root.
+ */
 void Matrix::sqrt(int option){
 
    Matrix hulp(*this);
@@ -259,6 +329,10 @@ void Matrix::sqrt(int option){
 
 }
 
+/**
+ * Multiply this matrix with diagonal matrix
+ * @param diag Diagonal matrix to multiply with this, has to be allocated on matrix dimension.
+ */
 void Matrix::mdiag(double *diag){
 
    int inc = 1;
@@ -268,8 +342,12 @@ void Matrix::mdiag(double *diag){
 
 }
 
-//symmetrische matrix links en rechts vermenigvuldigen met symmetrische matrix:
-//this = map*object*map
+/**
+ * Multiply symmetric matrix object left en right with symmetric matrix map to 
+ * form another symmetric matrix and put it in (*this): this = map*object*map
+ * @param map matrix that will be multiplied to the left en to the right of matrix object
+ * @param object central matrix
+ */
 void Matrix::L_map(Matrix &map,Matrix &object){
    
    char side = 'L';
@@ -293,22 +371,27 @@ void Matrix::L_map(Matrix &map,Matrix &object){
 
 }
 
-Matrix Matrix::operator*(Matrix &matrix_pr){
-
-   Matrix hulp(n);
+/**
+ * Matrix product of two general matrices A en B, put result in this
+ * @param A left matrix
+ * @param B right matrix
+ */
+Matrix &Matrix::mprod(Matrix &A, Matrix &B){
 
    char trans = 'N';
 
    double alpha = 1.0;
    double beta = 0.0;
 
-   dgemm_(&trans,&trans,&n,&n,&n,&alpha,matrix[0],&n,matrix_pr.matrix[0],&n,&beta,hulp.matrix[0],&n);
+   dgemm_(&trans,&trans,&n,&n,&n,&alpha,A.matrix[0],&n,B.matrix[0],&n,&beta,matrix[0],&n);
 
-   return hulp;
+   return *this;
 
 }
 
-//kopieer bovendriehoek in benedendriehoek
+/**
+ * Copy upper triangle into lower triangle.
+ */
 void Matrix::symmetrize(){
 
    for(int i = 0;i < n;++i)
@@ -317,7 +400,6 @@ void Matrix::symmetrize(){
 
 }
 
-//friend function! output stream operator overloaded
 ostream &operator<<(ostream &output,Matrix &matrix_p){
 
    for(int i = 0;i < matrix_p.gn();++i)

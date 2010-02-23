@@ -12,7 +12,12 @@ int DPM::counter = 0;
 int **DPM::dp2s;
 int ***DPM::s2dp;
 
-//constructor:
+/**
+ * standard constructor: constructs Matrix object of dimension M*(M - 1)*(M - 2)/6 and
+ * if counter == 0, allocates and constructs the lists containing the relationship between sp and dp basis.
+ * @param M nr of sp orbitals
+ * @param N nr of particles
+ */
 DPM::DPM(int M,int N) : Matrix(M*(M - 1)*(M - 2)/6) {
    
    this->N = N;
@@ -62,7 +67,11 @@ DPM::DPM(int M,int N) : Matrix(M*(M - 1)*(M - 2)/6) {
 
 }
 
-//copy constructor
+/**
+ * copy constructor: constructs Matrix object of dimension M*(M - 1)*(M - 2)/6 and copies the content of dpm_c into it,
+ * if counter == 0, allocates and constructs the lists containing the relationship between sp and dp basis.
+ * @param dpm_c input DPM to be copied
+ */
 DPM::DPM(DPM &dpm_c) : Matrix(dpm_c){
 
    this->N = dpm_c.N;
@@ -112,7 +121,9 @@ DPM::DPM(DPM &dpm_c) : Matrix(dpm_c){
 
 }
 
-//destructor
+/**
+ * destructor: if counter == 1 the memory for the static lists dp2s en s2dp twill be deleted.
+ */
 DPM::~DPM(){
 
    if(counter == 1){
@@ -139,7 +150,18 @@ DPM::~DPM(){
 
 }
 
-//access the numbers: sp indices
+/**
+ * access the elements of the matrix in sp mode, antisymmetry is automatically accounted for:\n\n
+ * DPM(a,b,c,d,e,f) = -TPM(b,a,c,d,e,f) = ...\n\n
+ * DPM(a,a,c,d,e,f) = 0\n\n
+ * @param a first sp index that forms the dp row index i together with b and c
+ * @param b second sp index that forms the dp row index i together with a and c
+ * @param c third sp index that forms the dp row index i together with a and b
+ * @param d first sp index that forms the dp column index j together with e and z
+ * @param e second sp index that forms the dp column index j together with d and z
+ * @param z third sp index that forms the dp column index j together with d and e
+ * @return the number on place DPM(i,j) with the right phase.
+ */
 double DPM::operator()(int a,int b,int c,int d,int e,int z) const{
 
    //eerst kijken of er geen indices gelijk zijn:
@@ -228,8 +250,7 @@ double DPM::operator()(int a,int b,int c,int d,int e,int z) const{
 
 }
 
-//friend function! output stream operator overloaded
-ostream &operator<<(ostream &output,const DPM &dpm_p){
+ostream &operator<<(ostream &output,DPM &dpm_p){
 
    for(int i = 0;i < dpm_p.n;++i)
       for(int j = 0;j < dpm_p.n;++j){
@@ -244,24 +265,37 @@ ostream &operator<<(ostream &output,const DPM &dpm_p){
 
 }
 
+/**
+ * @return nr of particles
+ */
 int DPM::gN(){
 
    return N;
 
 }
 
+/**
+ * @return dimension of sp space
+ */
 int DPM::gM(){
 
    return M;
 
 }
 
+/**
+ * @return dimension of dp space and of Matrix
+ */
 int DPM::gn(){
 
    return n;
 
 }
 
+/**
+ * The T1-map: maps a TPM object (tpm) on a DPM object (*this)
+ * @param tpm input TPM
+ */
 void DPM::T(TPM &tpm){
 
    SPM spm(tpm);

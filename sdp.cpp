@@ -1,3 +1,12 @@
+/**
+ * @mainpage 
+ * This is an implementation of the dual only, potential reduction interior point method
+ * for optimizing the second order density matrix using the P, Q, G and T_1 N-representability conditions.
+ * Compiling can be done with the options PQ, PQG and PQGT1, with logical consequences for the program.
+ * @author Brecht Verstichel
+ * @date 22-02-2010
+ */
+
 #include <iostream>
 #include <fstream>
 #include <cmath>
@@ -7,7 +16,20 @@ using std::endl;
 using std::ifstream;
 using std::ofstream;
 
+//includes all important headers and defines which conditions are
+//going to be used:
 #include "headers/include.h"
+
+/**
+ * In the main the actual program is run.\n 
+ * We start from the unity density matrix normed on the particle number and minimize the 
+ * ojective function:\n\n
+ * Tr (Gamma H) - t * ln(det P(Gamma)) \n\n
+ * Once the minimum is found the parameter t is reduced and a new search is initiated,
+ * this goes on until convergence is reached.\n
+ * The potential is minimized using the Newton-Raphson method and the resulting linear system
+ * is solved via the linear conjugate gradient method.
+ */
 
 int main(void){
 

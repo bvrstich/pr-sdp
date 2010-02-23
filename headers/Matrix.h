@@ -6,9 +6,25 @@
 
 using std::ostream;
 
+/**
+ * @author Brecht Verstichel
+ * @date 18-02-2010\n\n
+ * This is a class written for symmetric matrices. It is a wrapper around a double pointer and
+ * redefines much used lapack and blas routines as memberfunctions
+ */
+
 class Matrix{
 
-   friend ostream &operator<<(ostream &,Matrix &);
+   /**
+    * Output stream operator overloaded, the usage is simple, if you want to print to a file, make an
+    * ifstream object and type:\n\n
+    * object << matrix << endl;\n\n
+    * For output onto the screen type: \n\n
+    * cout << matrix << endl;\n\n
+    * @param output The stream to which you are writing (e.g. cout)
+    * @param matrix_p de Matrix you want to print
+    */
+   friend ostream &operator<<(ostream &output,Matrix &matrix_p);
 
    public:
 
@@ -34,9 +50,9 @@ class Matrix{
 
       Matrix &daxpy(double alpha,Matrix &);
 
-      Matrix operator*(Matrix &);
-
       Matrix &operator/=(double );
+
+      Matrix &mprod(Matrix &,Matrix &);
 
       //easy to change the numbers
       double &operator()(int i,int j);
@@ -72,10 +88,11 @@ class Matrix{
 
    private:
 
-      //velden
+      //!double pointer of doubles, contains the numbers, the matrix
       double **matrix;
 
-      int n;//dim of matrix
+      //!dimension of the matrix
+      int n;
 
 };
 

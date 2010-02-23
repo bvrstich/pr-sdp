@@ -1,9 +1,16 @@
+/**
+ * @file 
+ * This is a wrapper class around the different SUP_PQ(GT1) classes. It is decided at compile time from which 
+ * SUP_* file this class inherits. Compile with PQ to inherit from SUP_PQ, compile with PQG to inherit from SUP_PQG, etc. .
+ * This way, you can use the SUP object everywhere in the program without having to worry about which conditions are used.
+ */
 #ifndef SUP_H
 #define SUP_H
 
-#include "SUP/SUP_PQ.h"
-
+//if PQ is defined, inherit from SUP_PQ
 #ifdef PQ
+
+#include "SUP/SUP_PQ.h"
 
 class SUP : public SUP_PQ{
 
@@ -19,6 +26,7 @@ class SUP : public SUP_PQ{
 
 #endif
 
+//if PQG is defined, inherit from SUP_PQG
 #ifdef PQG
 
 #include "SUP/SUP_PQG.h"
@@ -37,6 +45,7 @@ class SUP : public SUP_PQG{
 
 #endif
 
+//if PQGT1 is defined, inherit from SUP_PQGT1
 #ifdef PQGT1
 
 #include "SUP/SUP_PQGT1.h"

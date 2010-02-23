@@ -5,6 +5,7 @@
 using std::ostream;
 using std::endl;
 
+//include all the important header function and make some definitions for the constraints
 #include "headers/include.h"
 
 int PHM::counter = 0;
@@ -12,7 +13,12 @@ int PHM::counter = 0;
 int **PHM::ph2s;
 int **PHM::s2ph;
 
-//constructor:
+/**
+ * standard constructor: constructs Matrix object of dimension M*M and
+ * if counter == 0, allocates and constructs the lists containing the relationship between sp and ph basis.
+ * @param M nr of sp orbitals
+ * @param N nr of particles
+ */
 PHM::PHM(int M,int N) : Matrix(M*M) {
    
    this->N = N;
@@ -55,7 +61,11 @@ PHM::PHM(int M,int N) : Matrix(M*M) {
 
 }
 
-//copy constructor
+/**
+ * copy constructor: constructs Matrix object of dimension M*M and copies the content of phm_c into it,
+ * if counter == 0, allocates and constructs the lists containing the relationship between sp and ph basis.
+ * @param phm_c PHM to be copied into (*this)
+ */
 PHM::PHM(PHM &phm_c) : Matrix(phm_c){
 
    this->N = phm_c.N;
@@ -98,7 +108,9 @@ PHM::PHM(PHM &phm_c) : Matrix(phm_c){
 
 }
 
-//destructor
+/**
+ * destructor: if counter == 1 the memory for the static lists ph2s en s2ph twill be deleted.
+ */
 PHM::~PHM(){
 
    if(counter == 1){
@@ -117,7 +129,14 @@ PHM::~PHM(){
 
 }
 
-//access the numbers: sp indices
+/**
+ * access the elements of the matrix in sp mode, 
+ * @param a first sp index that forms the ph row index i together with b
+ * @param b second sp index that forms the ph row index i together with a
+ * @param c first sp index that forms the ph column index j together with d
+ * @param d second sp index that forms the ph column index j together with c
+ * @return the number on place PHM(i,j)
+ */
 double PHM::operator()(int a,int b,int c,int d) const{
 
    int i = s2ph[a][b];
@@ -127,7 +146,6 @@ double PHM::operator()(int a,int b,int c,int d) const{
 
 }
 
-//friend function! output stream operator overloaded
 ostream &operator<<(ostream &output,const PHM &phm_p){
 
    for(int i = 0;i < phm_p.n;++i)
@@ -143,24 +161,37 @@ ostream &operator<<(ostream &output,const PHM &phm_p){
 
 }
 
+/**
+ * @return nr of particles
+ */
 int PHM::gN(){
 
    return N;
 
 }
 
+/**
+ * @return dimension of sp space
+ */
 int PHM::gM(){
 
    return M;
 
 }
 
+/**
+ * @return dimension of ph space and of Matrix
+ */
 int PHM::gn(){
 
    return n;
 
 }
 
+/**
+ * The G-map, maps a TPM object (tpm) on a PHM object (*this)
+ * @param tpm input TPM matrix
+ */
 void PHM::G(TPM &tpm){
 
    SPM spm(tpm);

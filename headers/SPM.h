@@ -8,9 +8,24 @@ using std::ostream;
 
 #include "Matrix.h"
 
+/**
+ * @author Brecht Verstichel
+ * @date 22-02-2010\n\n
+ * This class SPM is a class written for single particle matrices, it inherits alle the function from its mother 
+ * Matrix and some member function which are special for SPM's.
+ */
 class SPM : public Matrix {
 
-   friend ostream &operator<<(ostream &,SPM &);
+   /**
+    * Output stream operator overloaded, the usage is simple, if you want to print to a file, make an
+    * ifstream object and type:\n\n
+    * object << spm_p << endl;\n\n
+    * For output onto the screen type: \n\n
+    * cout << spm_p << endl;\n\n
+    * @param output The stream to which you are writing (e.g. cout)
+    * @param spm_p de SPM you want to print
+    */
+   friend ostream &operator<<(ostream &output,SPM &spm_p);
 
    public:
       
@@ -29,7 +44,10 @@ class SPM : public Matrix {
 
       int gM();
 
-      //definitie van template functies mag niet buiten de klassedefinitie
+      /**
+       * function constructs SPM from TPM or PHM, this function is SPM::bar times 1/(N - 1)
+       * @param MT input TPM or PHM
+       */
       template<class MatrixType>
          void constr(MatrixType &MT){
 
@@ -53,7 +71,10 @@ class SPM : public Matrix {
 
          }
 
-      //constructor met initialisatie op trace van een template matrix:
+      /**
+       * Constructor of SPM with initialization on SPM::constr of input TPM or PHM
+       * @param MT input TPM or PHM
+       */
       template<class MatrixType>
          SPM(MatrixType &MT) : Matrix(MT.gM()) {
 
@@ -64,7 +85,10 @@ class SPM : public Matrix {
 
          }
 
-      //definitie van template functies mag niet buiten de klassedefinitie
+      /**
+       * construct bar matrix from TPM or PHM: e.g. SPM(a,c) = sum_{b} TPM(a,b,c,b)
+       * @param MT input TPM or PHM
+       */
       template<class MatrixType>
          void bar(MatrixType &MT){
 
@@ -84,8 +108,11 @@ class SPM : public Matrix {
 
    private:
 
-      int M;//dim sp space
-      int N;//nr of particles
+      //!dimension of the single particle space, and dimension of the Matrix
+      int M;
+
+      //!number of particles
+      int N;
 
 };
 
