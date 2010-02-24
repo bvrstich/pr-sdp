@@ -1,8 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" href="$classMatrix.html#a49136ba8c9403c857e0bea5ce23698f1" title="Matrix::sqrt" alt="" coords="168,59,256,88"/>
-<area shape="rect" href="$lapack_8h.html#ab191a5588a637acb4412b1169080d839" title="dgemm_" alt="" coords="333,5,405,35"/>
-<area shape="rect" href="$classMatrix.html#a084e6e757678a530b80a78685c764187" title="Matrix::diagonalize" alt="" coords="304,59,435,88"/>
-<area shape="rect" href="$classMatrix.html#a83d39e162147747dad5bd61cc27fe6c4" title="Matrix::mdiag" alt="" coords="320,112,419,141"/>
-<area shape="rect" href="$lapack_8h.html#a8868c929c2851d32b2ffa7bc7c3940cf" title="dsyev_" alt="" coords="483,59,547,88"/>
-<area shape="rect" href="$lapack_8h.html#a9d4e5f6c81fb4bb87223f92b5347daf1" title="dscal_" alt="" coords="485,112,544,141"/>
-</map>

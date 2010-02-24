@@ -1,8 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" href="$classTPM.html#a6544731b5ecd5768cfead60496fd3499" title="TPM::constr_grad" alt="" coords="336,33,461,63"/>
-<area shape="rect" href="$classSUP__PQGT1.html#acc78189e3ad4eb6841b965772a70517b" title="SUP_PQGT1::dscal" alt="" coords="151,32,287,61"/>
-<area shape="rect" href="$classSUP__PQG.html#aae26b0b3b743fb626eefe09c0f14c022" title="SUP_PQG::dscal" alt="" coords="157,85,280,115"/>
-<area shape="rect" href="$classTPM.html#a56559f99ed4145e56c1b1771840ce927" title="TPM::H" alt="" coords="185,139,252,168"/>
-<area shape="rect" href="$classTPM.html#ae900c8b6b29cf6fc7d913ceab206a228" title="TPM::solve" alt="" coords="355,139,443,168"/>
-<area shape="rect" href="$sdp_8cpp.html#a840291bc02cba5474a4cb46a9b9566fe" title="main" alt="" coords="511,87,559,116"/>
-</map>

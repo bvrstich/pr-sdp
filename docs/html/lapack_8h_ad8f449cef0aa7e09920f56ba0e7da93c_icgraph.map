@@ -1,8 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" href="$classMatrix.html#aaf57a4ec587d408afbc85d5e874afbcd" title="Matrix::L_map" alt="" coords="125,59,229,88"/>
-<area shape="rect" href="$classTPM.html#a56559f99ed4145e56c1b1771840ce927" title="TPM::H" alt="" coords="317,5,384,35"/>
-<area shape="rect" href="$classSUP__PQGT1.html#ae7ca12930268d727b430b524c49e9734" title="SUP_PQGT1::L_map" alt="" coords="279,59,423,88"/>
-<area shape="rect" href="$classSUP__PQG.html#a5e7dc9bcf52de3692bdbe7f72d0db77d" title="SUP_PQG::L_map" alt="" coords="285,112,416,141"/>
-<area shape="rect" href="$classTPM.html#ae900c8b6b29cf6fc7d913ceab206a228" title="TPM::solve" alt="" coords="472,5,560,35"/>
-<area shape="rect" href="$sdp_8cpp.html#a840291bc02cba5474a4cb46a9b9566fe" title="main" alt="" coords="609,5,657,35"/>
-</map>

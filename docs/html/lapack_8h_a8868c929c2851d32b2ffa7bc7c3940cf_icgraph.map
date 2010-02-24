@@ -1,9 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" href="$classMatrix.html#a084e6e757678a530b80a78685c764187" title="Matrix::diagonalize" alt="" coords="117,85,248,115"/>
-<area shape="rect" href="$classEIG__PQ.html#a67a9c0c67ece5c220783f6721da2da5c" title="EIG_PQ::EIG_PQ" alt="" coords="320,5,448,35"/>
-<area shape="rect" href="$classEIG__PQG.html#a3b7fb6a1afd5bf016f162257b927f9ed" title="EIG_PQG::EIG_PQG" alt="" coords="311,59,457,88"/>
-<area shape="rect" href="$classEIG__PQGT1.html#a78f93a25c335502c5acff1d005e09e92" title="EIG_PQGT1::EIG_PQGT1" alt="" coords="296,112,472,141"/>
-<area shape="rect" href="$classMatrix.html#a49136ba8c9403c857e0bea5ce23698f1" title="Matrix::sqrt" alt="" coords="340,165,428,195"/>
-<area shape="rect" href="$classSUP__PQGT1.html#a73887c11cd3b2e92117a09d481250a6c" title="SUP_PQGT1::sqrt" alt="" coords="520,139,648,168"/>
-<area shape="rect" href="$classSUP__PQG.html#a7e79c8791de5409f7efe11d84426bd8d" title="SUP_PQG::sqrt" alt="" coords="527,192,641,221"/>
-</map>
