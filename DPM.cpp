@@ -152,7 +152,7 @@ DPM::~DPM(){
 
 /**
  * access the elements of the matrix in sp mode, antisymmetry is automatically accounted for:\n\n
- * DPM(a,b,c,d,e,f) = -TPM(b,a,c,d,e,f) = ...\n\n
+ * DPM(a,b,c,d,e,f) = -DPM(b,a,c,d,e,f) = ...\n\n
  * DPM(a,a,c,d,e,f) = 0\n\n
  * @param a first sp index that forms the dp row index i together with b and c
  * @param b second sp index that forms the dp row index i together with a and c
