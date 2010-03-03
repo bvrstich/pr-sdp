@@ -1,6 +1,8 @@
 #ifndef LAPACK_H
 #define LAPACK_H
 
+#include<mkl.h>
+
 //lapack definities
 extern "C" {
 
