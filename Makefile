@@ -135,5 +135,8 @@ clean:
 	@rm -f $(OBJ)
 	@echo 'Done.'
 
+doc:
+	doxygen doc-config
+
 
 # ====================== End of file 'Makefile.in' ========================== #
