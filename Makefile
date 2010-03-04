@@ -29,9 +29,11 @@ OBJ	= $(CPPSRC:.cpp=.o)
 
 BRIGHT_ROOT= .
 
-INCLUDE =
+MKL_ROOT = /opt/intel/Compiler/11.1/069/mkl
 
-LIBS=
+INCLUDE = -I${MKL_ROOT}/include
+
+LIBS= -L${MKL_ROOT}/lib/em64t -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread
 
 CC	= icc
 CXX	= icpc
@@ -39,9 +41,8 @@ CXX	= icpc
 # -----------------------------------------------------------------------------
 #   Compiler & Linker flags
 # -----------------------------------------------------------------------------
-CFLAGS	= -I$(INCLUDE) -g -Wall -O2 -I/opt/intel/mkl/10.0.3.020/include/
-LDFLAGS	= -g -Wall -O2 -lmkl_lapack -lmkl_intel -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -L/opt/intel/mkl/10.0.3.020/lib/32/
-
+CFLAGS	= $(INCLUDE) -g -Wall -O2 -ipo -xSSE4.2
+LDFLAGS	= $(LIBS) -g -Wall -O2 -xSSE4.2
 
 # =============================================================================
 #   Targets & Rules
