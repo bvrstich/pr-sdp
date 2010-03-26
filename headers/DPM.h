@@ -28,7 +28,7 @@ class DPM : public Matrix {
    friend ostream &operator<<(ostream &output,DPM &dpm_p);
 
    public:
-      
+
       //constructor
       DPM(int M,int N);
 

@@ -55,7 +55,7 @@ class TPM : public Matrix {
       //geef N terug
       int gN();
 
-      //geef N terug
+      //geef M terug
       int gM();
 
       //geef n terug

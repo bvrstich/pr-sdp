@@ -49,6 +49,7 @@ TPM::TPM(int M,int N) : Matrix(M*(M - 1)/2){
          for(int j = i + 1;j < M;++j){
 
             s2t[i][j] = teller;
+            s2t[j][i] = teller;
 
             t2s[teller][0] = i;
             t2s[teller][1] = j;
@@ -56,10 +57,6 @@ TPM::TPM(int M,int N) : Matrix(M*(M - 1)/2){
             ++teller;
 
          }
-
-      for(int i = 0;i < M;++i)
-         for(int j = i + 1;j < M;++j)
-            s2t[j][i] = s2t[i][j];
 
    }
 
@@ -100,6 +97,7 @@ TPM::TPM(TPM &tpm_c) : Matrix(tpm_c){
          for(int j = i + 1;j < M;++j){
 
             s2t[i][j] = teller;
+            s2t[j][i] = teller;
 
             t2s[teller][0] = i;
             t2s[teller][1] = j;
@@ -107,10 +105,6 @@ TPM::TPM(TPM &tpm_c) : Matrix(tpm_c){
             ++teller;
 
          }
-
-      for(int i = 0;i < M;++i)
-         for(int j = i + 1;j < M;++j)
-            s2t[j][i] = s2t[i][j];
 
    }
 
@@ -250,11 +244,10 @@ void TPM::hubbard(double U){
             if(a == (b - 1) && c == (d - 1) && a == c)
                (*this)(i,j) += U;
 
+         (*this)(j,i) = (*this)(i,j);
       }
 
    }
-   
-   this->symmetrize();
 
 }
 
@@ -292,10 +285,9 @@ void TPM::Q(TPM &tpm_d){
          if(b == d)
             (*this)(i,j) -= spm(a,c);
 
+         (*this)(j,i) = (*this)(i,j);
       }
    }
-
-   this->symmetrize();
 
 }
 
@@ -332,11 +324,10 @@ void TPM::G(PHM &phm){
          if(a == c)
             (*this)(i,j) += spm(b,d);
 
+         (*this)(j,i) = (*this)(i,j);
       }
 
    }
-
-   this->symmetrize();
 
 }
 
@@ -366,7 +357,7 @@ void TPM::init(){
  */
 void TPM::proj_Tr(){
 
-   double ward = (this->trace())/(double)n;
+   double ward = (this->trace())/n;
 
    for(int i = 0;i < n;++i)
       (*this)(i,i) -= ward;
@@ -658,11 +649,9 @@ void TPM::bar(DPM &dpm){
          for(int l = 0;l < M;++l)
             (*this)(i,j) += dpm(a,b,l,c,d,l);
 
+	 (*this)(j,i) = (*this)(i,j);
       }
    }
-
-   this->symmetrize();
-
 }
 
 /**
@@ -704,11 +693,10 @@ void TPM::T(DPM &dpm){
          if(a == c)
             (*this)(i,j) -= 0.5*spm(b,d);
 
+         (*this)(j,i) = (*this)(i,j);
       }
 
    }
-
-   this->symmetrize();
 
 }
 

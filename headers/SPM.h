@@ -28,7 +28,7 @@ class SPM : public Matrix {
    friend ostream &operator<<(ostream &output,SPM &spm_p);
 
    public:
-      
+
       //constructor
       SPM(int M,int N);
 
@@ -65,9 +65,8 @@ class SPM : public Matrix {
 
                   (*this)(a,b) *= ward;
 
+                  (*this)(b,a) = (*this)(a,b);
                }
-
-            this->symmetrize();
 
          }
 
@@ -100,9 +99,8 @@ class SPM : public Matrix {
                   for(int l = 0;l < M;++l)
                      (*this)(a,b) += MT(a,l,b,l);
 
+                  (*this)(b,a) = (*this)(a,b);
                }
-
-            this->symmetrize();
 
          }
 

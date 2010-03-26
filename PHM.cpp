@@ -213,9 +213,8 @@ void PHM::G(TPM &tpm){
          if(b == d)
             (*this)(i,j) += spm(a,c);
 
+         (*this)(j,i) = (*this)(i,j);
       }
    }
-
-   this->symmetrize();
 
 }
