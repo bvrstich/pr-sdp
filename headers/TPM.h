@@ -13,6 +13,7 @@ class SPM;
 class SUP;
 class PHM;
 class DPM;
+class PPHM;
 
 /**
  * @author Brecht Verstichel
@@ -77,6 +78,12 @@ class TPM : public Matrix {
       
       void T(DPM &);
 
+#endif
+
+#ifdef __T2_CON
+      void bar(PPHM &);
+
+      void T(PPHM &);
 #endif
 
       void init();

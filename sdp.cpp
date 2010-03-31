@@ -34,8 +34,8 @@ int main(void){
 
    cout.precision(10);
 
-   const int M = 4;//dim sp hilbert space
-   const int N = 4;//nr of particles
+   const int M = 6;//dim sp hilbert space
+   const int N = 3;//nr of particles
 
    //hamiltoniaan
    TPM ham(M,N);
@@ -113,6 +113,18 @@ int main(void){
       rdm.daxpy(a,extrapol);
 
    }
+
+   TPM A(M,N),B(M,N);
+   PPHM C(M,N),D(M,N);
+   A.fill_Random();
+   C.fill_Random();
+
+   D.T(A);
+   B.T(C);
+
+   cout << A.ddot(B) << " = " << C.ddot(D) << endl;
+
+
 
    return 0;
 

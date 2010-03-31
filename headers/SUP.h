@@ -64,4 +64,24 @@ class SUP : public SUP_PQGT1{
 
 #endif
 
+
+//if PQGT1 is defined, inherit from SUP_PQGT1
+#ifdef PQGT2
+
+#include "SUP/SUP_PQGT2.h"
+
+class SUP : public SUP_PQGT2{
+
+   public :
+
+      SUP(int M,int N) : SUP_PQGT2(M,N) { }
+
+      SUP(SUP &SZ) : SUP_PQGT2(SZ) { }
+
+      ~SUP(){ }
+
+};
+
+#endif
+
 #endif

@@ -70,4 +70,26 @@ class EIG : public EIG_PQGT1 {
 
 #endif
 
+
+//if PQGT1 is defined, inherit from EIG_PQGT1
+#ifdef PQGT2
+
+#include "EIG/EIG_PQGT2.h"
+
+class EIG : public EIG_PQGT2 { 
+
+   public :
+
+      EIG(int M,int N) : EIG_PQGT2(M,N) { }
+
+      EIG(EIG &eig) : EIG_PQGT2(eig) { }
+
+      EIG(SUP_PQGT2 &SZ) : EIG_PQGT2(SZ) { }
+
+      ~EIG(){ }
+   
+};
+
+#endif
+
 #endif

@@ -700,4 +700,87 @@ void TPM::T(DPM &dpm){
 
 }
 
-#endif
+#endif /* __T1_CON */
+
+
+
+#ifdef __T2_CON
+
+void TPM::bar(PPHM &pphm)
+{
+    int a,b,c,d;
+
+    for(int i=0;i<n;i++)
+    {
+	a = t2s[i][0];
+	b = t2s[i][1];
+
+	for(int j=i;j<n;j++)
+	{
+	    c = t2s[j][0];
+	    d = t2s[j][1];
+
+	    (*this)(i,j) = 0.0;
+
+	    for(int l=0;l<M;l++)
+		(*this)(i,j) += pphm(a,b,l,c,d,l);
+
+	    (*this)(j,i) = (*this)(i,j);
+	}
+    }
+}
+
+void TPM::T(PPHM &pphm)
+{
+    double brecht= 1.0/(2*(N-1));
+    int a,b,c,d;
+
+    // A bar
+    TPM tpm(M,N);
+    tpm.bar(pphm);
+
+    // A dubble bar
+    SPM spm(M,N);
+    spm.bar2(pphm);
+
+    // A tilde bar
+    PHM phm(M,N);
+    phm.bar(pphm);
+
+    for(int i=0;i<n;i++)
+    {
+	a = t2s[i][0];
+	b = t2s[i][1];
+
+	for(int j=i;j<n;j++)
+	{
+	    c = t2s[j][0];
+	    d = t2s[j][1];
+
+	    (*this)(i,j) = 0;
+
+	    if(b==d)
+		(*this)(i,j) += spm(a,c);
+
+	    if(a==d)
+		(*this)(i,j) -= spm(b,c);
+
+	    if(b==c)
+		(*this)(i,j) -= spm(a,d);
+
+	    if(a==c)
+		(*this)(i,j) += spm(b,d);
+
+	    (*this)(i,j) *= brecht;
+
+	    (*this)(i,j) += tpm(i,j);
+
+	    (*this)(i,j) -= phm(d,a,b,c)-phm(d,b,a,c)-phm(c,a,b,d)+phm(c,b,a,d);
+
+	    (*this)(j,i) = (*this)(i,j);
+	}
+    }
+}
+
+#endif /* __T2_CON */
+

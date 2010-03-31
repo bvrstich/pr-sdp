@@ -218,3 +218,32 @@ void PHM::G(TPM &tpm){
    }
 
 }
+
+#ifdef __T2_CON
+
+void PHM::bar(PPHM &pphm)
+{
+    int a,b,c,d;
+
+    for(int i=0;i<n;i++)
+    {
+	a = ph2s[i][0];
+	b = ph2s[i][1];
+
+	for(int j=i;j<n;j++)
+	{
+	    c = ph2s[j][0];
+	    d = ph2s[j][1];
+
+	    (*this)(i,j) = 0.0;
+
+	    for(int l=0;l<M;l++)
+		(*this)(i,j) += pphm(l,a,b,l,c,d);
+
+	    (*this)(j,i) = (*this)(i,j);
+	}
+    }
+}
+
+#endif /* __T2_CON */
+
