@@ -674,7 +674,7 @@ void TPM::T(DPM &dpm){
       a = t2s[i][0];
       b = t2s[i][1];
 
-      for(int j = 0;j < n;++j){
+      for(int j = i;j < n;++j){
 
          c = t2s[j][0];
          d = t2s[j][1];
@@ -697,7 +697,6 @@ void TPM::T(DPM &dpm){
       }
 
    }
-
 }
 
 #endif /* __T1_CON */
