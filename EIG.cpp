@@ -1,4 +1,3 @@
-
 #include "headers/EIG.h"
 
 ostream &operator<<(ostream &output,EIG &eig)
@@ -35,7 +34,12 @@ ostream &operator<<(ostream &output,EIG &eig)
     return output;
 }
 
-//constructor
+/**
+ * standard constructor, allocates the memory for the eigenvalues of an SUP object and makes the pointers point
+ * to the right place in the array.
+ * @param M dimension of sp space
+ * @param N nr of particles
+ */
 EIG::EIG(int M,int N)
 {
     this->N=N;
@@ -68,7 +72,11 @@ EIG::EIG(int M,int N)
 #endif
 }
 
-//copy constructor
+/**
+ * copy constructor, allocates the memory for the eigenvalues of an SUP object and makes the pointers point
+ * to the right place in the array. Copies the content of eig_c into this.
+ * @param eig_c EIG object that will be copied into this
+ */
 EIG::EIG(EIG &eig_c)
 {
     N=eig_c.N;
@@ -82,9 +90,9 @@ EIG::EIG(EIG &eig_c)
     eig[0] = new double [dim];
     eig[1] = eig[0] + n_tp;
 
-   int inc = 1;
+    int inc = 1;
 
-   dcopy_(&dim,eig_c.eig[0],&inc,eig[0],&inc);
+    dcopy_(&dim,eig_c.eig[0],&inc,eig[0],&inc);
 
 #ifdef __G_CON
     n_ph=eig_c.n_ph;
@@ -111,7 +119,11 @@ EIG::EIG(EIG &eig_c)
 #endif
 }
 
-//constructor met initialisatie op 
+/**
+ * standard constructor with initialization on the eigenvalues of a SUP object.
+ * @param SZ input SUP object that will be destroyed after this function is called. The eigenvectors
+ * of the matrix will be stored in the columns of the original SUP matrix.
+ */
 EIG::EIG(SUP &SZ)
 {
     N=SZ.gN();
@@ -150,7 +162,9 @@ EIG::EIG(SUP &SZ)
 #endif
 }
 
-//destructor
+/**
+ * Destructor, deallocates the memory.
+ */
 EIG::~EIG()
 {
     delete [] eig[0];
@@ -169,26 +183,43 @@ EIG::~EIG()
 #endif
 }
 
+/**
+ * @return nr of particles
+ */
 int EIG::gN()
 {
     return N;
 }
 
+/**
+ * @return dimension of sp space
+ */
 int EIG::gM()
 {
     return M;
 }
 
-//overload equality operator
+/**
+ * overload equality operator
+ * @param eig object that will be copied into this.
+ */
 EIG &EIG::operator=(EIG &eig)
 {
-   int inc = 1;
+    int inc = 1;
 
-   dcopy_(&dim,eig.eig[0],&inc,eig[0],&inc);
+    dcopy_(&dim,eig.eig[0],&inc,eig[0],&inc);
 
-   return *this;
+    return *this;
 }
 
+/** 
+ * @param i == 0, the eigenvalues of the P block will be returned, \n
+ * i == 1, the eigenvalues of the Q block will be returned,\n
+ * i == 2, the eigenvalues of the G block will be returned,\n
+ * i == 3, the eigenvalues of the T1 block will be returned,\n
+ * i == 4, the eigenvalues of the T2 block will be returned,\n
+ * @return array of eigenvalues
+ */
 double *EIG::operator[](int i)
 {
     switch(i)
@@ -215,10 +246,18 @@ double *EIG::operator[](int i)
     return 0;
 }
 
-//acces to the numbers
+/**
+ * access to the eigenvalues
+ * @param block == 0, get element "index" from P block,\n
+ * i == 1, get element "index" from Q block,\n
+ * i == 2, get element "index" from G block,\n
+ * i == 3, get element "index" from T1 block,\n
+ * i == 4, get element "index" from T2 block,\n
+ * @param index which element in block you want
+ * @return eig[block][index]
+ */
 double EIG::operator()(int block,int index)
 {
-    //return eig[block][index];
     switch(block)
     {
 	case 0:
@@ -240,37 +279,44 @@ double EIG::operator()(int block,int index)
 	default:
 	    std::cout << "Error: invalid block" << std::endl;
     }
-    return -1.0;
+    return 0.0;
 }
 
+/**
+ * @param alpha step length along the Newton direction
+ * @return The line search function, gradient of the potential in the Newton direction as a function of the step length alpha
+ */
 double EIG::lsfunc(double alpha)
 {
-   double brecht = 0.0;
+    double brecht = 0.0;
 
-   for(int i = 0;i < n_tp;i++)
-      brecht += eig[0][i]/(1.0 + alpha*eig[0][i]);
+    for(int i = 0;i < n_tp;i++)
+	brecht += eig[0][i]/(1.0 + alpha*eig[0][i]);
 
-   for(int i = 0;i < n_tp;i++)
-      brecht += eig[1][i]/(1.0 + alpha*eig[1][i]);
+    for(int i = 0;i < n_tp;i++)
+	brecht += eig[1][i]/(1.0 + alpha*eig[1][i]);
 
 #ifdef __G_CON
-   for(int i = 0;i < n_ph;i++)
-      brecht += eig_ph[i]/(1.0 + alpha*eig_ph[i]);
+    for(int i = 0;i < n_ph;i++)
+	brecht += eig_ph[i]/(1.0 + alpha*eig_ph[i]);
 #endif
 
 #ifdef __T1_CON
-   for(int i = 0;i < n_dp;i++)
-      brecht += eig_dp[i]/(1.0 + alpha*eig_dp[i]);
+    for(int i = 0;i < n_dp;i++)
+	brecht += eig_dp[i]/(1.0 + alpha*eig_dp[i]);
 #endif
 
 #ifdef __T2_CON
-   for(int i = 0;i < n_pph;i++)
-      brecht += eig_pph[i]/(1.0 + alpha*eig_pph[i]);
+    for(int i = 0;i < n_pph;i++)
+	brecht += eig_pph[i]/(1.0 + alpha*eig_pph[i]);
 #endif
 
-   return brecht;
+    return brecht;
 }
 
+/**
+ * @return the minimal element present in this EIG object.
+ */
 double EIG::min()
 {
     double brecht=eig[0][0];
@@ -296,12 +342,18 @@ double EIG::min()
     return brecht;
 }
 
+/** 
+ * @return dimension of tp space
+ */
 int EIG::gn_tp()
 {
     return n_tp;
 }
 
 #ifdef __G_CON
+/** 
+ * @return dimension of ph space
+ */
 int EIG::gn_ph()
 {
     return n_ph;
@@ -309,6 +361,9 @@ int EIG::gn_ph()
 #endif
 
 #ifdef __T1_CON
+/** 
+ * @return dimension of dp space
+ */
 int EIG::gn_dp()
 {
     return n_dp;
@@ -316,6 +371,9 @@ int EIG::gn_dp()
 #endif
 
 #ifdef __T2_CON
+/** 
+ * @return dimension of pph space
+ */
 int EIG::gn_pph()
 {
     return n_pph;
