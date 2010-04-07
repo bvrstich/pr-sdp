@@ -3,7 +3,7 @@
 #include <cmath>
 
 using std::ostream;
-using std::endl;
+    using std::endl;
 
 #include "headers/include.h"
 
@@ -147,10 +147,7 @@ PPHM::~PPHM()
 double PPHM::operator()(int a,int b,int c,int d,int e,int z) const
 {
     //eerst kijken of er geen indices gelijk zijn:
-    if(a == b)
-	return 0;
-
-    if(d == e)
+    if(a == b || d == e)
 	return 0;
 
     //dan kijken wel pph index met welke fase moet genomen worden:
@@ -177,7 +174,7 @@ double PPHM::operator()(int a,int b,int c,int d,int e,int z) const
     return phase*(*this)(i,j);
 }
 
-ostream &operator<<(ostream &output,PPHM &PPHM_p)
+ostream &operator<<(ostream &output,const PPHM &PPHM_p)
 {
     for(int i = 0;i < PPHM_p.n;++i)
 	for(int j = 0;j < PPHM_p.n;++j)

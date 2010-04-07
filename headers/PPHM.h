@@ -25,7 +25,7 @@ class PPHM : public Matrix {
     * @param output The stream to which you are writing (e.g. cout)
     * @param PPHM_p the PPHM you want to print
     */
-   friend ostream &operator<<(ostream &output,PPHM &PPHM_p);
+   friend ostream &operator<<(ostream &output,const PPHM &PPHM_p);
 
    public:
 

@@ -408,6 +408,13 @@ void TPM::constr_grad(double t,TPM &ham,SUP &P){
 
 #endif
 
+#ifdef __T2_CON
+
+   hulp.T(P.pphm());
+
+   *this +=hulp;
+#endif
+
    this->dscal(t);
 
    *this -= ham;
@@ -596,6 +603,21 @@ void TPM::H(double t,TPM &b,SUP &P){
 
 #endif
 
+#ifdef __T2_CON
+
+   PPHM hulp_pph(M,N);
+   PPHM T2_b(M,N);
+
+   T2_b.T(b);
+
+   hulp_pph.L_map(P.pphm(),T2_b);
+
+   hulp.T(hulp_pph);
+
+   *this+=hulp;
+
+#endif
+
    //nog schalen met t:
    this->dscal(t);
 
@@ -623,11 +645,9 @@ double TPM::line_search(double t,TPM &rdm,TPM &ham){
 
 }
 
-#ifdef __T1_CON
-
 /**
  * calculate the trace of one pair of sp indices of a DPM an put in (*this):\n\n
- * TPM(a,b,d,e) = \sum_{c} DPM(a,b,c,d,e,c)
+ * TPM(a,b,d,e) = \\sum_{c} DPM(a,b,c,d,e,c)
  * @param dpm input DPM
  */
 void TPM::bar(DPM &dpm){
@@ -699,12 +719,6 @@ void TPM::T(DPM &dpm){
    }
 }
 
-#endif /* __T1_CON */
-
-
-
-#ifdef __T2_CON
-
 void TPM::bar(PPHM &pphm)
 {
     int a,b,c,d;
@@ -740,7 +754,7 @@ void TPM::T(PPHM &pphm)
 
     // A dubble bar
     SPM spm(M,N);
-    spm.bar2(pphm);
+    spm.bar(pphm);
 
     // A tilde bar
     PHM phm(M,N);
@@ -780,6 +794,4 @@ void TPM::T(PPHM &pphm)
 	}
     }
 }
-
-#endif /* __T2_CON */
 

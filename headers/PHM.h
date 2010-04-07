@@ -56,11 +56,7 @@ class PHM : public Matrix {
 
       void G(TPM &);
 
-#ifdef __T2_CON
-
       void bar(PPHM &pphm);
-
-#endif
 
    private:
 

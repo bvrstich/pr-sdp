@@ -114,18 +114,5 @@ int main(void){
 
    }
 
-   TPM A(M,N),B(M,N);
-   PPHM C(M,N),D(M,N);
-   A.fill_Random();
-   C.fill_Random();
-
-   D.T(A);
-   B.T(C);
-
-   cout << A.ddot(B) << " = " << C.ddot(D) << endl;
-
-
-
    return 0;
-
 }

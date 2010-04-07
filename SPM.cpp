@@ -64,8 +64,12 @@ ostream &operator<<(ostream &output,SPM &spm_p){
 
 }
 
-//template<> void SPM::bar(PPHM &MT)
-void SPM::bar2(PPHM &MT)
+/**
+ * This function is a template specialization of bar() for the PPHM matrix.
+ * It's the so called A dubble bar
+ * @param MT A PPHM matrix to contract
+ */
+template<> void SPM::bar(PPHM &MT)
 {
     for(int a = 0;a < M;a++)
 	for(int b = a;b < M;b++)

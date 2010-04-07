@@ -91,8 +91,7 @@ class SPM : public Matrix {
        * construct bar matrix from TPM or PHM: e.g. SPM(a,c) = sum_{b} TPM(a,b,c,b)
        * @param MT input TPM or PHM
        */
-      template<class MatrixType>
-         void bar(MatrixType &MT){
+      template<class MatrixType> void bar(MatrixType &MT){
 
             for(int a = 0;a < M;++a)
                for(int b = a;b < M;++b){
@@ -107,10 +106,6 @@ class SPM : public Matrix {
 
          }
 
-
-      void bar2(PPHM &MT);
-
-
    private:
 
       //!dimension of the single particle space, and dimension of the Matrix
@@ -121,23 +116,7 @@ class SPM : public Matrix {
 
 };
 
-/*
-template<> void SPM::bar(PPHM &MT)
-{
-    for(int a = 0;a < M;a++)
-	for(int b = a;b < M;b++)
-	{
-	    (*this)(a,b) = 0.0;
-
-	    for(int l=0;l<M;l++)
-		for(int k=0;k<M;k++)
-		    (*this)(a,b) += MT(l,k,a,l,k,b);
-
-	    (*this)(b,a) = (*this)(a,b);
-	}
-}
-*/
-
-
+// template specialization of bar for PPHM matrices.
+template<> void SPM::bar(PPHM &MT);
 
 #endif
