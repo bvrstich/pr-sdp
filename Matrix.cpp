@@ -316,6 +316,29 @@ void Matrix::sqrt(int option){
    //vermenigvuldigen met diagonaalmatrix
    hulp_c.mdiag(eigen);
 
+#ifdef CUBLAS
+
+   double *hulpg,*hulp_cg,*matrixg;
+
+   cublasAlloc(n*n,sizeof(double),(void**)&hulpg);
+   cublasAlloc(n*n,sizeof(double),(void**)&hulp_cg);
+   cublasAlloc(n*n,sizeof(double),(void**)&matrixg);
+
+//   cublasSetMatrix(n,n,sizeof(double),matrix[0],n,matrixg,n);
+   cublasSetMatrix(n,n,sizeof(double),hulp.matrix[0],n,hulpg,n);
+   cublasSetMatrix(n,n,sizeof(double),hulp_c.matrix[0],n,hulp_cg,n);
+
+   cublasDgemm('N','T',n,n,n,1,hulp_cg,n,hulpg,n,0,matrixg,n);
+
+   cublasGetMatrix(n,n,sizeof(double),matrixg,n,matrix[0],n);
+//   cublasGetMatrix(n,n,sizeof(double),hulpg,n,hulp.matrix[0],n);
+//   cublasGetMatrix(n,n,sizeof(double),hulp_cg,n,hulp_c.matrix[0],n);
+
+   cublasFree(matrixg);
+   cublasFree(hulpg);
+   cublasFree(hulp_cg);
+
+#else
    //en tenslotte de laatste matrixvermenigvuldiging
    char transA = 'N';
    char transB = 'T';
@@ -324,9 +347,9 @@ void Matrix::sqrt(int option){
    double beta = 0.0;
 
    dgemm_(&transA,&transB,&n,&n,&n,&alpha,hulp_c.matrix[0],&n,hulp.matrix[0],&n,&beta,matrix[0],&n);
+#endif
 
    delete [] eigen;
-
 }
 
 /**
@@ -348,8 +371,35 @@ void Matrix::mdiag(double *diag){
  * @param map matrix that will be multiplied to the left en to the right of matrix object
  * @param object central matrix
  */
-void Matrix::L_map(Matrix &map,Matrix &object){
-   
+void Matrix::L_map(Matrix &map,Matrix &object)
+{
+#ifdef CUBLAS
+    double *mapg,*objectg,*matrixg,*hulpg;
+
+    cublasAlloc(n*n,sizeof(double),(void**)&mapg);
+    cublasAlloc(n*n,sizeof(double),(void**)&objectg);
+    cublasAlloc(n*n,sizeof(double),(void**)&matrixg);
+    cublasAlloc(n*n,sizeof(double),(void**)&hulpg);
+
+//    cublasSetMatrix(n,n,sizeof(double),matrix[0],n,matrixg,n);
+    cublasSetMatrix(n,n,sizeof(double),map.matrix[0],n,mapg,n);
+    cublasSetMatrix(n,n,sizeof(double),object.matrix[0],n,objectg,n);
+//    cublasSetMatrix(n,n,sizeof(double),object.matrix[0],n,objectg,n);
+
+    cublasDsymm('L','U',n,n,1,mapg,n,objectg,n,0,hulpg,n);
+
+    cublasDsymm('R','U',n,n,1,mapg,n,hulpg,n,0,matrixg,n);
+
+    cublasGetMatrix(n,n,sizeof(double),matrixg,n,matrix[0],n);
+//    cublasGetMatrix(n,n,sizeof(double),mapg,n,map.matrix[0],n);
+//    cublasGetMatrix(n,n,sizeof(double),objectg,n,object.matrix[0],n);
+
+    cublasFree(matrixg);
+    cublasFree(mapg);
+    cublasFree(objectg);
+    cublasFree(hulpg);
+
+#else
    char side = 'L';
    char uplo = 'U';
 
@@ -365,10 +415,10 @@ void Matrix::L_map(Matrix &map,Matrix &object){
    dsymm_(&side,&uplo,&n,&n,&alpha,map.matrix[0],&n,hulp,&n,&beta,matrix[0],&n);
 
    delete [] hulp;
+#endif
 
    //expliciet symmetriseren van de uit matrix
    this->symmetrize();
-
 }
 
 /**

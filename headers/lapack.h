@@ -5,6 +5,10 @@
 #include<mkl.h>
 #endif
 
+#ifdef CUBLAS
+#include<cublas.h>
+#endif
+
 //lapack definities
 extern "C" {
 
