@@ -1,11 +1,13 @@
 #include <iostream>
+#include <fstream>
 #include <cstdlib>
 #include <cmath>
 
 using std::ostream;
+using std::ifstream;
 using std::endl;
 
-#include "headers/include.h"
+#include "include.h"
 
 int DPM::counter = 0;
 
@@ -19,7 +21,7 @@ int ***DPM::s2dp;
  * @param N nr of particles
  */
 DPM::DPM(int M,int N) : Matrix(M*(M - 1)*(M - 2)/6) {
-   
+
    this->N = N;
    this->M = M;
    this->n = M*(M - 1)*(M - 2)/6;
@@ -122,7 +124,7 @@ DPM::DPM(DPM &dpm_c) : Matrix(dpm_c){
 }
 
 /**
- * destructor: if counter == 1 the memory for the static lists dp2s en s2dp twill be deleted.
+ * destructor: if counter == 1 the memory for the static lists dp2s en s2dp will be deleted.
  */
 DPM::~DPM(){
 
@@ -293,14 +295,17 @@ int DPM::gn(){
 }
 
 /**
- * The T1-map: maps a TPM object (tpm) on a DPM object (*this)
+ * The T1-like (generalized T1) map: maps a TPM object (tpm) on a DPM object (*this)
+ * @param A term before the tp part of the map
+ * @param B term before the np part of the map
+ * @param C term before the sp part of the map
  * @param tpm input TPM
  */
-void DPM::T(TPM &tpm){
+void DPM::T(double A,double B,double C,TPM &tpm){
 
-   SPM spm(tpm);
+   SPM spm(C,tpm);
 
-   double ward = 2.0*tpm.trace()/(N*(N - 1.0));
+   double ward = 2*B*tpm.trace();
 
    int a,b,c,d,e,z;
 
@@ -325,7 +330,7 @@ void DPM::T(TPM &tpm){
          if(a == d){
 
             //tp stuk
-            (*this)(i,j) += tpm(b,c,e,z);
+            (*this)(i,j) += A*tpm(b,c,e,z);
 
             //4 sp stukken
             if(c == z)
@@ -345,7 +350,7 @@ void DPM::T(TPM &tpm){
          if(b == d){
 
             //tp stuk
-            (*this)(i,j) -= tpm(a,c,e,z);
+            (*this)(i,j) -= A*tpm(a,c,e,z);
 
             //2 sp stukken
             if(c == z)
@@ -359,7 +364,7 @@ void DPM::T(TPM &tpm){
          if(b == e){
 
             //tp stuk
-            (*this)(i,j) += tpm(a,c,d,z);
+            (*this)(i,j) += A*tpm(a,c,d,z);
 
             //sp stuk
             if(c == z)
@@ -369,19 +374,117 @@ void DPM::T(TPM &tpm){
 
          //nu enkel nog tp stukken
          if(c == z)
-            (*this)(i,j) += tpm(a,b,d,e);
+            (*this)(i,j) += A*tpm(a,b,d,e);
 
          if(b == z)
-            (*this)(i,j) -= tpm(a,c,d,e);
+            (*this)(i,j) -= A*tpm(a,c,d,e);
 
          if(c == e)
-            (*this)(i,j) -= tpm(a,b,d,z);
+            (*this)(i,j) -= A*tpm(a,b,d,z);
 
          if(c == d)
-            (*this)(i,j) += tpm(a,b,e,z);
+            (*this)(i,j) += A*tpm(a,b,e,z);
 
-	 (*this)(j,i) = (*this)(i,j);
       }
    }
+
+   //niet vergeten!
+   this->symmetrize();
+
+}
+/**
+ * The T1-map: maps a TPM object (tpm) on a DPM object (*this). Watch out, like with the TPM::T with option = -1, when M = 2N the Q-like map is singular and the
+ * inverse map is undefined, so don't use it.
+ * @param option == +1 T1_up map, == -1, inverse T1_down map
+ * @param tpm input TPM
+ */
+void DPM::T(int option, TPM &tpm){
+
+   if(option == 1){
+
+      double a = 1.0;
+      double b = 1.0/(N*(N - 1.0));
+      double c = 1.0/(N - 1.0);
+
+      this->T(a,b,c,tpm);
+
+   }
+   else{//option == -1: inverse T1 down
+
+      //eerst zoeken we de inverse T1 down bar matrix
+      //dit is gewoon een inverse Q-like afbeelding:
+      TPM bar(M,N);
+
+      double a = 1;
+      double b = 3.0/(N*(N - 1.0));
+      double c = 0.5/(N - 1.0);
+
+      bar.Q(-1,a,b,c,tpm);
+
+      //dan raisen we dit naar de dp ruimte:
+      this->hat(bar);
+
+   }
+
+}
+
+/** 
+ * The hat function maps a TPM object tpm to a DPM object (*this) so that bar(this) = tpm,
+ * The inverse of the TPM::bar function. It is a T1-like map.
+ * @param tpm input TPM
+ */
+void DPM::hat(TPM &tpm){
+
+   double a = 1.0/(M - 4.0);
+   double b = 1.0/((M - 4.0)*(M - 3.0)*(M - 2.0));
+   double c = 1.0/((M - 4.0)*(M - 3.0));
+
+   this->T(a,b,c,tpm);
+
+}
+
+/**
+ * Deduct from (*this) the T1-map of the unit matrix times a constant (scale)\n\n
+ * this -= scale* T1(1) \n\n
+ * see notes primal_dual.pdf for more information.
+ * @param scale the constant
+ */
+void DPM::min_tunit(double scale){
+
+   double t = (M*(M - 1.0) - 3.0*N*(M - N))/(N*(N - 1.0));
+
+   scale *= t;
+
+   for(int i = 0;i < n;++i)
+      (*this)(i,i) -= scale;
+
+}
+
+/**
+ * fill the DPM from a file with name filename, where the elements are indicated by their sp-indices
+ * @param filename Name of the inputfile
+ */
+void DPM::in_sp(const char *filename){
+
+   ifstream input(filename);
+
+   double value;
+
+   int a,b,c,d,e,z;
+
+   int i,j;
+
+   while(input >> a >> b >> c >> d >> e >> z >> value){
+
+      i = s2dp[a][b][c];
+      j = s2dp[d][e][z];
+
+      std::cout << i << "\t" << j << "\t" << value << endl;
+
+      (*this)(i,j) = value;
+
+   }
+
+   this->symmetrize();
 
 }

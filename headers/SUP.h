@@ -1,133 +1,234 @@
 #ifndef SUP_H
 #define SUP_H
 
-#include "include.h"
+#include <iostream> 
+#include <fstream> 
+
+using std::ostream;
+
+#include "TPM.h"
+#include "PHM.h"
+#include "DPM.h"
+#include "PPHM.h"
+
+//definitions:
+#ifdef PQ
+
+#define __Q_CON
+
+#endif
+
+#ifdef PQG
+
+#define __Q_CON
+#define __G_CON
+
+#endif
+
+#ifdef PQGT1
+
+#define __Q_CON
+#define __G_CON
+#define __T1_CON
+
+#endif
+
+#ifdef PQGT2
+
+#define __Q_CON
+#define __G_CON
+#define __T2_CON
+
+#endif
+
+#ifdef PQGT
+
+#define __Q_CON
+#define __G_CON
+#define __T1_CON
+#define __T2_CON
+
+#endif
 
 class EIG;
 
 /**
  * @author Brecht Verstichel
- * @date 23-02-2010\n\n
- * This class, SUP is a blockmatrix over the carrierspace's of the P and Q conditions. This is the
- * motherclass of all the SUP* classes because I assume that the P and Q condtional will always be used.
- * This class contains two TPM objects, that are independent of each other (by which I mean that TPM::Q(SUP::tpm (0))
- * is not neccesarily equal to SUP::tpm (1)).
+ * @date 09-03-2010\n\n
+ * This class, SUP is a blockmatrix over the carrierspace's of active N-representability conditions. 
+ * This class contains two TPM objects, and if compiled with the right option a PHM or DPM object, 
+ * You have to remember that these matrices are independent of each other (by which I mean that TPM::Q(SUP_PQ::tpm (0))
+ * is not neccesarily equal to SUP_PQ::tpm (1)) etc. .
  */
-class SUP {
+class SUP{
+  
+   /**
+    * Output stream operator overloaded, the usage is simple, if you want to print to a file, make an
+    * ifstream object and type:\n\n
+    * object << sup_p << endl;\n\n
+    * For output onto the screen type: \n\n
+    * cout << sup_p << endl;\n\n
+    * @param output The stream to which you are writing (e.g. cout)
+    * @param SZ_p the SUP you want to print
+    */
+   friend ostream &operator<<(ostream &output,SUP &SZ_p);
 
-    /**
-     * Output stream operator overloaded, the usage is simple, if you want to print to a file, make an
-     * ifstream object and type:\n\n
-     * object << sup_p << endl;\n\n
-     * For output onto the screen type: \n\n
-     * cout << sup_p << endl;\n\n
-     * @param output The stream to which you are writing (e.g. cout)
-     * @param sup_p the SUP you want to print
-     */
-    friend ostream &operator<<(ostream &output,SUP &sup_p);
+   public:
 
-    public:
+      //constructor
+      SUP(int M,int N);
 
-    //constructor
-    SUP(int M,int N);
+      //copy constructor
+      SUP(SUP &);
 
-    //copy constructor
-    SUP(SUP &);
+      //destructor
+      ~SUP();
 
-    //destructor
-    ~SUP();
+      //overload += operator
+      SUP &operator+=(SUP &);
 
-    //overload += operator
-    SUP &operator+=(SUP &);
+      //overload -= operator
+      SUP &operator-=(SUP &);
 
-    //overload -= operator
-    SUP &operator-=(SUP &);
+      //overload equality operator
+      SUP &operator=(SUP &);
 
-    //overload equality operator
-    SUP &operator=(SUP &);
+      //overload equality operator
+      SUP &operator=(double &);
 
-    //overload equality operator
-    SUP &operator=(double &);
+      TPM &tpm(int i);
 
-    SUP operator*(SUP &);
+      //initialiseer S
+      void init_S();
 
-    int gN();
+      //initialiseer Z
+      void init_Z(double alpha,TPM &ham,SUP &u_0);
 
-    int gM();
+      int gN();
 
-    double ddot(SUP &);
+      int gM();
 
-    void invert();
+      int gn_tp();
 
-    void dscal(double alpha);
+      int gdim();
 
-    //positieve of negatieve vierkantswortel uit een supermatrix
-    void sqrt(int option);
+      double ddot(SUP &);
 
-    void L_map(SUP &,SUP &);
+      void invert();
 
-    void daxpy(double alpha,SUP &);
+      void dscal(double alpha);
 
-    double trace();
+      void proj_U();
 
-    void fill(TPM &);
+      void proj_C(TPM &);
 
-    TPM &tpm(int i);
+      //maak de matrix D, nodig voor de hessiaan van het stelsel
+      void D(SUP &S,SUP &Z);
 
-    int gn_tp();
+      //positieve of negatieve vierkantswortel uit een supermatrix
+      void sqrt(int option);
+
+      void L_map(SUP &,SUP &);
+
+      void daxpy(double alpha,SUP &);
+
+      double trace();
+
+      double U_trace();
+
+      void proj_C();
+
+      SUP &mprod(SUP &,SUP &);
+
+      void fill(TPM &);
+
+      void fill();
+
+      int solve(SUP &B,SUP &D);
+
+      void H(SUP &B,SUP &D);
+
+      void proj_U_Tr();
+
+      double U_norm();
+
+      double center_dev(SUP &Z);
+
+      double line_search(SUP &DZ,SUP &S,SUP &Z,double max_dev);
+
+      void fill_Random();
 
 #ifdef __G_CON
-    PHM &phm();
-    int gn_ph();
+
+      PHM &phm();
+
+      int gn_ph();
+
 #endif
 
 #ifdef __T1_CON
-    DPM &dpm();
-    int gn_dp();
+      
+      DPM &dpm();
+
+      int gn_dp();
+
 #endif
 
 #ifdef __T2_CON
-    PPHM &pphm();
-    int gn_pph();
+
+      PPHM &pphm();
+
+      int gn_pph();
+
 #endif
 
-    private:
+   private:
 
-    //!double pointer to TPM's. will containt the P space matrix in SZ_tp[0] and the Q space matrix in SZ_tp[1]
-    TPM **SZ_tp;
+      //!double pointer of TPM's, will contain the P and Q block of the SUP in the first and second block.
+      TPM **SZ_tp;
 
-    //!nr of sp orbitals
-    int M;
+      //!number of sp orbitals
+      int M;
 
-    //!nr of particles
-    int N;
+      //!nr of particles
+      int N;
 
-    //!total dimension of the block matrix
-    int dim;
+      //!dimension of tp space
+      int n_tp;
 
-    //!dimension of tp space
-    int n_tp;
+      //!total dimension of the SUP matrix
+      int dim;
 
 #ifdef __G_CON
-    //! dimension of the ph space
-    int n_ph;
-    //! double pointer to PHM
-    PHM *SZ_ph;
+
+      //!pointer to the particle hole matrix
+      PHM *SZ_ph;
+
+      //!dimenson of particle hole space
+      int n_ph;
+
 #endif
 
 #ifdef __T1_CON
-    //! dimension of the dp space
-    int n_dp;
-    //! double pointer to DPM
-    DPM *SZ_dp;
+      
+      //!pointer tot he three particles matrix DPM
+      DPM *SZ_dp;
+
+      //!dimension of three particle space
+      int n_dp;
+
 #endif
 
 #ifdef __T2_CON
-    //! dimension of the pph space
-    int n_pph;
-    //! double pointer to PPHM
-    PPHM *SZ_pph;
+
+      //!pointer tot he three particles matrix DPM
+      PPHM *SZ_pph;
+
+      //!dimension of three particle space
+      int n_pph;
+
 #endif
+
 };
 
-#endif /* SUP_H */
+#endif

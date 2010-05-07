@@ -7,16 +7,14 @@
 using std::ostream;
 
 #include "Matrix.h"
-#include "PPHM.h"
-
-class PPHM;
 
 /**
  * @author Brecht Verstichel
- * @date 22-02-2010\n\n
- * This class SPM is a class written for single particle matrices, it inherits alle the function from its mother 
- * Matrix and some member function which are special for SPM's.
+ * @date 18-02-2010\n\n
+ * This class SPM was written for single particle matrices. It inherits from the class Matrix and expands it with
+ * specific memberfunction and a knowledge of the nr of sp orbitals and particles.
  */
+
 class SPM : public Matrix {
 
    /**
@@ -31,7 +29,7 @@ class SPM : public Matrix {
    friend ostream &operator<<(ostream &output,SPM &spm_p);
 
    public:
-
+      
       //constructor
       SPM(int M,int N);
 
@@ -48,15 +46,13 @@ class SPM : public Matrix {
       int gM();
 
       /**
-       * function constructs SPM from TPM or PHM, this function is SPM::bar times 1/(N - 1)
-       * @param MT input TPM or PHM
+       * constructs a SPM from a TPM or a PHM. Definition of these functions are in different notes.
+       * Actually this function is defined as bar * scale.
+       * @param scale The factor that multiplies the bar(MT), e.g. 1/(N - 1) for a normal single particle density matrix
+       * @param MT PHM or TPM inputmatrix.
        */
       template<class MatrixType>
-         void constr(MatrixType &MT){
-
-            double ward;
-
-            ward = 1.0/(N - 1.0);
+         void constr(double scale,MatrixType &MT){
 
             for(int a = 0;a < M;++a)
                for(int b = a;b < M;++b){
@@ -66,32 +62,36 @@ class SPM : public Matrix {
                   for(int l = 0;l < M;++l)
                      (*this)(a,b) += MT(a,l,b,l);
 
-                  (*this)(a,b) *= ward;
+                  (*this)(a,b) *= scale;
 
-                  (*this)(b,a) = (*this)(a,b);
                }
+
+            this->symmetrize();
 
          }
 
       /**
-       * Constructor of SPM with initialization on SPM::constr of input TPM or PHM
-       * @param MT input TPM or PHM
+       * Constructor of an SPM object with initialisation by means of the function SPM::constr
+       * @param scale The factor that multiplies the bar(MT), e.g. 1/(N - 1) for a normal single particle density matrix
+       * @param MT the PHM or TPM inputmatrix.
        */
       template<class MatrixType>
-         SPM(MatrixType &MT) : Matrix(MT.gM()) {
+         SPM(double scale,MatrixType &MT) : Matrix(MT.gM()) {
 
             this->M = MT.gM();
             this->N = MT.gN();
 
-            this->constr(MT);
+            this->constr(scale,MT);
 
          }
 
       /**
-       * construct bar matrix from TPM or PHM: e.g. SPM(a,c) = sum_{b} TPM(a,b,c,b)
-       * @param MT input TPM or PHM
+       * construeert een SPM uit een TPM of PHM. \n\n
+       * SPM(a,c) = sum_b MT(a,b,c,b)\n\n
+       * @param MT the PHM or TPM inputmatrix.
        */
-      template<class MatrixType> void bar(MatrixType &MT){
+      template<class MatrixType>
+         void bar(MatrixType &MT){
 
             for(int a = 0;a < M;++a)
                for(int b = a;b < M;++b){
@@ -101,22 +101,20 @@ class SPM : public Matrix {
                   for(int l = 0;l < M;++l)
                      (*this)(a,b) += MT(a,l,b,l);
 
-                  (*this)(b,a) = (*this)(a,b);
                }
+
+            this->symmetrize();
 
          }
 
    private:
 
-      //!dimension of the single particle space, and dimension of the Matrix
+      //!dimension of single particle space
       int M;
 
-      //!number of particles
+      //!nr of particles
       int N;
 
 };
-
-// template specialization of bar for PPHM matrices.
-template<> void SPM::bar(PPHM &MT);
 
 #endif

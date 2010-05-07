@@ -1,12 +1,13 @@
 #include <iostream>
+#include <fstream>
 #include <cstdlib>
 #include <cmath>
 
 using std::ostream;
+using std::ifstream;
 using std::endl;
 
-//include all the important header function and make some definitions for the constraints
-#include "headers/include.h"
+#include "include.h"
 
 int PHM::counter = 0;
 
@@ -20,44 +21,44 @@ int **PHM::s2ph;
  * @param N nr of particles
  */
 PHM::PHM(int M,int N) : Matrix(M*M) {
+   
+   this->N = N;
+   this->M = M;
+   this->n = M*M;
 
-    this->N = N;
-    this->M = M;
-    this->n = M*M;
+   if(counter == 0){
 
-    if(counter == 0){
+      //allocatie van s2ph
+      s2ph = new int * [M];
+      s2ph[0] = new int [M*M];
 
-	//allocatie van s2ph
-	s2ph = new int * [M];
-	s2ph[0] = new int [M*M];
+      for(int i = 1;i < M;++i)
+         s2ph[i] = s2ph[i - 1] + M;
 
-	for(int i = 1;i < M;++i)
-	    s2ph[i] = s2ph[i - 1] + M;
+      //allocatie van ph2s
+      ph2s = new int * [n];
 
-	//allocatie van ph2s
-	ph2s = new int * [n];
+      for(int i = 0;i < n;++i)
+         ph2s[i] = new int [2];
 
-	for(int i = 0;i < n;++i)
-	    ph2s[i] = new int [2];
+      //initialisatie van de twee arrays
+      int teller = 0;
 
-	//initialisatie van de twee arrays
-	int teller = 0;
+      for(int a = 0;a < M;++a)
+         for(int b = 0;b < M;++b){
 
-	for(int a = 0;a < M;++a)
-	    for(int b = 0;b < M;++b){
+            s2ph[a][b] = teller;
 
-		s2ph[a][b] = teller;
+            ph2s[teller][0] = a;
+            ph2s[teller][1] = b;
 
-		ph2s[teller][0] = a;
-		ph2s[teller][1] = b;
+            ++teller;
 
-		++teller;
+         }
 
-	    }
+   }
 
-    }
-
-    ++counter;
+   ++counter;
 
 }
 
@@ -68,64 +69,64 @@ PHM::PHM(int M,int N) : Matrix(M*M) {
  */
 PHM::PHM(PHM &phm_c) : Matrix(phm_c){
 
-    this->N = phm_c.N;
-    this->M = phm_c.M;
-    this->n = M*M;
+   this->N = phm_c.N;
+   this->M = phm_c.M;
+   this->n = M*M;
 
-    if(counter == 0){
+   if(counter == 0){
 
-	//allocatie van sp2tp
-	s2ph = new int * [M];
-	s2ph[0] = new int [M*M];
+      //allocatie van sp2tp
+      s2ph = new int * [M];
+      s2ph[0] = new int [M*M];
 
-	for(int i = 1;i < M;++i)
-	    s2ph[i] = s2ph[i - 1] + M;
+      for(int i = 1;i < M;++i)
+         s2ph[i] = s2ph[i - 1] + M;
 
-	//allocatie van tp2sp
-	ph2s = new int * [n];
+      //allocatie van tp2sp
+      ph2s = new int * [n];
 
-	for(int i = 0;i < n;++i)
-	    ph2s[i] = new int [2];
+      for(int i = 0;i < n;++i)
+         ph2s[i] = new int [2];
 
-	//initialisatie van de twee arrays
-	int teller = 0;
+      //initialisatie van de twee arrays
+      int teller = 0;
 
-	for(int a = 0;a < M;++a)
-	    for(int b = 0;b < M;++b){
+      for(int a = 0;a < M;++a)
+         for(int b = 0;b < M;++b){
 
-		s2ph[a][b] = teller;
+            s2ph[a][b] = teller;
 
-		ph2s[teller][0] = a;
-		ph2s[teller][1] = b;
+            ph2s[teller][0] = a;
+            ph2s[teller][1] = b;
 
-		++teller;
+            ++teller;
 
-	    }
+         }
 
-    }
+   }
 
-    ++counter;
+   ++counter;
 
 }
 
 /**
- * destructor: if counter == 1 the memory for the static lists ph2s en s2ph twill be deleted.
+ * destructor: if counter == 1 the memory for the static lists ph2s en s2ph will be deleted.
  */
 PHM::~PHM(){
 
-    if(counter == 1){
+   if(counter == 1){
 
-	delete [] s2ph[0];
-	delete [] s2ph;
+      delete [] s2ph[0];
+      delete [] s2ph;
 
-	for(int i = 0;i < n;++i)
-	    delete [] ph2s[i];
+      for(int i = 0;i < n;++i)
+         delete [] ph2s[i];
 
-	delete [] ph2s;
+      delete [] ph2s;
 
-    }
+   }
 
-    --counter;
+   --counter;
 
 }
 
@@ -137,109 +138,182 @@ PHM::~PHM(){
  * @param d second sp index that forms the ph column index j together with c
  * @return the number on place PHM(i,j)
  */
-double PHM::operator()(int a,int b,int c,int d) const{
+double &PHM::operator()(int a,int b,int c,int d){
 
-    int i = s2ph[a][b];
-    int j = s2ph[c][d];
+   int i = s2ph[a][b];
+   int j = s2ph[c][d];
 
-    return (*this)(i,j);
+   return (*this)(i,j);
 
 }
 
-ostream &operator<<(ostream &output,const PHM &phm_p){
+ostream &operator<<(ostream &output,PHM &phm_p){
 
-    for(int i = 0;i < phm_p.n;++i)
-	for(int j = 0;j < phm_p.n;++j){
+   for(int i = 0;i < phm_p.n;++i)
+      for(int j = 0;j < phm_p.n;++j){
 
-	    output << i << "\t" << j << "\t|\t" << phm_p.ph2s[i][0] << "\t" << phm_p.ph2s[i][1]
+         output << i << "\t" << j << "\t|\t" << phm_p.ph2s[i][0] << "\t" << phm_p.ph2s[i][1]
 
-		<< "\t" << phm_p.ph2s[j][0] << "\t" << phm_p.ph2s[j][1] << "\t" << phm_p(i,j) << endl;
+            << "\t" << phm_p.ph2s[j][0] << "\t" << phm_p.ph2s[j][1] << "\t" << phm_p(i,j) << endl;
 
-	}
+      }
 
-    return output;
+   return output;
 
 }
 
 /**
- * @return nr of particles
+ * @return number of particles
  */
 int PHM::gN(){
 
-    return N;
+   return N;
 
 }
 
 /**
- * @return dimension of sp space
+ * @return number of single particle oribals
  */
 int PHM::gM(){
 
-    return M;
+   return M;
 
 }
 
 /**
- * @return dimension of ph space and of Matrix
+ * @return dimension of the particle hole space, which is also the dimension of the matrix
  */
 int PHM::gn(){
 
-    return n;
+   return n;
 
 }
 
 /**
- * The G-map, maps a TPM object (tpm) on a PHM object (*this)
- * @param tpm input TPM matrix
+ * De G map, maps a TPM object on a PHM object.
+ * @param option = 1 G_up map is used, = -1 G^{-1}_down map is used
+ * @param tpm input TPM
  */
-void PHM::G(TPM &tpm){
+void PHM::G(int option,TPM &tpm){
 
-    SPM spm(tpm);
+   SPM spm(M,N);
 
-    int a,b,c,d;
+   if(option == 1)
+      spm.constr(1.0/(N - 1.0),tpm);
+   else
+      spm.constr(1.0/(M - N + 1.0),tpm);
 
-    for(int i = 0;i < n;++i){
+   int a,b,c,d;
 
-	a = ph2s[i][0];
-	b = ph2s[i][1];
+   for(int i = 0;i < n;++i){
 
-	for(int j = i;j < n;++j){
+      a = ph2s[i][0];
+      b = ph2s[i][1];
 
-	    c = ph2s[j][0];
-	    d = ph2s[j][1];
+      for(int j = i;j < n;++j){
 
-	    (*this)(i,j) = -tpm(a,d,c,b);
+         c = ph2s[j][0];
+         d = ph2s[j][1];
 
-	    if(b == d)
-		(*this)(i,j) += spm(a,c);
+         (*this)(i,j) = -tpm(a,d,c,b);
 
-	    (*this)(j,i) = (*this)(i,j);
-	}
-    }
+         if(b == d)
+            (*this)(i,j) += spm(a,c);
+
+      }
+   }
+   
+   //nog schalen met 4 voor G^{-1}, door de G down die eigenlijk een factor 4 te groot is
+   if(option == -1)
+      this->dscal(0.25);
+
+   this->symmetrize();
 
 }
 
-void PHM::bar(PPHM &pphm)
-{
-    int a,b,c,d;
+/**
+ * Calculate the skew trace, defined as:\n\n
+ * sum_{ab} PHM(a,a,b,b)
+ * @return the skew trace
+ */
+double PHM::skew_trace(){
 
-    for(int i=0;i<n;i++)
-    {
-	a = ph2s[i][0];
-	b = ph2s[i][1];
+   double ward = 0.0;
 
-	for(int j=i;j<n;j++)
-	{
-	    c = ph2s[j][0];
-	    d = ph2s[j][1];
+   for(int a = 0;a < M;++a)
+      for(int b = 0;b < M;++b)
+         ward += (*this)(a,a,b,b);
 
-	    (*this)(i,j) = 0.0;
+   return ward;
 
-	    for(int l=0;l<M;l++)
-		(*this)(i,j) += pphm(l,a,b,l,c,d);
-
-	    (*this)(j,i) = (*this)(i,j);
-	}
-    }
 }
 
+/**
+ * Deduct from this the G-map of the unit matrix times a constant (scale)\n\n
+ * this -= scale* G(1) \n\n
+ * see notes primal_dual.pdf for more information.
+ * @param scale the constant
+ */
+void PHM::min_gunit(double scale){
+
+   for(int a = 0;a < M;++a)
+      for(int b = 0;b < M;++b)
+         (*this)(a,a,b,b) -= scale;
+
+   double g = (M - N)/(N - 1.0);
+
+   scale *= g;
+
+   for(int i = 0;i < n;++i)
+      (*this)(i,i) -= scale;
+
+}
+
+/**
+ * Map a PPHM (pphm) object onto a PHM (*this) object by tracing one pair of indices (see primal_dual.pdf for more info)
+ * @param pphm Input PPHM
+ */
+void PHM::bar(PPHM &pphm){
+
+   int a,b,c,d;
+
+   for(int i = 0;i < n;++i){
+
+      a = ph2s[i][0];
+      b = ph2s[i][1];
+
+      for(int j = i;j < n;++j){
+
+         c = ph2s[j][0];
+         d = ph2s[j][1];
+
+         (*this)(i,j) = 0.0;
+
+         for(int l = 0;l < M;++l)
+            (*this)(i,j) += pphm(l,a,b,l,c,d);
+
+      }
+   }
+
+   this->symmetrize();
+
+}
+
+/**
+ * fill the phm from a file with name filename, where the elements are indicated by their sp-indices
+ * @param filename name of the inputfile
+ */
+void PHM::in_sp(const char *filename){
+
+   ifstream input(filename);
+
+   double value;
+
+   int a,b,c,d;
+
+   while(input >> a >> b >> c >> d >> value)
+      (*this)(a,b,c,d) = value;
+
+   this->symmetrize();
+
+}

@@ -4,7 +4,7 @@
 using std::ostream;
 using std::endl;
 
-#include "headers/include.h"
+#include "include.h"
 
 /**
  * constructor, makes matrix of dimension M
@@ -63,24 +63,3 @@ ostream &operator<<(ostream &output,SPM &spm_p){
    return output;
 
 }
-
-/**
- * This function is a template specialization of bar() for the PPHM matrix.
- * It's the so called A dubble bar
- * @param MT A PPHM matrix to contract
- */
-template<> void SPM::bar(PPHM &MT)
-{
-    for(int a = 0;a < M;a++)
-	for(int b = a;b < M;b++)
-	{
-	    (*this)(a,b) = 0.0;
-
-	    for(int l=0;l<M;l++)
-		for(int k=0;k<M;k++)
-		    (*this)(a,b) += MT(l,k,a,l,k,b);
-
-	    (*this)(b,a) = (*this)(a,b);
-	}
-}
-

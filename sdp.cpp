@@ -2,7 +2,7 @@
  * @mainpage 
  * This is an implementation of the dual only, potential reduction interior point method
  * for optimizing the second order density matrix using the P, Q, G and T_1 N-representability conditions.
- * Compiling can be done with the options PQ, PQG and PQGT1, with logical consequences for the program.
+ * Compiling can be done with the options PQ, PQG, PQGT1, PQGT2 and PQGT (for all conditions active) with logical consequences for the program.
  * @author Brecht Verstichel, Ward Poelmans
  * @date 22-02-2010
  */
@@ -18,7 +18,7 @@ using std::ofstream;
 
 //includes all important headers and defines which conditions are
 //going to be used:
-#include "headers/include.h"
+#include "include.h"
 
 /**
  * In the main the actual program is run.\n 
@@ -37,21 +37,14 @@ int main(void){
    const int M = 8;//dim sp hilbert space
    const int N = 4;//nr of particles
 
-#ifdef CUBLAS
-   cublasInit();
-#endif
-
    //hamiltoniaan
    TPM ham(M,N);
 
-   ham.hubbard(100.0);
-
-   //double norm_ham = sqrt(ham.ddot(ham));
-
-   //ham /= norm_ham;
+   //the zero is for pbc's
+   ham.hubbard(0,1.0);
 
    TPM rdm(M,N);
-   rdm.init();
+   rdm.unit();
 
    TPM backup_rdm(rdm);
 
@@ -61,7 +54,7 @@ int main(void){
    //outer iteration: scaling of the potential barrier
    while(t > 1.0e-12){
 
-      cout << t << "\t" << rdm.trace() << "\t" << rdm.ddot(ham)/*norm_ham*/ << endl;
+      cout << t << "\t" << rdm.trace() << "\t" << rdm.ddot(ham) << endl;
 
       double convergence = 1.0;
 
@@ -117,10 +110,6 @@ int main(void){
       rdm.daxpy(a,extrapol);
 
    }
-
-#ifdef CUBLAS
-   cublasShutdown();
-#endif
 
    return 0;
 }

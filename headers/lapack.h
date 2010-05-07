@@ -1,14 +1,6 @@
 #ifndef LAPACK_H
 #define LAPACK_H
 
-#ifdef __INTEL_COMPILER
-#include<mkl.h>
-#endif
-
-#ifdef CUBLAS
-#include<cublas.h>
-#endif
-
 //lapack definities
 extern "C" {
 

@@ -7,6 +7,7 @@ using std::ostream;
 
 #include "Matrix.h"
 #include "TPM.h"
+#include "PPHM.h"
 
 /**
  * @author Brecht Verstichel
@@ -16,7 +17,7 @@ using std::ostream;
  */
 class PHM : public Matrix {
 
-   /**
+    /**
     * Output stream operator overloaded, the usage is simple, if you want to print to a file, make an
     * ifstream object and type:\n\n
     * object << phm_p << endl;\n\n
@@ -25,7 +26,7 @@ class PHM : public Matrix {
     * @param output The stream to which you are writing (e.g. cout)
     * @param phm_p the TPM you want to print
     */
-   friend ostream &operator<<(ostream &output,const PHM &phm_p);
+   friend ostream &operator<<(ostream &output,PHM &phm_p);
 
    public:
       
@@ -43,7 +44,10 @@ class PHM : public Matrix {
       using Matrix::operator();
 
       //easy to access the numbers, in sp mode
-      double operator()(int a,int b,int c,int d) const;
+      //double operator()(int a,int b,int c,int d) const;
+
+      //change the numbers in sp mode
+      double &operator()(int a,int b,int c,int d);
 
       //geef N terug
       int gN();
@@ -54,9 +58,15 @@ class PHM : public Matrix {
       //geef dim terug
       int gn();
 
-      void G(TPM &);
+      void G(int option,TPM &);
 
-      void bar(PPHM &pphm);
+      double skew_trace();
+
+      void min_gunit(double scale);
+
+      void bar(PPHM &);
+
+      void in_sp(const char *filename);
 
    private:
 

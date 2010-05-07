@@ -28,8 +28,18 @@
 
 #endif
 
+#ifdef PQGT
+
+#define __Q_CON
+#define __G_CON
+#define __T1_CON
+#define __T2_CON
+
+#endif
+
 #include "lapack.h"
 #include "Matrix.h"
+#include "Vector.h"
 #include "TPM.h"
 #include "SPM.h"
 #include "PHM.h"

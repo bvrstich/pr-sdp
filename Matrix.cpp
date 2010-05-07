@@ -1,11 +1,15 @@
 #include <iostream>
+#include <fstream>
 #include <time.h>
 #include <cmath>
 
 using std::endl;
 using std::ostream;
+using std::ofstream;
+using std::ifstream;
 
-#include "headers/include.h"
+#include "Matrix.h"
+#include "lapack.h"
 
 /**
  * constructor 
@@ -42,6 +46,30 @@ Matrix::Matrix(Matrix &mat_copy){
    int incy = 1;
 
    dcopy_(&dim,mat_copy.matrix[0],&incx,matrix[0],&incy);
+
+}
+
+/**
+ * construct from file: matrix is allocated and is filled with number from the file "filename"
+ * @param filename char containing the name of the input file
+ */
+Matrix::Matrix(const char *filename){
+
+   ifstream input(filename);
+
+   input >> this->n;
+
+   matrix = new double * [n];
+   matrix[0] = new double [n*n];
+
+   for(int i = 1;i < n;++i)
+      matrix[i] = matrix[i - 1] + n;
+
+   int I,J;
+
+   for(int i = 0;i < n;++i)
+      for(int j = 0;j < n;++j)
+         input >> I >> J >> matrix[j][i];
 
 }
 
@@ -208,29 +236,6 @@ double Matrix::trace(){
 }
 
 /**
- * Diagonalizes symmetric matrices. Watch out! The current matrix (*this) is destroyed, in it
- * the eigenvectors will be stored (one in every column).
- * @param eigenvalues the pointer of doubles in which the eigenvalues will be storen, Watch out, its memory
- * has to be allocated on the dimension of the matrix before you call the function.
- */
-void Matrix::diagonalize(double *eigenvalues){
-
-   char jobz = 'V';
-   char uplo = 'U';
-
-   int lwork = 3*n - 1;
-
-   double *work = new double [lwork];
-
-   int info;
-
-   dsyev_(&jobz,&uplo,&n,matrix[0],&n,eigenvalues,work,&lwork,&info);
-
-   delete [] work;
-
-}
-
-/**
  * @return inproduct of (*this) matrix with matrix_i, defined as Tr (A B)
  * @param matrix_i input matrix
  */
@@ -299,9 +304,7 @@ void Matrix::sqrt(int option){
 
    Matrix hulp(*this);
 
-   double *eigen = new double [n];
-
-   hulp.diagonalize(eigen);
+   Vector<Matrix> eigen(hulp);
 
    if(option == 1)
       for(int i = 0;i < n;++i)
@@ -316,26 +319,6 @@ void Matrix::sqrt(int option){
    //vermenigvuldigen met diagonaalmatrix
    hulp_c.mdiag(eigen);
 
-#ifdef CUBLAS
-
-   double *hulpg,*hulp_cg,*matrixg;
-
-   cublasAlloc(n*n,sizeof(double),(void**)&hulpg);
-   cublasAlloc(n*n,sizeof(double),(void**)&hulp_cg);
-   cublasAlloc(n*n,sizeof(double),(void**)&matrixg);
-
-   cublasSetMatrix(n,n,sizeof(double),hulp.matrix[0],n,hulpg,n);
-   cublasSetMatrix(n,n,sizeof(double),hulp_c.matrix[0],n,hulp_cg,n);
-
-   cublasDgemm('N','T',n,n,n,1,hulp_cg,n,hulpg,n,0,matrixg,n);
-
-   cublasGetMatrix(n,n,sizeof(double),matrixg,n,matrix[0],n);
-
-   cublasFree(matrixg);
-   cublasFree(hulpg);
-   cublasFree(hulp_cg);
-
-#else
    //en tenslotte de laatste matrixvermenigvuldiging
    char transA = 'N';
    char transB = 'T';
@@ -344,21 +327,19 @@ void Matrix::sqrt(int option){
    double beta = 0.0;
 
    dgemm_(&transA,&transB,&n,&n,&n,&alpha,hulp_c.matrix[0],&n,hulp.matrix[0],&n,&beta,matrix[0],&n);
-#endif
 
-   delete [] eigen;
 }
 
 /**
  * Multiply this matrix with diagonal matrix
  * @param diag Diagonal matrix to multiply with this, has to be allocated on matrix dimension.
  */
-void Matrix::mdiag(double *diag){
+void Matrix::mdiag(Vector<Matrix> &diag){
 
    int inc = 1;
 
    for(int i = 0;i < n;++i)
-      dscal_(&n,diag + i,matrix[i],&inc);
+      dscal_(&n,&diag[i],matrix[i],&inc);
 
 }
 
@@ -368,31 +349,8 @@ void Matrix::mdiag(double *diag){
  * @param map matrix that will be multiplied to the left en to the right of matrix object
  * @param object central matrix
  */
-void Matrix::L_map(Matrix &map,Matrix &object)
-{
-#ifdef CUBLAS
-    double *mapg,*objectg,*matrixg,*hulpg;
-
-    cublasAlloc(n*n,sizeof(double),(void**)&mapg);
-    cublasAlloc(n*n,sizeof(double),(void**)&objectg);
-    cublasAlloc(n*n,sizeof(double),(void**)&matrixg);
-    cublasAlloc(n*n,sizeof(double),(void**)&hulpg);
-
-    cublasSetMatrix(n,n,sizeof(double),map.matrix[0],n,mapg,n);
-    cublasSetMatrix(n,n,sizeof(double),object.matrix[0],n,objectg,n);
-
-    cublasDsymm('L','U',n,n,1,mapg,n,objectg,n,0,hulpg,n);
-
-    cublasDsymm('R','U',n,n,1,mapg,n,hulpg,n,0,matrixg,n);
-
-    cublasGetMatrix(n,n,sizeof(double),matrixg,n,matrix[0],n);
-
-    cublasFree(matrixg);
-    cublasFree(mapg);
-    cublasFree(objectg);
-    cublasFree(hulpg);
-
-#else
+void Matrix::L_map(Matrix &map,Matrix &object){
+   
    char side = 'L';
    char uplo = 'U';
 
@@ -408,10 +366,10 @@ void Matrix::L_map(Matrix &map,Matrix &object)
    dsymm_(&side,&uplo,&n,&n,&alpha,map.matrix[0],&n,hulp,&n,&beta,matrix[0],&n);
 
    delete [] hulp;
-#endif
 
    //expliciet symmetriseren van de uit matrix
    this->symmetrize();
+
 }
 
 /**
@@ -419,37 +377,17 @@ void Matrix::L_map(Matrix &map,Matrix &object)
  * @param A left matrix
  * @param B right matrix
  */
-Matrix &Matrix::mprod(Matrix &A, Matrix &B)
-{
-#ifdef CUBLAS
+Matrix &Matrix::mprod(Matrix &A, Matrix &B){
 
-    double *Ag,*Bg,*matrixg;
-
-    cublasAlloc(n*n,sizeof(double),(void**)&Ag);
-    cublasAlloc(n*n,sizeof(double),(void**)&Bg);
-    cublasAlloc(n*n,sizeof(double),(void**)&matrixg);
-
-    cublasSetMatrix(n,n,sizeof(double),A.matrix[0],n,Ag,n);
-    cublasSetMatrix(n,n,sizeof(double),B.matrix[0],n,Bg,n);
-
-    cublasDgemm('N','N',n,n,n,1,Ag,n,Bg,n,0,matrixg,n);
-
-    cublasGetMatrix(n,n,sizeof(double),matrixg,n,matrix[0],n);
-
-    cublasFree(matrixg);
-    cublasFree(Ag);
-    cublasFree(Bg);
-
-#else
    char trans = 'N';
 
    double alpha = 1.0;
    double beta = 0.0;
 
    dgemm_(&trans,&trans,&n,&n,&n,&alpha,A.matrix[0],&n,B.matrix[0],&n,&beta,matrix[0],&n);
-#endif
 
    return *this;
+
 }
 
 /**
@@ -470,5 +408,23 @@ ostream &operator<<(ostream &output,Matrix &matrix_p){
          output << i << "\t" << j << "\t" << matrix_p(i,j) << endl;
 
    return output;
+
+}
+
+/**
+ * print the matrix in a file with name and location filename
+ * @param filename char with name and location
+ */
+void Matrix::out(const char *filename){
+
+   ofstream output(filename);
+   output.precision(10);
+
+   //first the bare essentials:
+   output << n << endl;
+
+   for(int i = 0;i < n;++i)
+      for(int j = 0;j < n;++j)
+         output << i << "\t" << j << "\t" << matrix[j][i] << endl;
 
 }

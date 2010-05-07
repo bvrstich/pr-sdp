@@ -5,7 +5,6 @@
 #include <fstream>
 
 using std::ostream;
-using std::string;
 
 #include "Matrix.h"
 
@@ -22,93 +21,125 @@ class PPHM;
  * Matrix, some special member functions and two lists that give the relationship between the sp and the tp 
  * basis.
  */
+
 class TPM : public Matrix {
 
-    /**
-     * Output stream operator overloaded, the usage is simple, if you want to print to a file, make an
-     * ifstream object and type:\n\n
-     * object << tpm_p << endl;\n\n
-     * For output onto the screen type: \n\n
-     * cout << tpm_p << endl;\n\n
-     * @param output The stream to which you are writing (e.g. cout)
-     * @param tpm_p the TPM you want to print
-     */
-    friend ostream &operator<<(ostream &output,const TPM &tpm_p);
+   /**
+    * Output stream operator overloaded, the usage is simple, if you want to print to a file, make an
+    * ifstream object and type:\n\n
+    * object << tpm_p << endl;\n\n
+    * For output onto the screen type: \n\n
+    * cout << tpm_p << endl;\n\n
+    * @param output The stream to which you are writing (e.g. cout)
+    * @param tpm_p the TPM you want to print
+    */
+   friend ostream &operator<<(ostream &output,TPM &tpm_p);
 
-    public:
+   public:
+      
+      //constructor
+      TPM(int M,int N);
 
-    //constructor
-    TPM(int M,int N);
+      //copy constructor
+      TPM(TPM &);
 
-    //copy constructor
-    TPM(TPM &);
+      //file constructor
+      TPM(const char *);
 
-    //destructor
-    virtual ~TPM();
+      //destructor
+      virtual ~TPM();
 
-    using Matrix::operator=;
+      using Matrix::operator=;
 
-    using Matrix::operator();
+      using Matrix::operator();
 
-    //easy to access the numbers, in sp mode
-    double operator()(int a,int b,int c,int d) const;
+      //easy to access the numbers, in sp mode
+      double operator()(int a,int b,int c,int d) const;
 
-    //geef N terug
-    int gN();
+      //geef N terug
+      int gN();
 
-    //geef M terug
-    int gM();
+      //geef N terug
+      int gM();
 
-    //geef n terug
-    int gn();
+      //geef n terug
+      int gn();
 
-    void hubbard(double U);
+      void hubbard(int option,double U);
 
-    void Q(TPM &);
+      //Q afbeelding en zijn inverse
+      void Q(int option,TPM &);
 
-    void G(PHM &);
+      //Q like afbeelding Q(A,B,C,tpm_d)
+      void Q(int option,double A,double B,double C,TPM &);
 
-    void bar(DPM &);
+      //overlapmatrix afbeelding en zijn inverse
+      void S(int option,TPM &);
 
-    void T(DPM &);
+      void unit();
 
-    void bar(PPHM &);
+      void proj_Tr();
 
-    void T(PPHM &);
+      //de hessiaan afbeelding:
+      void H(TPM &b,SUP &D);
 
-    void init();
+      //los het stelsel op
+      //de G down en inverse G up
+      void G(int option,PHM &);
 
-    void proj_Tr();
+      //trace one pair of indices of DPM
+      void bar(DPM &);
 
-    void constr_grad(double t,TPM &,SUP &);
+      //trace one pair of indices of PPHM
+      void bar(PPHM &);
 
-    int solve(double t,SUP &,TPM &);
+      //T1 down
+      void T(int option,DPM &);
 
-    double line_search(double t,SUP &P,TPM &ham);
+      //T2 down
+      void T(PPHM &);
 
-    double line_search(double t,TPM &,TPM &);
+      void min_unit(double scale);
 
-    void H(double t,TPM &b,SUP &P);
+      void min_qunit(double scale);
 
-    private:
+      void collaps(int option,SUP &);
 
-    //!static list of dimension [n_tp][2] that takes in a tp index i and returns two sp indices: a = t2s[i][0] and b = t2s[i][1]
-    static int **t2s;
+      void out(const char *filename);
 
-    //!static list of dimension [M][M] that takes two sp indices a,b and returns a tp index i: i = s2t[a][b]
-    static int **s2t;
+      void sp_pairing(double );
 
-    //!static counter that counts the number of TPM objects running in the program
-    static int counter;
+      void in_sp(const char *);
 
-    //!nr of particles
-    int N;
+      void constr_grad(double t,TPM &,SUP &);
 
-    //!dimension of sp hilbert space
-    int M;
+      int solve(double t,SUP &,TPM &);
 
-    //!dimension of tp hilbert space and of the matrix
-    int n;
+      double line_search(double t,SUP &P,TPM &ham);
+
+      double line_search(double t,TPM &,TPM &);
+
+      void H(double t,TPM &b,SUP &P);
+
+   private:
+
+      //!static list of dimension [n_tp][2] that takes in a tp index i and returns two sp indices: a = t2s[i][0] and b = t2s[i][1]
+      static int **t2s;
+
+      //!static list of dimension [M][M] that takes two sp indices a,b and returns a tp index i: i = s2t[a][b]
+      static int **s2t;
+
+      //!static counter that counts the number of TPM objects running in the program
+      static int counter;
+
+      //!nr of particles
+      int N;
+
+      //!dimension of sp hilbert space
+      int M;
+
+      //!dimension of tp hilbert space and of the matrix
+      int n;
 
 };
 

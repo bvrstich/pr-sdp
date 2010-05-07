@@ -28,7 +28,7 @@ class DPM : public Matrix {
    friend ostream &operator<<(ostream &output,DPM &dpm_p);
 
    public:
-
+      
       //constructor
       DPM(int M,int N);
 
@@ -54,8 +54,20 @@ class DPM : public Matrix {
       //geef dim terug
       int gn();
 
-      //maak een DPM van een TPM
-      void T(TPM &);
+      //generalized T1 map
+      void T(double,double,double,TPM &);
+
+      //maak een DPM van een TPM via de T1 conditie
+      void T(int option,TPM &);
+
+      //maak een DPM van een TPM via de hat functie
+      void hat(TPM &);
+
+      //deduct scale times T1(1) matrix
+      void min_tunit(double scale);
+
+      //input from file with sp indices
+      void in_sp(const char *);
 
    private:
 
