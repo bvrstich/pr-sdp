@@ -177,6 +177,7 @@ double SUP_PQ::ddot(SUP_PQ &SZ_i){
 
 /**
  * Invert all the Matrices in SUP and put it in this, watch out, destroys original matrices.
+ * Makes use of cholesky decomposition, so only positive definite matrices can be used as input!
  */
 void SUP_PQ::invert(){
 

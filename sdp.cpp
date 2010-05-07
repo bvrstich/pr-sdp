@@ -36,16 +36,16 @@ int main(void){
    cout.precision(10);
 
    int M = 8;//dim sp hilbert space
-   int N = 4;//nr of particles
+   int N = 3;//nr of particles
 
    //hamiltoniaan
    TPM ham(M,N);
 
-   ham.hubbard(1.0);
+   ham.hubbard(100.0);
 
-   double norm_ham = sqrt(ham.ddot(ham));
+   //double norm_ham = sqrt(ham.ddot(ham));
 
-   ham /= norm_ham;
+   //ham /= norm_ham;
 
    TPM rdm(M,N);
    rdm.init();
@@ -58,7 +58,7 @@ int main(void){
    //outer iteration: scaling of the potential barrier
    while(t > 1.0e-12){
 
-      cout << t << "\t" << rdm.trace() << "\t" << rdm.ddot(ham)*norm_ham << endl;
+      cout << t << "\t" << rdm.trace() << "\t" << rdm.ddot(ham)/*norm_ham*/ << endl;
 
       double convergence = 1.0;
 
