@@ -3,7 +3,7 @@
  * This is an implementation of the dual only, potential reduction interior point method
  * for optimizing the second order density matrix using the P, Q, G and T_1 N-representability conditions.
  * Compiling can be done with the options PQ, PQG and PQGT1, with logical consequences for the program.
- * @author Brecht Verstichel
+ * @author Brecht Verstichel, Ward Poelmans
  * @date 22-02-2010
  */
 
@@ -30,13 +30,16 @@ using std::ofstream;
  * The potential is minimized using the Newton-Raphson method and the resulting linear system
  * is solved via the linear conjugate gradient method.
  */
-
 int main(void){
 
    cout.precision(10);
 
-   int M = 8;//dim sp hilbert space
-   int N = 3;//nr of particles
+   const int M = 8;//dim sp hilbert space
+   const int N = 4;//nr of particles
+
+#ifdef CUBLAS
+   cublasInit();
+#endif
 
    //hamiltoniaan
    TPM ham(M,N);
@@ -115,6 +118,9 @@ int main(void){
 
    }
 
-   return 0;
+#ifdef CUBLAS
+   cublasShutdown();
+#endif
 
+   return 0;
 }

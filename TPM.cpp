@@ -49,6 +49,7 @@ TPM::TPM(int M,int N) : Matrix(M*(M - 1)/2){
          for(int j = i + 1;j < M;++j){
 
             s2t[i][j] = teller;
+            s2t[j][i] = teller;
 
             t2s[teller][0] = i;
             t2s[teller][1] = j;
@@ -56,10 +57,6 @@ TPM::TPM(int M,int N) : Matrix(M*(M - 1)/2){
             ++teller;
 
          }
-
-      for(int i = 0;i < M;++i)
-         for(int j = i + 1;j < M;++j)
-            s2t[j][i] = s2t[i][j];
 
    }
 
@@ -100,6 +97,7 @@ TPM::TPM(TPM &tpm_c) : Matrix(tpm_c){
          for(int j = i + 1;j < M;++j){
 
             s2t[i][j] = teller;
+            s2t[j][i] = teller;
 
             t2s[teller][0] = i;
             t2s[teller][1] = j;
@@ -107,10 +105,6 @@ TPM::TPM(TPM &tpm_c) : Matrix(tpm_c){
             ++teller;
 
          }
-
-      for(int i = 0;i < M;++i)
-         for(int j = i + 1;j < M;++j)
-            s2t[j][i] = s2t[i][j];
 
    }
 
@@ -250,11 +244,10 @@ void TPM::hubbard(double U){
             if(a == (b - 1) && c == (d - 1) && a == c)
                (*this)(i,j) += U;
 
+         (*this)(j,i) = (*this)(i,j);
       }
 
    }
-   
-   this->symmetrize();
 
 }
 
@@ -292,10 +285,9 @@ void TPM::Q(TPM &tpm_d){
          if(b == d)
             (*this)(i,j) -= spm(a,c);
 
+         (*this)(j,i) = (*this)(i,j);
       }
    }
-
-   this->symmetrize();
 
 }
 
@@ -332,11 +324,10 @@ void TPM::G(PHM &phm){
          if(a == c)
             (*this)(i,j) += spm(b,d);
 
+         (*this)(j,i) = (*this)(i,j);
       }
 
    }
-
-   this->symmetrize();
 
 }
 
@@ -366,7 +357,7 @@ void TPM::init(){
  */
 void TPM::proj_Tr(){
 
-   double ward = (this->trace())/(double)n;
+   double ward = (this->trace())/n;
 
    for(int i = 0;i < n;++i)
       (*this)(i,i) -= ward;
@@ -415,6 +406,13 @@ void TPM::constr_grad(double t,TPM &ham,SUP &P){
 
    *this += hulp;
 
+#endif
+
+#ifdef __T2_CON
+
+   hulp.T(P.pphm());
+
+   *this +=hulp;
 #endif
 
    this->dscal(t);
@@ -605,6 +603,21 @@ void TPM::H(double t,TPM &b,SUP &P){
 
 #endif
 
+#ifdef __T2_CON
+
+   PPHM hulp_pph(M,N);
+   PPHM T2_b(M,N);
+
+   T2_b.T(b);
+
+   hulp_pph.L_map(P.pphm(),T2_b);
+
+   hulp.T(hulp_pph);
+
+   *this+=hulp;
+
+#endif
+
    //nog schalen met t:
    this->dscal(t);
 
@@ -632,11 +645,9 @@ double TPM::line_search(double t,TPM &rdm,TPM &ham){
 
 }
 
-#ifdef __T1_CON
-
 /**
  * calculate the trace of one pair of sp indices of a DPM an put in (*this):\n\n
- * TPM(a,b,d,e) = \sum_{c} DPM(a,b,c,d,e,c)
+ * TPM(a,b,d,e) = \\sum_{c} DPM(a,b,c,d,e,c)
  * @param dpm input DPM
  */
 void TPM::bar(DPM &dpm){
@@ -658,11 +669,9 @@ void TPM::bar(DPM &dpm){
          for(int l = 0;l < M;++l)
             (*this)(i,j) += dpm(a,b,l,c,d,l);
 
+	 (*this)(j,i) = (*this)(i,j);
       }
    }
-
-   this->symmetrize();
-
 }
 
 /**
@@ -685,7 +694,7 @@ void TPM::T(DPM &dpm){
       a = t2s[i][0];
       b = t2s[i][1];
 
-      for(int j = 0;j < n;++j){
+      for(int j = i;j < n;++j){
 
          c = t2s[j][0];
          d = t2s[j][1];
@@ -704,12 +713,85 @@ void TPM::T(DPM &dpm){
          if(a == c)
             (*this)(i,j) -= 0.5*spm(b,d);
 
+         (*this)(j,i) = (*this)(i,j);
       }
 
    }
-
-   this->symmetrize();
-
 }
 
-#endif
+void TPM::bar(PPHM &pphm)
+{
+    int a,b,c,d;
+
+    for(int i=0;i<n;i++)
+    {
+	a = t2s[i][0];
+	b = t2s[i][1];
+
+	for(int j=i;j<n;j++)
+	{
+	    c = t2s[j][0];
+	    d = t2s[j][1];
+
+	    (*this)(i,j) = 0.0;
+
+	    for(int l=0;l<M;l++)
+		(*this)(i,j) += pphm(a,b,l,c,d,l);
+
+	    (*this)(j,i) = (*this)(i,j);
+	}
+    }
+}
+
+void TPM::T(PPHM &pphm)
+{
+    double brecht= 1.0/(2*(N-1));
+    int a,b,c,d;
+
+    // A bar
+    TPM tpm(M,N);
+    tpm.bar(pphm);
+
+    // A dubble bar
+    SPM spm(M,N);
+    spm.bar(pphm);
+
+    // A tilde bar
+    PHM phm(M,N);
+    phm.bar(pphm);
+
+    for(int i=0;i<n;i++)
+    {
+	a = t2s[i][0];
+	b = t2s[i][1];
+
+	for(int j=i;j<n;j++)
+	{
+	    c = t2s[j][0];
+	    d = t2s[j][1];
+
+	    (*this)(i,j) = 0;
+
+	    if(b==d)
+		(*this)(i,j) += spm(a,c);
+
+	    if(a==d)
+		(*this)(i,j) -= spm(b,c);
+
+	    if(b==c)
+		(*this)(i,j) -= spm(a,d);
+
+	    if(a==c)
+		(*this)(i,j) += spm(b,d);
+
+	    (*this)(i,j) *= brecht;
+
+	    (*this)(i,j) += tpm(i,j);
+
+	    (*this)(i,j) -= phm(d,a,b,c)-phm(d,b,a,c)-phm(c,a,b,d)+phm(c,b,a,d);
+
+	    (*this)(j,i) = (*this)(i,j);
+	}
+    }
+}
+

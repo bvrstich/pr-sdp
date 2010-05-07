@@ -380,10 +380,8 @@ void DPM::T(TPM &tpm){
          if(c == d)
             (*this)(i,j) += tpm(a,b,e,z);
 
+	 (*this)(j,i) = (*this)(i,j);
       }
    }
-
-   //niet vergeten!
-   this->symmetrize();
 
 }

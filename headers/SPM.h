@@ -7,6 +7,9 @@
 using std::ostream;
 
 #include "Matrix.h"
+#include "PPHM.h"
+
+class PPHM;
 
 /**
  * @author Brecht Verstichel
@@ -28,7 +31,7 @@ class SPM : public Matrix {
    friend ostream &operator<<(ostream &output,SPM &spm_p);
 
    public:
-      
+
       //constructor
       SPM(int M,int N);
 
@@ -65,9 +68,8 @@ class SPM : public Matrix {
 
                   (*this)(a,b) *= ward;
 
+                  (*this)(b,a) = (*this)(a,b);
                }
-
-            this->symmetrize();
 
          }
 
@@ -89,8 +91,7 @@ class SPM : public Matrix {
        * construct bar matrix from TPM or PHM: e.g. SPM(a,c) = sum_{b} TPM(a,b,c,b)
        * @param MT input TPM or PHM
        */
-      template<class MatrixType>
-         void bar(MatrixType &MT){
+      template<class MatrixType> void bar(MatrixType &MT){
 
             for(int a = 0;a < M;++a)
                for(int b = a;b < M;++b){
@@ -100,9 +101,8 @@ class SPM : public Matrix {
                   for(int l = 0;l < M;++l)
                      (*this)(a,b) += MT(a,l,b,l);
 
+                  (*this)(b,a) = (*this)(a,b);
                }
-
-            this->symmetrize();
 
          }
 
@@ -115,5 +115,8 @@ class SPM : public Matrix {
       int N;
 
 };
+
+// template specialization of bar for PPHM matrices.
+template<> void SPM::bar(PPHM &MT);
 
 #endif

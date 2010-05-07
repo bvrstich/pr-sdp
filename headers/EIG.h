@@ -1,73 +1,113 @@
-/**
- * @file 
- * This is a wrapper class around the different EIG_PQ(GT1) classes. It is decided at compile time from which 
- * EIG_* file this class inherits. Compile with PQ to inherit from EIG_PQ, compile with PQG to inherit from EIG_PQG, etc. .
- * This way, you can use the EIG object everywhere in the program without having to worry about which conditions are used.
- */
 #ifndef EIG_H
 #define EIG_H
 
-//if PQ is defined, inherit from EIG_PQ
-#ifdef PQ
+#include <iostream>
+#include <fstream>
 
-#include "EIG/EIG_PQ.h"
+using std::ostream;
 
-class EIG : public EIG_PQ { 
+#include "SUP.h"
 
-   public :
+/**
+ * @author Brecht Verstichel
+ * @date 23-02-2010\n\n
+ * This class, EIG is a "block"-vector over the carrierspace's of the P,Q,G,T1,T2 
+ * conditions (depending on the macro's that are set). It contains room to store the eigenvalues
+ * of all conditions, and special member function that work with these eigenvalues.
+ * This class should only be used when a SUP matrix has been diagonalized, some functions 
+ * could give strange results when the EIG object is filled with random numbers.\n\n
+ */
+class EIG
+{
+    /**
+     * Output stream operator overloaded, the usage is simple, if you want to print to a file, make an
+     * ifstream object and type:\n\n
+     * object << eig_p << endl;\n\n
+     * For output onto the screen type: \n\n
+     * cout << eig_p << endl;\n\n
+     * @param output The stream to which you are writing (e.g. cout)
+     * @param eig_p the EIG you want to print
+     */
+    friend ostream &operator<<(ostream &output,EIG &eig_p);
 
-      EIG(int M,int N) : EIG_PQ(M,N) { }
+    public:
+    //constructor
+    EIG(int M,int N);
 
-      EIG(EIG &eig) : EIG_PQ(eig) { }
+    //copy constructor
+    EIG(EIG &);
 
-      EIG(SUP_PQ &SZ) : EIG_PQ(SZ) { }
+    //constructor met initialisatie op 
+    EIG(SUP &);
 
-      ~EIG(){ }
-   
+    //destructor
+    ~EIG();
+
+    int gN();
+
+    int gM();
+
+    //overload equality operator
+    EIG &operator=(EIG &);
+
+    double *operator[](int);
+
+    //acces to the numbers
+    double operator()(int block,int index);
+
+    double lsfunc(double );
+
+    double min();
+
+    int gn_tp();
+
+#ifdef __G_CON
+    int gn_ph();
+#endif
+
+#ifdef __T1_CON
+    int gn_dp();
+#endif
+
+#ifdef __T2_CON
+    int gn_pph();
+#endif
+
+    private:
+
+    //!double pointer that will store the eigenvalues of the P (eig[0][0 -> n_tp - 1]) and Q (eig[1][0 -> n_tp - 1]) blocks of the SUP_PQ matrix
+    double **eig;
+
+    //!nr of particles
+    int N;
+
+    //!dim sp space
+    int M;
+
+    //!total dimension
+    int dim;
+
+    //!dim tp space
+    int n_tp;
+
+#ifdef __G_CON
+    //! dimension of the ph space
+    int n_ph;
+    //! double pointer to PHM
+    double *eig_ph;
+#endif
+
+#ifdef __T1_CON
+    //! dimension of the dp space
+    int n_dp;
+    double *eig_dp;
+#endif
+
+#ifdef __T2_CON
+    //! dimension of the pph space
+    int n_pph;
+    double *eig_pph;
+#endif
 };
 
-#endif
-
-//if PQG is defined, inherit from EIG_PQG
-#ifdef PQG
-
-#include "EIG/EIG_PQG.h"
-
-class EIG : public EIG_PQG { 
-
-   public :
-
-      EIG(int M,int N) : EIG_PQG(M,N) { }
-
-      EIG(EIG &eig) : EIG_PQG(eig) { }
-
-      EIG(SUP_PQG &SZ) : EIG_PQG(SZ) { }
-
-      ~EIG(){ }
-   
-};
-
-#endif
-
-//if PQGT1 is defined, inherit from EIG_PQGT1
-#ifdef PQGT1
-
-#include "EIG/EIG_PQGT1.h"
-
-class EIG : public EIG_PQGT1 { 
-
-   public :
-
-      EIG(int M,int N) : EIG_PQGT1(M,N) { }
-
-      EIG(EIG &eig) : EIG_PQGT1(eig) { }
-
-      EIG(SUP_PQGT1 &SZ) : EIG_PQGT1(SZ) { }
-
-      ~EIG(){ }
-   
-};
-
-#endif
-
-#endif
+#endif /* EIG_H */

@@ -56,6 +56,8 @@ class PHM : public Matrix {
 
       void G(TPM &);
 
+      void bar(PPHM &pphm);
+
    private:
 
       //!static counter that counts the number of PHM objects running in the program
