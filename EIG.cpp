@@ -380,3 +380,4 @@ int EIG::gn_pph()
 }
 #endif
 
+/* vim: set ts=3 sw=3 tw=3 expandtab :*/

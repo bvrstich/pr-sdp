@@ -38,3 +38,5 @@
 
 #include "SUP.h"
 #include "EIG.h"
+
+/* vim: set ts=3 sw=3 tw=3 expandtab :*/

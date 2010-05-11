@@ -409,3 +409,5 @@ ostream &operator<<(ostream &output,Matrix &matrix_p){
    return output;
 
 }
+
+/* vim: set ts=3 sw=3 tw=3 expandtab :*/
