@@ -275,7 +275,7 @@ void Matrix::dscal(double alpha){
 }
 
 /**
- * Fill the matrix with random numbers.
+ * Fill the matrix with random numbers. The seed is the current time.
  */
 void Matrix::fill_Random(){
 
@@ -289,6 +289,26 @@ void Matrix::fill_Random(){
       for(int j = i + 1;j < n;++j)
          matrix[i][j] = matrix[j][i];
 
+}
+
+/**
+ * Fill the matrix with random numbers.
+ * @param seed the seed for the random number generator
+ */
+void Matrix::fill_Random(int seed)
+{
+   srand(seed);
+
+   for(int i = 0;i < n;++i)
+   {
+      matrix[i][i] = (double) rand()/RAND_MAX;
+
+      for(int j = i+1;j < n;++j)
+      {
+         matrix[j][i] = (double) rand()/RAND_MAX;
+         matrix[i][j] = matrix[j][i];
+      }
+   }
 }
 
 /**
