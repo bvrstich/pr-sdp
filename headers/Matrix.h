@@ -50,6 +50,8 @@ class Matrix{
 
       Matrix &daxpy(double alpha,Matrix &);
 
+      Matrix &operator*=(double c);
+
       Matrix &operator/=(double );
 
       Matrix &mprod(Matrix &,Matrix &);

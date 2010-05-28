@@ -132,6 +132,21 @@ Matrix &Matrix::daxpy(double alpha,Matrix &matrix_pl){
    return *this;
 
 }
+
+/**
+ * *= operator overloaded: multiply by a constant
+ * @param c the number to multiply your matrix with
+ */
+Matrix &Matrix::operator*=(double c)
+{
+   int dim = n*n;
+   int inc = 1;
+
+   dscal_(&dim,&c,matrix[0],&inc);
+
+   return *this;
+}
+
 /**
  * /= operator overloaded: divide by a constant
  * @param c the number to divide your matrix through
