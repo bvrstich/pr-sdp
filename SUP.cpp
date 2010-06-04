@@ -19,6 +19,10 @@ ostream &operator<<(ostream &output,SUP &SZ)
     output << (*SZ.SZ_pph) << endl;
 #endif
 
+#ifdef __T2P_CON
+    output << (*SZ.SZ_t2p) << endl;
+#endif
+
     return output;
 }
 
@@ -58,6 +62,12 @@ SUP::SUP(int M,int N)
     dim+=n_pph;
     SZ_pph=new PPHM(M,N);
 #endif
+
+#ifdef __T2P_CON
+    n_t2p=M+M*M*(M-1)/2;
+    dim+=n_t2p;
+    SZ_t2p=new T2PM(M,N);
+#endif
 }
 
 
@@ -96,6 +106,12 @@ SUP::SUP(SUP &SZ)
     SZ_pph=new PPHM(M,N);
     (*SZ_pph)=(*SZ.SZ_pph);
 #endif
+
+#ifdef __T2P_CON
+    n_t2p=SZ.n_t2p;
+    SZ_t2p=new T2PM(M,N);
+    (*SZ_t2p)=(*SZ.SZ_t2p);
+#endif
 }
 
 /**
@@ -118,6 +134,10 @@ SUP::~SUP()
 #ifdef __T2_CON
     delete SZ_pph;
 #endif
+
+#ifdef __T2P_CON
+    delete SZ_t2p;
+#endif
 }
 
 /**
@@ -139,6 +159,10 @@ SUP &SUP::operator+=(SUP &SZ)
 
 #ifdef __T2_CON
     (*SZ_pph)+=(*SZ.SZ_pph);
+#endif
+
+#ifdef __T2P_CON
+    (*SZ_t2p)+=(*SZ.SZ_t2p);
 #endif
 
     return *this;
@@ -165,6 +189,10 @@ SUP &SUP::operator-=(SUP &SZ)
     (*SZ_pph)-=(*SZ.SZ_pph);
 #endif
 
+#ifdef __T2P_CON
+    (*SZ_t2p)-=(*SZ.SZ_t2p);
+#endif
+
     return *this;
 }
 
@@ -187,6 +215,10 @@ SUP &SUP::operator=(SUP &SZ)
 
 #ifdef __T2_CON
     (*SZ_pph)=(*SZ.SZ_pph);
+#endif
+
+#ifdef __T2P_CON
+    (*SZ_t2p)=(*SZ.SZ_t2p);
 #endif
 
     return *this;
@@ -212,6 +244,10 @@ SUP &SUP::operator=(double &a)
 
 #ifdef __T2_CON
     (*SZ_pph)=a;
+#endif
+
+#ifdef __T2P_CON
+    (*SZ_t2p)=a;
 #endif
 
     return *this;
@@ -256,6 +292,10 @@ double SUP::ddot(SUP &SZ)
     brecht += SZ_pph->ddot(*SZ.SZ_pph);
 #endif
 
+#ifdef __T2P_CON
+    brecht += SZ_t2p->ddot(*SZ.SZ_t2p);
+#endif
+
     return brecht;
 }
 
@@ -277,6 +317,10 @@ void SUP::invert()
 
 #ifdef __T2_CON
     SZ_pph->invert();
+#endif
+
+#ifdef __T2P_CON
+    SZ_t2p->invert();
 #endif
 }
 
@@ -300,6 +344,10 @@ void SUP::dscal(double alpha)
 #ifdef __T2_CON
     SZ_pph->dscal(alpha);
 #endif
+
+#ifdef __T2P_CON
+    SZ_t2p->dscal(alpha);
+#endif
 }
 
 /**
@@ -321,6 +369,10 @@ void SUP::sqrt(int option)
 
 #ifdef __T2_CON
     SZ_pph->sqrt(option);
+#endif
+
+#ifdef __T2P_CON
+    SZ_t2p->sqrt(option);
 #endif
 }
 
@@ -346,6 +398,10 @@ void SUP::L_map(SUP &map,SUP &obj)
 #ifdef __T2_CON
     SZ_pph->L_map(*map.SZ_pph,*obj.SZ_pph);
 #endif
+
+#ifdef __T2P_CON
+    SZ_t2p->L_map(*map.SZ_t2p,*obj.SZ_t2p);
+#endif
 }
 
 /**
@@ -369,6 +425,10 @@ void SUP::daxpy(double alpha,SUP &SZ)
 #ifdef __T2_CON
     SZ_pph->daxpy(alpha,*SZ.SZ_pph);
 #endif
+
+#ifdef __T2P_CON
+    SZ_t2p->daxpy(alpha,*SZ.SZ_t2p);
+#endif
 }
 
 /**
@@ -391,6 +451,10 @@ double SUP::trace()
 
 #ifdef __T2_CON
     brecht += SZ_pph->trace();
+#endif
+
+#ifdef __T2P_CON
+    brecht += SZ_t2p->trace();
 #endif
 
     return brecht;
@@ -420,6 +484,10 @@ void SUP::fill(TPM &tpm)
 
 #ifdef __T2_CON
     SZ_pph->T(tpm);
+#endif
+
+#ifdef __T2P_CON
+    SZ_t2p->T(tpm);
 #endif
 }
 
@@ -491,6 +559,24 @@ PPHM &SUP::pphm()
 int SUP::gn_pph()
 {
     return n_pph;
+}
+#endif
+
+#ifdef __T2P_CON
+/**
+ * @return pointer to the T2PM block
+ */
+T2PM &SUP::t2pm()
+{
+    return *SZ_t2p;
+}
+
+/**
+ * @return dim of t2p space
+ */
+int SUP::gn_t2p()
+{
+    return n_t2p;
 }
 #endif
 

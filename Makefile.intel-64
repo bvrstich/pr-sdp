@@ -15,6 +15,7 @@ CPPSRC	= sdp.cpp\
             PHM.cpp\
             DPM.cpp\
 	    PPHM.cpp\
+	    T2PM.cpp\
 	    SUP.cpp\
 	    EIG.cpp
 
@@ -105,6 +106,18 @@ PQGT2:
 	   echo; echo '*************** FAILED! ***************' ; echo; \
 	 else \
 	   echo; echo '  +++ $(BINNAME) has been built with P, Q, G and T_2 conditions successfully!'; \
+	   echo; \
+	 fi
+
+PQGT2P:
+	@echo
+	@echo "  +++ Building $(BINNAME) with P, Q, G and T_2' conditions"
+	@echo	
+	$(MAKE) $(BRIGHT_ROOT)/$(BINNAME) DEFS="-DPQGT2P"
+	@if test $?; then \
+	   echo; echo '*************** FAILED! ***************' ; echo; \
+	 else \
+	   echo; echo "  +++ $(BINNAME) has been built with P, Q, G and T_2' conditions successfully!"; \
 	   echo; \
 	 fi
 

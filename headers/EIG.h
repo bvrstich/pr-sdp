@@ -73,6 +73,10 @@ class EIG
     int gn_pph();
 #endif
 
+#ifdef __T2P_CON
+    int gn_t2p();
+#endif
+
     private:
 
     //!double pointer that will store the eigenvalues of the P (eig[0][0 -> n_tp - 1]) and Q (eig[1][0 -> n_tp - 1]) blocks of the SUP_PQ matrix
@@ -107,6 +111,12 @@ class EIG
     //! dimension of the pph space
     int n_pph;
     double *eig_pph;
+#endif
+
+#ifdef __T2P_CON
+    //! dimension of the pph space
+    int n_t2p;
+    double *eig_t2p;
 #endif
 };
 

@@ -28,6 +28,14 @@
 
 #endif
 
+#ifdef PQGT2P
+
+#define __Q_CON
+#define __G_CON
+#define __T2P_CON
+
+#endif
+
 #include "lapack.h"
 #include "Matrix.h"
 #include "TPM.h"
@@ -35,6 +43,7 @@
 #include "PHM.h"
 #include "DPM.h"
 #include "PPHM.h"
+#include "T2PM.h"
 
 #include "SUP.h"
 #include "EIG.h"

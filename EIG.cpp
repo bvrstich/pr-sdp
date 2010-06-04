@@ -31,6 +31,13 @@ ostream &operator<<(ostream &output,EIG &eig)
 	output << i << "\t" << eig.eig_pph[i] << std::endl;
 #endif
 
+#ifdef __T2P_CON
+    output << std::endl;
+
+    for(int i = 0;i < eig.n_t2p;i++)
+       output << i << "\t" << eig.eig_t2p[i] << std::endl;
+#endif
+
     return output;
 }
 
@@ -69,6 +76,12 @@ EIG::EIG(int M,int N)
     n_pph=M*M*(M-1)/2;
     dim+=n_pph;
     eig_pph=new double[n_pph];
+#endif
+
+#ifdef __T2P_CON
+    n_t2p=M+M*M*(M-1)/2;
+    dim+=n_t2p;
+    eig_t2p=new double[n_t2p];
 #endif
 }
 
@@ -117,6 +130,14 @@ EIG::EIG(EIG &eig_c)
 
     dcopy_(&n_pph,eig_c.eig_pph,&inc,eig_pph,&inc);
 #endif
+
+#ifdef __T2P_CON
+    n_t2p=eig_c.n_t2p;
+    dim+=n_t2p;
+    eig_t2p=new double[n_t2p];
+
+    dcopy_(&n_t2p,eig_c.eig_t2p,&inc,eig_t2p,&inc);
+#endif
 }
 
 /**
@@ -160,6 +181,13 @@ EIG::EIG(SUP &SZ)
     eig_pph=new double[n_pph];
     SZ.pphm().diagonalize(eig_pph);
 #endif
+
+#ifdef __T2P_CON
+    n_t2p=SZ.gn_t2p();
+    dim+=n_t2p;
+    eig_t2p=new double[n_t2p];
+    SZ.t2pm().diagonalize(eig_t2p);
+#endif
 }
 
 /**
@@ -180,6 +208,10 @@ EIG::~EIG()
 
 #ifdef __T2_CON
     delete [] eig_pph;
+#endif
+
+#ifdef __T2P_CON
+    delete [] eig_t2p;
 #endif
 }
 
@@ -218,6 +250,7 @@ EIG &EIG::operator=(EIG &eig)
  * i == 2, the eigenvalues of the G block will be returned,\n
  * i == 3, the eigenvalues of the T1 block will be returned,\n
  * i == 4, the eigenvalues of the T2 block will be returned,\n
+ * i == 5, the eigenvalues of the T2' block will be returned,\n
  * @return array of eigenvalues
  */
 double *EIG::operator[](int i)
@@ -240,6 +273,10 @@ double *EIG::operator[](int i)
 	case 4:
 	    return eig_pph;
 #endif
+#ifdef __T2P_CON
+	case 5:
+	    return eig_t2p;
+#endif
 	default:
 	    std::cout << "Error: invalid block" << std::endl;
     }
@@ -253,6 +290,7 @@ double *EIG::operator[](int i)
  * i == 2, get element "index" from G block,\n
  * i == 3, get element "index" from T1 block,\n
  * i == 4, get element "index" from T2 block,\n
+ * i == 5, get element "index" from T2' block,\n
  * @param index which element in block you want
  * @return eig[block][index]
  */
@@ -275,6 +313,10 @@ double EIG::operator()(int block,int index)
 #ifdef __T2_CON
 	case 4:
 	    return eig_pph[index];
+#endif
+#ifdef __T2P_CON
+	case 5:
+	    return eig_t2p[index];
 #endif
 	default:
 	    std::cout << "Error: invalid block" << std::endl;
@@ -311,6 +353,11 @@ double EIG::lsfunc(double alpha)
 	brecht += eig_pph[i]/(1.0 + alpha*eig_pph[i]);
 #endif
 
+#ifdef __T2P_CON
+    for(int i = 0;i < n_t2p;i++)
+       brecht += eig_t2p[i]/(1.0 + alpha*eig_t2p[i]);
+#endif
+
     return brecht;
 }
 
@@ -337,6 +384,11 @@ double EIG::min()
 #ifdef __T2_CON
     if(brecht>eig_pph[0])
 	brecht=eig_pph[0];
+#endif
+
+#ifdef __T2P_CON
+    if(brecht>eig_t2p[0])
+       brecht=eig_t2p[0];
 #endif
 
     return brecht;
@@ -377,6 +429,16 @@ int EIG::gn_dp()
 int EIG::gn_pph()
 {
     return n_pph;
+}
+#endif
+
+#ifdef __T2P_CON
+/** 
+ * @return dimension of t2p space
+ */
+int EIG::gn_t2p()
+{
+    return n_t2p;
 }
 #endif
 
