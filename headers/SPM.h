@@ -122,4 +122,4 @@ template<> void SPM::bar(T2PM &MT);
 
 #endif
 
-/* vim: set ts=3 sw=3 tw=3 expandtab :*/
+/* vim: set ts=3 sw=3 expandtab :*/

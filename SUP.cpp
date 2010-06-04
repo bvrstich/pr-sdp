@@ -580,4 +580,4 @@ int SUP::gn_t2p()
 }
 #endif
 
-/* vim: set ts=3 sw=3 tw=3 expandtab :*/
+/* vim: set ts=3 sw=3 expandtab :*/
