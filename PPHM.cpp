@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <iostream>
 #include <cstdlib>
 #include <cmath>
@@ -176,15 +177,30 @@ double PPHM::operator()(int a,int b,int c,int d,int e,int z) const
 
 ostream &operator<<(ostream &output,const PPHM &PPHM_p)
 {
-    for(int i = 0;i < PPHM_p.n;++i)
-	for(int j = 0;j < PPHM_p.n;++j)
-	{
-	    output << i << "\t" << j << "\t|\t" << PPHM_p.pph2s[i][0] << "\t" << PPHM_p.pph2s[i][1] << "\t" << PPHM_p.pph2s[i][2]
-		<< "\t" << PPHM_p.pph2s[j][0] << "\t" << PPHM_p.pph2s[j][1] << "\t" << PPHM_p.pph2s[j][2] 
-		<< "\t" << PPHM_p(i,j) << endl;
-	}
+   output << std::setprecision(2) << std::fixed;
 
-    return output;
+   for(int i = 0;i < PPHM_p.n;i++)
+   {
+      for(int j = 0;j < PPHM_p.n;j++)
+         output << std::setfill('0') << std::setw(6) << PPHM_p(i,j) << " ";
+
+      output << endl;
+   }
+
+   output << endl;
+   output << std::setprecision(10) << std::scientific;
+
+   for(int i = 0;i < PPHM_p.n;++i)
+      for(int j = 0;j < PPHM_p.n;++j)
+      {
+         output << i << "\t" << j << "\t|\t" << PPHM_p.pph2s[i][0] << "\t" << PPHM_p.pph2s[i][1] << "\t" << PPHM_p.pph2s[i][2]
+            << "\t" << PPHM_p.pph2s[j][0] << "\t" << PPHM_p.pph2s[j][1] << "\t" << PPHM_p.pph2s[j][2]
+            << "\t" << PPHM_p(i,j) << endl;
+      }
+
+   output.unsetf(std::ios_base::floatfield);
+
+   return output;
 }
 
 /**

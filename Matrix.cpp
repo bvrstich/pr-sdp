@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <time.h>
 #include <cmath>
 
@@ -435,11 +436,27 @@ void Matrix::symmetrize(){
 
 }
 
-ostream &operator<<(ostream &output,Matrix &matrix_p){
+ostream &operator<<(ostream &output,Matrix &matrix_p)
+{
+
+   output << std::setprecision(2) << std::fixed;
+
+   for(int i = 0;i < matrix_p.gn();i++)
+   {
+      for(int j = 0;j < matrix_p.gn();j++)
+         output << std::setfill('0') << std::setw(6) << matrix_p(i,j) << " ";
+
+      output << endl;
+   }
+
+   output << endl;
+   output << std::setprecision(10) << std::scientific;
 
    for(int i = 0;i < matrix_p.gn();++i)
       for(int j = 0;j < matrix_p.gn();++j)
          output << i << "\t" << j << "\t" << matrix_p(i,j) << endl;
+
+   output.unsetf(std::ios_base::floatfield);
 
    return output;
 

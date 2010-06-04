@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <iostream>
 #include <fstream>
 
@@ -54,14 +55,29 @@ int SPM::gM(){
 
 }
 
-ostream &operator<<(ostream &output,SPM &spm_p){
+ostream &operator<<(ostream &output,SPM &spm_p)
+{
+   output << std::setprecision(2) << std::fixed;
+
+   for(int i = 0;i < spm_p.gn();i++)
+   {
+      for(int j = 0;j < spm_p.gn();j++)
+         output << std::setfill('0') << std::setw(6) << spm_p(i,j) << " ";
+
+      output << endl;
+   }
+
+   output << endl;
+   output << std::setprecision(10) << std::scientific;
+
 
    for(int i = 0;i < spm_p.M;++i)
       for(int j = 0;j < spm_p.M;++j)
          output << i << "\t" << j << "\t" << spm_p(i,j) << endl;
 
-   return output;
+   output.unsetf(std::ios_base::floatfield);
 
+   return output;
 }
 
 /**

@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <iostream>
 #include <fstream>
 #include <cmath>
@@ -165,19 +166,31 @@ double TPM::operator()(int a,int b,int c,int d) const{
 
 }
 
-ostream &operator<<(ostream &output,const TPM &tpm_p){
+ostream &operator<<(ostream &output,const TPM &tpm_p)
+{
+   output << std::setprecision(2) << std::fixed;
+
+   for(int i = 0;i < tpm_p.n;i++)
+   {
+      for(int j = 0;j < tpm_p.n;j++)
+         output << std::setfill('0') << std::setw(6) << tpm_p(i,j) << " ";
+
+      output << endl;
+   }
+
+   output << endl;
+   output << std::setprecision(10) << std::scientific;
 
    for(int i = 0;i < tpm_p.n;++i)
-      for(int j = 0;j < tpm_p.n;++j){
-
+      for(int j = 0;j < tpm_p.n;++j)
+      {
          output << i << "\t" << j << "\t|\t" << tpm_p.t2s[i][0] << "\t" << tpm_p.t2s[i][1]
-
             << "\t" << tpm_p.t2s[j][0] << "\t" << tpm_p.t2s[j][1] << "\t" << tpm_p(i,j) << endl;
-
       }
 
-   return output;
+   output.unsetf(std::ios_base::floatfield);
 
+   return output;
 }
 
 /**
