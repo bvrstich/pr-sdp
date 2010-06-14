@@ -37,10 +37,6 @@ int main(void){
    const int M = 8;//dim sp hilbert space
    const int N = 4;//nr of particles
 
-#ifdef CUBLAS
-   cublasInit();
-#endif
-
    //hamiltoniaan
    TPM ham(M,N);
 
@@ -117,10 +113,6 @@ int main(void){
       rdm.daxpy(a,extrapol);
 
    }
-
-#ifdef CUBLAS
-   cublasShutdown();
-#endif
 
    return 0;
 }
