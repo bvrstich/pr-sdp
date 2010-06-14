@@ -1,5 +1,5 @@
-#ifndef PPHM_H
-#define PPHM_H
+#ifndef T2PM_H
+#define T2PM_H
 
 #include <iostream>
 
@@ -10,33 +10,31 @@ using std::ostream;
 
 /**
  * @author Ward Poelmans
- * @date 26-03-2010\n\n
- * This class, PPHM, is the particle-particle-hole matrix. It's used in the T_2 condition
- * It inherits all the functions from its mother class Matrix, some special member functions and two lists that give the relationship between the pph and the sp basis.
+ * @date 11-05-2010\n\n
  */
-class PPHM : public Matrix {
+class T2PM : public Matrix {
 
    /**
     * Output stream operator overloaded, the usage is simple, if you want to print to a file, make an
     * ifstream object and type:\n\n
-    * object << PPHM_p << endl;\n\n
+    * object << T2PM_p << endl;\n\n
     * For output onto the screen type: \n\n
-    * cout << PPHM_p << endl;\n\n
+    * cout << T2PM_p << endl;\n\n
     * @param output The stream to which you are writing (e.g. cout)
-    * @param PPHM_p the PPHM you want to print
+    * @param T2PM_p the T2PM you want to print
     */
-   friend ostream &operator<<(ostream &output,const PPHM &PPHM_p);
+   friend ostream &operator<<(ostream &output,const T2PM &T2PM_p);
 
    public:
 
       //constructor
-      PPHM(int M,int N);
+      T2PM(int M,int N);
 
       //copy constructor
-      PPHM(PPHM &);
+      T2PM(T2PM &);
 
       //destructor
-      virtual ~PPHM();
+      virtual ~T2PM();
 
       using Matrix::operator=;
 
@@ -44,6 +42,8 @@ class PPHM : public Matrix {
 
       //easy to access the numbers, in sp mode
       double operator()(int a,int b,int c,int d,int e,int f) const;
+
+      double operator()(int a,int b,int c,int d) const;
 
       //geef N terug
       int gN();
@@ -54,12 +54,12 @@ class PPHM : public Matrix {
       //geef dim terug
       int gn();
 
-      //maak een PPHM van een TPM
+      //maak een T2PM van een TPM
       void T(TPM &);
 
    private:
 
-      //!static counter that counts the number of PPHM objects running in the program
+      //!static counter that counts the number of T2PM objects running in the program
       static int counter;
 
       //!static list of dimension [n_dp][3] that takes in a pph index i and returns three sp indices: a = dp2s[i][0], b = dp2s[i][1] and c = dp2s[i][2]
@@ -74,10 +74,13 @@ class PPHM : public Matrix {
       //!dimension of sp hilbert space
       int M;
 
-      //!dimension of pph space
+      //!dimension of T2' space
       int n;
+
+      //!dimension of T2 space
+      int n_pph;
 };
 
-#endif /* PPHM_H */
+#endif /* T2PM_H */
 
 /* vim: set ts=3 sw=3 expandtab :*/

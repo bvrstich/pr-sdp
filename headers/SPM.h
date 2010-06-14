@@ -118,5 +118,8 @@ class SPM : public Matrix {
 
 // template specialization of bar for PPHM matrices.
 template<> void SPM::bar(PPHM &MT);
+template<> void SPM::bar(T2PM &MT);
 
 #endif
+
+/* vim: set ts=3 sw=3 expandtab :*/

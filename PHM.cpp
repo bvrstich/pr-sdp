@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <iostream>
 #include <cstdlib>
 #include <cmath>
@@ -146,19 +147,31 @@ double PHM::operator()(int a,int b,int c,int d) const{
 
 }
 
-ostream &operator<<(ostream &output,const PHM &phm_p){
+ostream &operator<<(ostream &output,const PHM &phm_p)
+{
+   output << std::setprecision(2) << std::fixed;
 
-    for(int i = 0;i < phm_p.n;++i)
-	for(int j = 0;j < phm_p.n;++j){
+   for(int i = 0;i < phm_p.n;i++)
+   {
+      for(int j = 0;j < phm_p.n;j++)
+         output << std::setfill('0') << std::setw(6) << phm_p(i,j) << " ";
 
-	    output << i << "\t" << j << "\t|\t" << phm_p.ph2s[i][0] << "\t" << phm_p.ph2s[i][1]
+      output << endl;
+   }
 
-		<< "\t" << phm_p.ph2s[j][0] << "\t" << phm_p.ph2s[j][1] << "\t" << phm_p(i,j) << endl;
+   output << endl;
+   output << std::setprecision(10) << std::scientific;
 
-	}
+   for(int i = 0;i < phm_p.n;++i)
+      for(int j = 0;j < phm_p.n;++j)
+      {
+         output << i << "\t" << j << "\t|\t" << phm_p.ph2s[i][0] << "\t" << phm_p.ph2s[i][1]
+            << "\t" << phm_p.ph2s[j][0] << "\t" << phm_p.ph2s[j][1] << "\t" << phm_p(i,j) << endl;
+      }
 
-    return output;
+   output.unsetf(std::ios_base::floatfield);
 
+   return output;
 }
 
 /**
@@ -243,3 +256,28 @@ void PHM::bar(PPHM &pphm)
     }
 }
 
+void PHM::bar(T2PM &t2pm)
+{
+   int a,b,c,d;
+
+   for(int i=0;i<n;i++)
+   {
+      a = ph2s[i][0];
+      b = ph2s[i][1];
+
+      for(int j=i;j<n;j++)
+      {
+         c = ph2s[j][0];
+         d = ph2s[j][1];
+
+         (*this)(i,j) = 0.0;
+
+         for(int l=0;l<M;l++)
+            (*this)(i,j) += t2pm(l,a,b,l,c,d);
+
+         (*this)(j,i) = (*this)(i,j);
+      }
+   }
+}
+
+/* vim: set ts=3 sw=3 expandtab :*/

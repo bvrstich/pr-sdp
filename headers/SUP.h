@@ -91,6 +91,11 @@ class SUP {
     int gn_pph();
 #endif
 
+#ifdef __T2P_CON
+    T2PM &t2pm();
+    int gn_t2p();
+#endif
+
     private:
 
     //!double pointer to TPM's. will containt the P space matrix in SZ_tp[0] and the Q space matrix in SZ_tp[1]
@@ -128,6 +133,15 @@ class SUP {
     //! double pointer to PPHM
     PPHM *SZ_pph;
 #endif
+
+#ifdef __T2P_CON
+    //! dimension of the T2' space
+    int n_t2p;
+    //! double pointer to T2PM
+    T2PM *SZ_t2p;
+#endif
 };
 
 #endif /* SUP_H */
+
+/* vim: set ts=3 sw=3 expandtab :*/

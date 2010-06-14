@@ -14,6 +14,7 @@ class SUP;
 class PHM;
 class DPM;
 class PPHM;
+class T2PM;
 
 /**
  * @author Brecht Verstichel
@@ -76,6 +77,10 @@ class TPM : public Matrix {
 
     void T(PPHM &);
 
+    void bar(T2PM &);
+
+    void T(T2PM &);
+
     void init();
 
     void proj_Tr();
@@ -113,3 +118,5 @@ class TPM : public Matrix {
 };
 
 #endif
+
+/* vim: set ts=3 sw=3 expandtab :*/

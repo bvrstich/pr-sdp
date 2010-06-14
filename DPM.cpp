@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <cstdlib>
 #include <cmath>
 
@@ -250,19 +251,32 @@ double DPM::operator()(int a,int b,int c,int d,int e,int z) const{
 
 }
 
-ostream &operator<<(ostream &output,DPM &dpm_p){
+ostream &operator<<(ostream &output,DPM &dpm_p)
+{
+
+   output << std::setprecision(2) << std::fixed;
+
+   for(int i = 0;i < dpm_p.n;i++)
+   {
+      for(int j = 0;j < dpm_p.n;j++)
+         output << std::setfill('0') << std::setw(6) << dpm_p(i,j) << " ";
+
+      output << endl;
+   }
+
+   output << endl;
+   output << std::setprecision(10) << std::scientific;
 
    for(int i = 0;i < dpm_p.n;++i)
-      for(int j = 0;j < dpm_p.n;++j){
-
+      for(int j = 0;j < dpm_p.n;++j)
+      {
          output << i << "\t" << j << "\t|\t" << dpm_p.dp2s[i][0] << "\t" << dpm_p.dp2s[i][1] << "\t" << dpm_p.dp2s[i][2]
-
             << "\t" << dpm_p.dp2s[j][0] << "\t" << dpm_p.dp2s[j][1] << "\t" << dpm_p.dp2s[j][2] << "\t" << dpm_p(i,j) << endl;
-
       }
 
-   return output;
+   output.unsetf(std::ios_base::floatfield);
 
+   return output;
 }
 
 /**
@@ -385,3 +399,5 @@ void DPM::T(TPM &tpm){
    }
 
 }
+
+/* vim: set ts=3 sw=3 expandtab :*/

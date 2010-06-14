@@ -50,6 +50,8 @@ class Matrix{
 
       Matrix &daxpy(double alpha,Matrix &);
 
+      Matrix &operator*=(double c);
+
       Matrix &operator/=(double );
 
       Matrix &mprod(Matrix &,Matrix &);
@@ -77,6 +79,8 @@ class Matrix{
 
       void fill_Random();
 
+      void fill_Random(int seed);
+
       //positieve of negatieve vierkantswortel uit de matrix
       void sqrt(int option);
 
@@ -97,3 +101,5 @@ class Matrix{
 };
 
 #endif
+
+/* vim: set ts=3 sw=3 expandtab :*/

@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <iostream>
 #include <fstream>
 
@@ -54,14 +55,29 @@ int SPM::gM(){
 
 }
 
-ostream &operator<<(ostream &output,SPM &spm_p){
+ostream &operator<<(ostream &output,SPM &spm_p)
+{
+   output << std::setprecision(2) << std::fixed;
+
+   for(int i = 0;i < spm_p.gn();i++)
+   {
+      for(int j = 0;j < spm_p.gn();j++)
+         output << std::setfill('0') << std::setw(6) << spm_p(i,j) << " ";
+
+      output << endl;
+   }
+
+   output << endl;
+   output << std::setprecision(10) << std::scientific;
+
 
    for(int i = 0;i < spm_p.M;++i)
       for(int j = 0;j < spm_p.M;++j)
          output << i << "\t" << j << "\t" << spm_p(i,j) << endl;
 
-   return output;
+   output.unsetf(std::ios_base::floatfield);
 
+   return output;
 }
 
 /**
@@ -84,3 +100,19 @@ template<> void SPM::bar(PPHM &MT)
 	}
 }
 
+template<> void SPM::bar(T2PM &MT)
+{
+   for(int a = 0;a < M;a++)
+      for(int b = a;b < M;b++)
+      {
+         (*this)(a,b) = 0.0;
+
+         for(int l=0;l<M;l++)
+            for(int k=0;k<M;k++)
+               (*this)(a,b) += MT(l,k,a,l,k,b);
+
+         (*this)(b,a) = (*this)(a,b);
+      }
+}
+
+/* vim: set ts=3 sw=3 expandtab :*/

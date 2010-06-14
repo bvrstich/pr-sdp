@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <time.h>
 #include <cmath>
 
@@ -132,6 +133,21 @@ Matrix &Matrix::daxpy(double alpha,Matrix &matrix_pl){
    return *this;
 
 }
+
+/**
+ * *= operator overloaded: multiply by a constant
+ * @param c the number to multiply your matrix with
+ */
+Matrix &Matrix::operator*=(double c)
+{
+   int dim = n*n;
+   int inc = 1;
+
+   dscal_(&dim,&c,matrix[0],&inc);
+
+   return *this;
+}
+
 /**
  * /= operator overloaded: divide by a constant
  * @param c the number to divide your matrix through
@@ -275,7 +291,7 @@ void Matrix::dscal(double alpha){
 }
 
 /**
- * Fill the matrix with random numbers.
+ * Fill the matrix with random numbers. The seed is the current time.
  */
 void Matrix::fill_Random(){
 
@@ -289,6 +305,26 @@ void Matrix::fill_Random(){
       for(int j = i + 1;j < n;++j)
          matrix[i][j] = matrix[j][i];
 
+}
+
+/**
+ * Fill the matrix with random numbers.
+ * @param seed the seed for the random number generator
+ */
+void Matrix::fill_Random(int seed)
+{
+   srand(seed);
+
+   for(int i = 0;i < n;++i)
+   {
+      matrix[i][i] = (double) rand()/RAND_MAX;
+
+      for(int j = i+1;j < n;++j)
+      {
+         matrix[j][i] = (double) rand()/RAND_MAX;
+         matrix[i][j] = matrix[j][i];
+      }
+   }
 }
 
 /**
@@ -400,12 +436,30 @@ void Matrix::symmetrize(){
 
 }
 
-ostream &operator<<(ostream &output,Matrix &matrix_p){
+ostream &operator<<(ostream &output,Matrix &matrix_p)
+{
+
+   output << std::setprecision(2) << std::fixed;
+
+   for(int i = 0;i < matrix_p.gn();i++)
+   {
+      for(int j = 0;j < matrix_p.gn();j++)
+         output << std::setfill('0') << std::setw(6) << matrix_p(i,j) << " ";
+
+      output << endl;
+   }
+
+   output << endl;
+   output << std::setprecision(10) << std::scientific;
 
    for(int i = 0;i < matrix_p.gn();++i)
       for(int j = 0;j < matrix_p.gn();++j)
          output << i << "\t" << j << "\t" << matrix_p(i,j) << endl;
 
+   output.unsetf(std::ios_base::floatfield);
+
    return output;
 
 }
+
+/* vim: set ts=3 sw=3 expandtab :*/
