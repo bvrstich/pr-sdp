@@ -15,6 +15,7 @@ class PHM;
 class DPM;
 class PPHM;
 class T2PM;
+class Lineq;
 
 /**
  * @author Brecht Verstichel
@@ -94,6 +95,8 @@ class TPM : public Matrix {
     double line_search(double t,TPM &,TPM &);
 
     void H(double t,TPM &b,SUP &P);
+
+    void proj_E(int,Lineq &);
 
     private:
 

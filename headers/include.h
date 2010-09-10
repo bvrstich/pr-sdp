@@ -44,6 +44,7 @@
 #include "DPM.h"
 #include "PPHM.h"
 #include "T2PM.h"
+#include "Lineq.h"
 
 #include "SUP.h"
 #include "EIG.h"
