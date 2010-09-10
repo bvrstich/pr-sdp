@@ -36,23 +36,35 @@ class Lineq {
       //destructor
       virtual ~Lineq();
 
+      void fill_Random();
+
+      void fill_Random(int);
+
       int gN() const;
 
       int gnr() const;
 
       int gM() const;
 
-      TPM &gE(int) const;
+      TPM &gE(int);
 
-      double &ge(int) const;
+      const TPM &gE(int) const;
 
-      TPM &gE_ortho(int) const;
+      double &ge(int);
 
-      double &ge_ortho(int) const;
+      double ge(int) const;
 
-   private:
+      TPM &gE_ortho(int);
+
+      const TPM &gE_ortho(int) const;
+
+      double &ge_ortho(int);
+
+      double ge_ortho(int) const;
 
       void orthogonalize();
+
+   private:
 
       //!double pointer to TPM object, will contain the linear equality constraints
       TPM **E;

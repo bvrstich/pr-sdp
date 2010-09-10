@@ -28,23 +28,12 @@ Lineq::Lineq(int M,int N,int nr){
    for(int i = 0;i < nr;++i)
       E[i] = new TPM(M,N);
 
-   //for now, for testies, fill randomly
-
-   for(int i = 0;i < nr;++i){
-
-      E[i]->fill_Random();
-      e[i] = (double) rand()/RAND_MAX;
-
-   }
-
    //orthogonalize the constraints:
    E_ortho = new TPM * [nr];
    e_ortho = new double [nr];
 
    for(int i = 0;i < nr;++i)
       E_ortho[i] = new TPM(M,N);
-
-   orthogonalize();//speaks for itself, doesn't it?
 
 }
 
@@ -100,6 +89,31 @@ Lineq::~Lineq(){
 }
 
 /**
+ * Fill with random constrains
+ */
+void Lineq::fill_Random()
+{
+   for(int i = 0;i < nr;++i)
+   {
+      E[i]->fill_Random();
+      e[i] = (double) rand()/RAND_MAX;
+   }
+}
+
+/**
+ * Fill with random constrains
+ * @param seed the seed for the random number generator
+ */
+void Lineq::fill_Random(int seed)
+{
+   for(int i = 0;i < nr;++i)
+   {
+      E[i]->fill_Random(seed++);
+      e[i] = (double) rand()/RAND_MAX;
+   }
+}
+
+/**
  * @return nr of particles
  */
 int Lineq::gN() const {
@@ -131,7 +145,18 @@ int Lineq::gM() const {
  * @param i the index
  * @return The E TPM on index i.
  */
-TPM &Lineq::gE(int i) const {
+const TPM &Lineq::gE(int i) const {
+
+   return *E[i];
+
+}
+
+/**
+ * access to the individual constraint TPM's
+ * @param i the index
+ * @return The E TPM on index i.
+ */
+TPM &Lineq::gE(int i) {
 
    return *E[i];
 
@@ -142,7 +167,18 @@ TPM &Lineq::gE(int i) const {
  * @param i the index
  * @return the e values on index i: e[i] or something
  */
-double &Lineq::ge(int i) const{
+double Lineq::ge(int i) const {
+
+   return e[i];
+
+}
+
+/**
+ * access to the individual constraint values
+ * @param i the index
+ * @return the e values on index i: e[i] or something
+ */
+double &Lineq::ge(int i) {
 
    return e[i];
 
@@ -153,7 +189,17 @@ double &Lineq::ge(int i) const{
  * @param i the index
  * @return The E_ortho TPM on index i.
  */
-TPM &Lineq::gE_ortho(int i) const {
+TPM &Lineq::gE_ortho(int i) {
+
+   return *E_ortho[i];
+
+}
+/**
+ * access to the individual orthogonalized constraint TPM's: private function
+ * @param i the index
+ * @return The E_ortho TPM on index i.
+ */
+const TPM &Lineq::gE_ortho(int i) const {
 
    return *E_ortho[i];
 
@@ -164,7 +210,18 @@ TPM &Lineq::gE_ortho(int i) const {
  * @param i the index
  * @return the e values on index i: e_ortho[i] or something
  */
-double &Lineq::ge_ortho(int i) const{
+double &Lineq::ge_ortho(int i) {
+
+   return e_ortho[i];
+
+}
+
+/**
+ * access to the individual orthogonalized constraint values: private function
+ * @param i the index
+ * @return the e values on index i: e_ortho[i] or something
+ */
+double Lineq::ge_ortho(int i) const {
 
    return e_ortho[i];
 
