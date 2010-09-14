@@ -1,4 +1,4 @@
-#include "headers/SUP.h"
+#include "SUP.h"
 
 using std::endl;
 

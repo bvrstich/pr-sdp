@@ -32,7 +32,7 @@ class Matrix{
       Matrix(int n);
 
       //copy constructor
-      Matrix(Matrix &);
+      Matrix(const Matrix &);
 
       //destructor
       virtual ~Matrix();

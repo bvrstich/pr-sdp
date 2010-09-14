@@ -7,33 +7,59 @@ using std::ostream;
 using std::ofstream;
 using std::ifstream;
 
-#include "headers/include.h"
+#include "include.h"
 
 /**
- * constructor:
+ * standard constructor, only norm constraint:
  * @param M nr of sp orbitals
  * @param N nr of particles
- * @param nr the nr of contraints
  */
-Lineq::Lineq(int M,int N,int nr){
+Lineq::Lineq(int M,int N){
 
-   this->nr = nr;
+   this->nr = 1;
 
    this->M = M;
    this->N = N;
 
-   E = new TPM * [nr];
-   e = new double [nr];
+   //allocate the bitch.
+   allocate();
 
-   for(int i = 0;i < nr;++i)
-      E[i] = new TPM(M,N);
+   //initialize the constraint
+   E[0]->set_unit();
 
-   //orthogonalize the constraints:
-   E_ortho = new TPM * [nr];
-   e_ortho = new double [nr];
+   e[0] = N*(N - 1.0)/2.0;
 
-   for(int i = 0;i < nr;++i)
-      E_ortho[i] = new TPM(M,N);
+   orthogonalize();//speaks for itself, doesn't it?
+
+}
+
+/**
+ * constructor, norm and S^2 constraint:
+ * @param M nr of sp orbitals
+ * @param N nr of particles
+ * @param spin the size of the spin you want to project on: e[1]
+ */
+Lineq::Lineq(int M,int N,double spin){
+
+   this->nr = 2;
+
+   this->M = M;
+   this->N = N;
+
+   //allocate the bitch.
+   allocate();
+
+   //initialize the constraints:first the norm
+   E[0]->set_unit();
+
+   e[0] = N*(N - 1.0)/2.0;
+
+   //then the spin in the "1" block
+   E[1]->set_S_2();
+
+   e[1] = spin * ( spin + 1.0 );
+
+   orthogonalize();//speaks for itself, doesn't it?
 
 }
 
@@ -43,7 +69,7 @@ Lineq::Lineq(int M,int N,int nr){
  */
 Lineq::Lineq(const Lineq &lineq){
 
-  this->nr = lineq.gnr();
+   this->nr = lineq.gnr();
 
    this->M = lineq.gM();
    this->N = lineq.gN();
@@ -57,11 +83,11 @@ Lineq::Lineq(const Lineq &lineq){
    //copy the that which needs to be copied
    for(int i = 0;i < nr;++i){
 
-      E[i] = new TPM(lineq.gE(i));
+      E[i] = new TPM(lineq.gE(i)); 
       e[i] = lineq.ge(i);
 
       //no need to orthogonalize, just copy!
-      E_ortho[i] = new TPM(lineq.gE_ortho(i));
+      E_ortho[i] = new TPM(lineq.gE_ortho(i)); 
       e_ortho[i] = lineq.ge_ortho(i);
 
    }
@@ -86,31 +112,6 @@ Lineq::~Lineq(){
    delete [] e;
    delete [] e_ortho;
 
-}
-
-/**
- * Fill with random constrains
- */
-void Lineq::fill_Random()
-{
-   for(int i = 0;i < nr;++i)
-   {
-      E[i]->fill_Random();
-      e[i] = (double) rand()/RAND_MAX;
-   }
-}
-
-/**
- * Fill with random constrains
- * @param seed the seed for the random number generator
- */
-void Lineq::fill_Random(int seed)
-{
-   for(int i = 0;i < nr;++i)
-   {
-      E[i]->fill_Random(seed++);
-      e[i] = (double) rand()/RAND_MAX;
-   }
 }
 
 /**
@@ -145,18 +146,7 @@ int Lineq::gM() const {
  * @param i the index
  * @return The E TPM on index i.
  */
-const TPM &Lineq::gE(int i) const {
-
-   return *E[i];
-
-}
-
-/**
- * access to the individual constraint TPM's
- * @param i the index
- * @return The E TPM on index i.
- */
-TPM &Lineq::gE(int i) {
+TPM &Lineq::gE(int i) const {
 
    return *E[i];
 
@@ -167,18 +157,7 @@ TPM &Lineq::gE(int i) {
  * @param i the index
  * @return the e values on index i: e[i] or something
  */
-double Lineq::ge(int i) const {
-
-   return e[i];
-
-}
-
-/**
- * access to the individual constraint values
- * @param i the index
- * @return the e values on index i: e[i] or something
- */
-double &Lineq::ge(int i) {
+double &Lineq::ge(int i) const{
 
    return e[i];
 
@@ -189,17 +168,7 @@ double &Lineq::ge(int i) {
  * @param i the index
  * @return The E_ortho TPM on index i.
  */
-TPM &Lineq::gE_ortho(int i) {
-
-   return *E_ortho[i];
-
-}
-/**
- * access to the individual orthogonalized constraint TPM's: private function
- * @param i the index
- * @return The E_ortho TPM on index i.
- */
-const TPM &Lineq::gE_ortho(int i) const {
+TPM &Lineq::gE_ortho(int i) const {
 
    return *E_ortho[i];
 
@@ -210,18 +179,7 @@ const TPM &Lineq::gE_ortho(int i) const {
  * @param i the index
  * @return the e values on index i: e_ortho[i] or something
  */
-double &Lineq::ge_ortho(int i) {
-
-   return e_ortho[i];
-
-}
-
-/**
- * access to the individual orthogonalized constraint values: private function
- * @param i the index
- * @return the e values on index i: e_ortho[i] or something
- */
-double Lineq::ge_ortho(int i) const {
+double &Lineq::ge_ortho(int i) const{
 
    return e_ortho[i];
 
@@ -288,4 +246,24 @@ void Lineq::orthogonalize(){
 
 }
 
-/* vim: set ts=3 sw=3 expandtab :*/
+/**
+ * allocate the array's and memory needed for the program, reusable code for the different constructors
+ * private because I say it's private.
+ */
+void Lineq::allocate(){
+
+   //the regular ones
+   E = new TPM * [nr];
+   e = new double [nr];
+
+   for(int i = 0;i < nr;++i)
+      E[i] = new TPM(M,N);
+
+   //the orthogonal ones
+   E_ortho = new TPM * [nr];
+   e_ortho = new double [nr];
+
+   for(int i = 0;i < nr;++i)
+      E_ortho[i] = new TPM(M,N);
+
+}

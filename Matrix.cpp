@@ -6,7 +6,7 @@
 using std::endl;
 using std::ostream;
 
-#include "headers/include.h"
+#include "include.h"
 
 /**
  * constructor 
@@ -28,7 +28,7 @@ Matrix::Matrix(int n){
  * copy constructor 
  * @param mat_copy The matrix you want to be copied into the object you are constructing
  */
-Matrix::Matrix(Matrix &mat_copy){
+Matrix::Matrix(const Matrix &mat_copy){
 
    this->n = mat_copy.n;
 

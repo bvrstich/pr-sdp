@@ -7,6 +7,7 @@
 using std::ostream;
 
 #include "TPM.h"
+#include "SUP.h"
 
 /**
  * @author Brecht Verstichel
@@ -27,8 +28,11 @@ class Lineq {
 
    public:
 
-      //constructor
-      Lineq(int M,int N,int nr);
+      //norm constructor
+      Lineq(int M,int N);
+
+      //norm + spinsize constructor
+      Lineq(int M,int N,double spin);
 
       //copy constructor
       Lineq(const Lineq &);
@@ -36,35 +40,25 @@ class Lineq {
       //destructor
       virtual ~Lineq();
 
-      void fill_Random();
-
-      void fill_Random(int);
-
       int gN() const;
 
       int gnr() const;
 
       int gM() const;
 
-      TPM &gE(int);
+      TPM &gE(int) const;
 
-      const TPM &gE(int) const;
+      double &ge(int) const;
 
-      double &ge(int);
+      TPM &gE_ortho(int) const;
 
-      double ge(int) const;
-
-      TPM &gE_ortho(int);
-
-      const TPM &gE_ortho(int) const;
-
-      double &ge_ortho(int);
-
-      double ge_ortho(int) const;
-
-      void orthogonalize();
+      double &ge_ortho(int) const;
 
    private:
+
+      void allocate();
+
+      void orthogonalize();
 
       //!double pointer to TPM object, will contain the linear equality constraints
       TPM **E;
@@ -89,6 +83,6 @@ class Lineq {
 
 };
 
-#endif /* LINEQ_H */
+#endif
 
 /* vim: set ts=3 sw=3 expandtab :*/

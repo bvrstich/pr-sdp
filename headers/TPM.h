@@ -43,7 +43,7 @@ class TPM : public Matrix {
     TPM(int M,int N);
 
     //copy constructor
-    TPM(TPM &);
+    TPM(const TPM &);
 
     //destructor
     virtual ~TPM();
@@ -82,21 +82,27 @@ class TPM : public Matrix {
 
     void T(T2PM &);
 
-    void init();
+    void init(const Lineq &);
+
+    void set_unit();
+
+    void set_S_2();
 
     void proj_Tr();
 
-    void constr_grad(double t,TPM &,SUP &);
+    void constr_grad(double t,TPM &,SUP &,const Lineq &lineq);
 
-    int solve(double t,SUP &,TPM &);
+    int solve(double t,SUP &,TPM &,const Lineq &);
 
     double line_search(double t,SUP &P,TPM &ham);
 
     double line_search(double t,TPM &,TPM &);
 
-    void H(double t,TPM &b,SUP &P);
+    void H(double t,TPM &b,SUP &P,const Lineq &);
 
-    void proj_E(int,Lineq &);
+    void proj_E(int,const Lineq &);
+
+    double S_2();
 
     private:
 

@@ -1,4 +1,4 @@
-#include "headers/EIG.h"
+#include "EIG.h"
 
 ostream &operator<<(ostream &output,EIG &eig)
 {

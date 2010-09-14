@@ -1,8 +1,8 @@
 /**
  * @mainpage 
  * This is an implementation of the dual only, potential reduction interior point method
- * for optimizing the second order density matrix using the P, Q, G and T_1 N-representability conditions.
- * Compiling can be done with the options PQ, PQG and PQGT1, with logical consequences for the program.
+ * for optimizing the second order density matrix using the P, Q, G, T_1, T_2 and T_2' N-representability conditions.
+ * Compiling can be done with the options PQ, PQG, PQGT1, etc... with logical consequences for the program.
  * @author Brecht Verstichel, Ward Poelmans
  * @date 22-02-2010
  */
@@ -18,7 +18,7 @@ using std::ofstream;
 
 //includes all important headers and defines which conditions are
 //going to be used:
-#include "headers/include.h"
+#include "include.h"
 
 /**
  * In the main the actual program is run.\n 
@@ -37,6 +37,9 @@ int main(void){
    const int M = 8;//dim sp hilbert space
    const int N = 4;//nr of particles
 
+   //linear inequalities
+   Lineq lineq(M,N,1.0);
+
    //hamiltoniaan
    TPM ham(M,N);
 
@@ -47,7 +50,7 @@ int main(void){
    ham /= norm_ham;
 
    TPM rdm(M,N);
-   rdm.init();
+   rdm.init(lineq);
 
    TPM backup_rdm(rdm);
 
@@ -74,13 +77,13 @@ int main(void){
          //eerst -gradient aanmaken:
          TPM grad(M,N);
 
-         grad.constr_grad(t,ham,P);
+         grad.constr_grad(t,ham,P,lineq);
 
          //dit wordt de stap:
          TPM delta(M,N);
 
          //los het hessiaan stelsel op:
-         cout << delta.solve(t,P,grad) << endl;
+         cout << delta.solve(t,P,grad,lineq) << endl;
 
          //line search
          double a = delta.line_search(t,P,ham);
@@ -113,6 +116,9 @@ int main(void){
       rdm.daxpy(a,extrapol);
 
    }
+
+   cout << endl;
+   cout << "Energy = " << rdm.ddot(ham)*norm_ham << "\t <S^2> = " << rdm.S_2() << endl;
 
    return 0;
 }

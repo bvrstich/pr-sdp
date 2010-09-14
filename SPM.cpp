@@ -5,7 +5,7 @@
 using std::ostream;
 using std::endl;
 
-#include "headers/include.h"
+#include "include.h"
 
 /**
  * constructor, makes matrix of dimension M

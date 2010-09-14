@@ -9,7 +9,7 @@ using std::ifstream;
 using std::endl;
 
 //include headers files and define some defines for the conditions
-#include "headers/include.h"
+#include "include.h"
 
 int TPM::counter = 0;
 
@@ -70,7 +70,7 @@ TPM::TPM(int M,int N) : Matrix(M*(M - 1)/2){
  * if counter == 0, the lists containing the relationship between sp and tp basis.
  * @param tpm_c object that will be copied into this.
  */
-TPM::TPM(TPM &tpm_c) : Matrix(tpm_c){
+TPM::TPM(const TPM &tpm_c) : Matrix(tpm_c){
 
    this->N = tpm_c.N;
    this->M = tpm_c.M;
@@ -348,19 +348,78 @@ void TPM::G(PHM &phm){
 
 /**
  * Initializes the TPM on the a unit matrix with trace N*(N - 1)/2, i.e. the number of tp pairs
+ * @param lineq object containing the linear equalities, to make sure the initial rdm satisfies them all.
  */
-void TPM::init(){
+void TPM::init(const Lineq &lineq){
 
-   double ward = N*(N - 1.0)/(2.0*n);
+   //init
+   *this = 0;
+
+   for(int i = 0;i < lineq.gnr();++i)
+      this->daxpy(lineq.ge_ortho(i),lineq.gE_ortho(i));
+
+}
+
+/**
+ * set the matrix to the unitmatrix
+ */
+void TPM::set_unit(){
 
    for(int i = 0;i < n;++i){
 
-      (*this)(i,i) = ward;
+      (*this)(i,i) = 1.0;
 
       for(int j = i + 1;j < n;++j)
-         (*this)(j,i) = (*this)(i,j) = 0.0;
+         (*this)(i,j) = (*this)(j,i) = 0.0;
 
    }
+
+}
+
+/**
+ * fill the TPM object with the S^2 matrix
+ */
+void TPM::set_S_2(){
+
+   int a,b,c,d;
+
+   double s_a,s_b;
+
+   for(int i = 0;i < n;++i){
+
+      a = t2s[i][0];
+      b = t2s[i][1];
+
+      for(int j = i;j < n;++j){
+
+         c = t2s[j][0];
+         d = t2s[j][1];
+
+         //init
+         (*this)(i,j) = 0.0;
+
+         if(i == j){//diagonal stuff
+
+            s_a = ( 1.0 - 2 * (a % 2) )/2;
+            s_b = ( 1.0 - 2 * (b % 2) )/2;
+
+            (*this)(i,i) = (1 + s_a*s_a + s_b*s_b)/(N - 1.0) + 2*s_a*s_b;
+
+            if(a/2 == b/2 && a % 2 == 0 && b % 2 == 1)
+               (*this)(i,i) -= 1.0;
+
+         }
+
+         //then the off-diagonal elements
+         if(a % 2 == 0 && b % 2 == 1 && a/2 != b/2)//a up and b down
+            if(a + 1 == c && b == d + 1)
+               (*this)(i,j) += 1.0;
+
+      }
+
+   }
+
+   this->symmetrize();
 
 }
 
@@ -383,8 +442,9 @@ void TPM::proj_Tr(){
  * @param t scaling factor of the potential
  * @param ham Hamiltonian of the current problem
  * @param P SUP matrix containing the inverse of the constraint matrices (carrier space matrices).
+ * @param lineq object containing the linear equality constraints, needed for projection onto "f" space.
  */
-void TPM::constr_grad(double t,TPM &ham,SUP &P){
+void TPM::constr_grad(double t,TPM &ham,SUP &P,const Lineq &lineq){
 
    //eerst P conditie 
    *this = P.tpm(0);
@@ -439,7 +499,7 @@ void TPM::constr_grad(double t,TPM &ham,SUP &P){
 
    *this -= ham;
 
-   this->proj_Tr();
+   this->proj_E(0,lineq);
 
 }
 
@@ -449,8 +509,9 @@ void TPM::constr_grad(double t,TPM &ham,SUP &P){
  * @param P SUP matrix containing the inverse of the constraint matrices (carrier space matrices).
  * @param b right hand side (the gradient constructed int TPM::constr_grad)
  * @return nr of iterations needed to converge to the desired accuracy
+ * @param lineq The object containing the linear constraints
  */
-int TPM::solve(double t,SUP &P,TPM &b){
+int TPM::solve(double t,SUP &P,TPM &b,const Lineq &lineq){
 
    int iter = 0;
 
@@ -470,7 +531,7 @@ int TPM::solve(double t,SUP &P,TPM &b){
 
    while(rr > 1.0e-7){ 
 
-      Hb.H(t,b,P);
+      Hb.H(t,b,P,lineq);
 
       ward = rr/b.ddot(Hb);
 
@@ -554,8 +615,9 @@ double TPM::line_search(double t,SUP &P,TPM &ham){
  * @param t potential scaling factor
  * @param b the TPM on which the hamiltonian will work, the image will be put in (*this)
  * @param P the SUP matrix containing the constraints, (can be seen as the metric).
+ * @param lineq The object containing the linear constraints for the projection onto "f" - space.
  */
-void TPM::H(double t,TPM &b,SUP &P){
+void TPM::H(double t,TPM &b,SUP &P,const Lineq &lineq){
 
    //eerst de P conditie:
 
@@ -657,7 +719,7 @@ void TPM::H(double t,TPM &b,SUP &P){
    this->dscal(t);
 
    //en projecteren op spoorloze ruimte
-   this->proj_Tr();
+   this->proj_E(0,lineq);
 
 }
 
@@ -934,7 +996,7 @@ void TPM::T(T2PM &t2pm)
  * @param option project onto (option = 0) 0 or (option = 1) e
  * @param lineq The object containing the linear constraints
  */
-void TPM::proj_E(int option,Lineq &lineq){
+void TPM::proj_E(int option,const Lineq &lineq){
 
    double ward;
 
@@ -948,6 +1010,38 @@ void TPM::proj_E(int option,Lineq &lineq){
       this->daxpy(-ward,lineq.gE_ortho(i));
 
    }
+
+}
+
+/**
+ * @return the expectation value of the size of the spin: S^2
+ */
+double TPM::S_2(){
+
+   //first diagonal elements:
+   int a,b;
+   double s_a,s_b;
+
+   double ward = 0.0;
+
+   for(int i = 0;i < n;++i){
+
+      a = t2s[i][0];
+      b = t2s[i][1];
+
+      s_a = ( 1.0 - 2 * (a % 2) )/2;
+      s_b = ( 1.0 - 2 * (b % 2) )/2;
+
+      ward += ( (1 + s_a*s_a + s_b*s_b)/(N - 1.0) + 2*s_a*s_b ) * (*this)(i,i);
+
+   }
+
+   //then the off diagonal elements: a and b are sp indices
+   for(int a = 0;a < M/2;++a)
+      for(int b = 0;b < M/2;++b)
+         ward += (*this)(2*a,2*b + 1,2*a + 1,2*b);
+
+   return ward;
 
 }
 
