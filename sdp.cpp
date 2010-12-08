@@ -54,13 +54,18 @@ int main(void){
    //outer iteration: scaling of the potential barrier
    while(t > 1.0e-12){
 
-      cout << t << "\t" << rdm.trace() << "\t" << rdm.ddot(ham) << endl;
+      cout << t << "\t" << rdm.trace() << "\t" << rdm.ddot(ham) << "\t";
+
+      int nr_cg_iter = 0;
+      int nr_newton_iter = 0;
 
       double convergence = 1.0;
 
       //inner iteration: 
       //Newton's method for finding the minimum of the current potential
       while(convergence > tolerance){
+
+         ++nr_newton_iter;
 
          SUP P(M,N);
 
@@ -77,7 +82,7 @@ int main(void){
          TPM delta(M,N);
 
          //los het hessiaan stelsel op:
-         cout << delta.solve(t,P,grad) << endl;
+         nr_cg_iter += delta.solve(t,P,grad);
 
          //line search
          double a = delta.line_search(t,P,ham);
@@ -88,6 +93,8 @@ int main(void){
          convergence = a*a*delta.ddot(delta);
 
       }
+
+      cout << nr_newton_iter << "\t" << nr_cg_iter << endl;
 
       t /= 2.0;
 
@@ -110,6 +117,12 @@ int main(void){
       rdm.daxpy(a,extrapol);
 
    }
+
+   cout << endl;
+   
+   cout << "Final Energy:\t" << ham.ddot(rdm) << endl;
+   cout << endl;
+   cout << "Final Spin:\t" << rdm.S_2() << endl;
 
    return 0;
 }
