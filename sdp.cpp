@@ -1,10 +1,11 @@
 /**
  * @mainpage 
  * This is an implementation of the dual only, potential reduction interior point method
- * for optimizing the second order density matrix using the P, Q, G and T_1 N-representability conditions.
- * Compiling can be done with the options PQ, PQG, PQGT1, PQGT2 and PQGT (for all conditions active) with logical consequences for the program.
+ * for optimizing the second order density matrix using the P, Q, G , T_1, T_2 and T_2' N-representability conditions.
+ * This has an extra class for adding linear inequality constraints.
+ * Compiling can be done with the options PQ, PQG, PQGT1, PQGT2, PQGT2P and PQGT (for all conditions active) with logical consequences for the program.
  * @author Brecht Verstichel, Ward Poelmans
- * @date 22-02-2010
+ * @date 08-12-2010
  */
 
 #include <iostream>
@@ -50,6 +51,8 @@ int main(void){
 
    double t = 1.0;
    double tolerance = 1.0e-5;
+
+   LinCon lc(ham,-3.6);
 
    //outer iteration: scaling of the potential barrier
    while(t > 1.0e-12){
