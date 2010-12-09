@@ -67,7 +67,7 @@ class EIG{
     * @param output The stream to which you are writing (e.g. cout)
     * @param eig_p the EIG you want to print
     */
-   friend ostream &operator<<(ostream &output,EIG &eig_p);
+   friend ostream &operator<<(ostream &output,const EIG &eig_p);
 
    public:
 
@@ -78,49 +78,49 @@ class EIG{
       EIG(SUP &);
       
       //copy constructor
-      EIG(EIG &);
+      EIG(const EIG &);
 
       //destructor
       ~EIG();
 
       void diagonalize(SUP &);
 
-      int gN();
+      int gN() const;
 
-      int gM();
+      int gM() const;
 
-      int gn_tp();
+      int gn_tp() const;
 
-      int gdim();
+      int gdim() const;
 
-      double centerpot(double,EIG &,double,double);
+      double centerpot(double,const EIG &,double,double);
 
       //overload equality operator
-      EIG &operator=(EIG &);
+      EIG &operator=(const EIG &);
 
-      Vector<TPM> &tpv(int);
+      Vector<TPM> &tpv(int) const;
 
 #ifdef __G_CON
 
-      int gn_ph();
+      int gn_ph() const;
 
-      Vector<PHM> &phv();
+      Vector<PHM> &phv() const;
 
 #endif
 
 #ifdef __T1_CON
 
-      int gn_dp();
+      int gn_dp() const;
 
-      Vector<DPM> &dpv();
+      Vector<DPM> &dpv() const;
 
 #endif
 
 #ifdef __T2_CON
 
-      int gn_pph();
+      int gn_pph() const;
 
-      Vector<PPHM> &pphv();
+      Vector<PPHM> &pphv() const;
 
 #endif
 

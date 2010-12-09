@@ -16,7 +16,7 @@ using std::ifstream;
  * @param I The constraint matrix
  * @param i the minimal projection
  */
-LinCon::LinCon(TPM &I,double i){
+LinCon::LinCon(const TPM &I,double i){
 
    I_c = new TPM(I);
 
@@ -25,10 +25,17 @@ LinCon::LinCon(TPM &I,double i){
 }
 
 /**
+ * empty constructor
+ */
+LinCon::LinCon(){
+
+}
+
+/**
  * copy constructor
  * @param lc_copy The LinCon object to be copied
  */
-LinCon::LinCon(LinCon &lc_copy){
+LinCon::LinCon(const LinCon &lc_copy){
 
    I_c = new TPM(lc_copy.gI());
 
@@ -48,7 +55,7 @@ LinCon::~LinCon(){
 /**
  * @return the constraint TPM object
  */
-TPM &LinCon::gI(){
+TPM &LinCon::gI() const{
 
    return *I_c;
 
@@ -57,13 +64,13 @@ TPM &LinCon::gI(){
 /**
  * @return The minimal projection
  */
-double LinCon::gi(){
+double LinCon::gi() const{
 
    return i_c;
 
 }
 
-void LinCon::init(TPM &tpm){
+void LinCon::init(const TPM &tpm){
 
    tpm_I = tpm.ddot(*I_c);
 
@@ -72,13 +79,13 @@ void LinCon::init(TPM &tpm){
 /**
  * @return the projection of the input (LinCon::init) TPM on the constraint matrix
  */
-double LinCon::gtpm_I(){
+double LinCon::gtpm_I() const{
 
    return tpm_I;
 
 }
 
-ostream &operator<<(ostream &output,LinCon &lc_p){
+ostream &operator<<(ostream &output,const LinCon &lc_p){
 
    cout << "The current projection and the minimal projection" << endl;
    cout << lc_p.gtpm_I() << "\t" << lc_p.gi() << endl;

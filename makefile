@@ -17,7 +17,8 @@ CPPSRC	= sdp.cpp\
             PPHM.cpp\
             SUP.cpp\
             EIG.cpp\
-            LinCon.cpp
+            LinCon.cpp\
+            LinIneq.cpp
 
 OBJ	= $(CPPSRC:.cpp=.o)
 

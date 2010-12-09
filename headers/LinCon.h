@@ -21,26 +21,29 @@ class LinCon{
     * @param output The stream to which you are writing (e.g. cout)
     * @param LinCon_p de LinCon object you want to print
     */
-   friend ostream &operator<<(ostream &output,LinCon &lc_p);
+   friend ostream &operator<<(ostream &output,const LinCon &lc_p);
 
    public:
 
+      //empty constructor
+      LinCon();
+
       //constructor
-      LinCon(TPM &,double);
+      LinCon(const TPM &,double);
 
       //copy constructor
-      LinCon(LinCon &);
+      LinCon(const LinCon &);
 
       //destructor
       virtual ~LinCon();
 
-      TPM &gI();
+      TPM &gI() const;
 
-      double gi();
+      double gi() const;
 
-      void init(TPM &);
+      void init(const TPM &);
 
-      double gtpm_I();
+      double gtpm_I() const;
 
    private:
 

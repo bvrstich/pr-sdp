@@ -54,8 +54,12 @@ int main(void){
 
    LinCon lc(ham,-3.6);
 
+   LinIneq li(M,N);
+
+   li.add(lc);
+
    //outer iteration: scaling of the potential barrier
-   while(t > 1.0e-12){
+   //while(t > 1.0e-12){
 
       cout << t << "\t" << rdm.trace() << "\t" << rdm.ddot(ham) << "\t";
 
@@ -119,7 +123,7 @@ int main(void){
 
       rdm.daxpy(a,extrapol);
 
-   }
+//   }
 
    cout << endl;
    

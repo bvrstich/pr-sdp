@@ -63,7 +63,7 @@ SUP::SUP(int M,int N){
  * input SUP SZ_c into it.
  * @param SZ_c input SUP
  */
-SUP::SUP(SUP &SZ_c){
+SUP::SUP(const SUP &SZ_c){
 
    this->M = SZ_c.M;
    this->N = SZ_c.N;
@@ -150,7 +150,7 @@ SUP::~SUP(){
  * Overload += operator
  * @param SZ_pl The SUP matrix that has to be added to this
  */
-SUP &SUP::operator+=(SUP &SZ_pl){
+SUP &SUP::operator+=(const SUP &SZ_pl){
 
    for(int i = 0;i < 2;++i)
       (*SZ_tp[i]) += (*SZ_pl.SZ_tp[i]);
@@ -181,7 +181,7 @@ SUP &SUP::operator+=(SUP &SZ_pl){
  * Overload -= operator
  * @param SZ_pl The SUP that will be deducted from this
  */
-SUP &SUP::operator-=(SUP &SZ_pl){
+SUP &SUP::operator-=(const SUP &SZ_pl){
 
    for(int i = 0;i < 2;++i)
       (*SZ_tp[i]) -= (*SZ_pl.SZ_tp[i]);
@@ -212,7 +212,7 @@ SUP &SUP::operator-=(SUP &SZ_pl){
  * Overload equality operator, copy SZ_c into this
  * @param SZ_c SUP_PQ to be copied into this
  */
-SUP &SUP::operator=(SUP &SZ_c){
+SUP &SUP::operator=(const SUP &SZ_c){
 
    (*SZ_tp[0]) = (*SZ_c.SZ_tp[0]);
    (*SZ_tp[1]) = (*SZ_c.SZ_tp[1]);
@@ -275,7 +275,7 @@ SUP &SUP::operator=(double &a){
  * @param i which block you want to have the pointer to.
  * @return pointer to the individual TPM blocks: SZ_tp[i]
  */
-TPM &SUP::tpm(int i){
+TPM &SUP::tpm(int i) const{
 
    return *SZ_tp[i];
 
@@ -286,7 +286,7 @@ TPM &SUP::tpm(int i){
 /**
  * @return pointer to the PHM block: SZ_ph
  */
-PHM &SUP::phm(){
+PHM &SUP::phm() const{
 
    return *SZ_ph;
 
@@ -299,7 +299,7 @@ PHM &SUP::phm(){
 /**
  * @return pointer to the DPM block: SZ_dp
  */
-DPM &SUP::dpm(){
+DPM &SUP::dpm() const{
 
    return *SZ_dp;
 
@@ -312,7 +312,7 @@ DPM &SUP::dpm(){
 /**
  * @return pointer to the PPHM block: SZ_pph
  */
-PPHM &SUP::pphm(){
+PPHM &SUP::pphm() const{
 
    return *SZ_pph;
 
@@ -331,7 +331,7 @@ void SUP::init_S(){
 
 }
 
-ostream &operator<<(ostream &output,SUP &SZ_p){
+ostream &operator<<(ostream &output,const SUP &SZ_p){
 
    output << (*SZ_p.SZ_tp[0]) << std::endl;
    output << (*SZ_p.SZ_tp[1]);
@@ -392,7 +392,7 @@ void SUP::fill_Random(){
 /**
  * Initialisation for dual SUP matrix Z, see primal_dual.pdf for info.
  */
-void SUP::init_Z(double alpha,TPM &ham,SUP &u_0){
+void SUP::init_Z(double alpha,const TPM &ham,const SUP &u_0){
 
    this->fill_Random();
 
@@ -406,7 +406,7 @@ void SUP::init_Z(double alpha,TPM &ham,SUP &u_0){
 /**
  * @return number of particles
  */
-int SUP::gN() {
+int SUP::gN() const {
 
    return N;
 
@@ -415,7 +415,7 @@ int SUP::gN() {
 /**
  * @return dimension of sp space
  */
-int SUP::gM(){
+int SUP::gM() const{
 
    return M;
 
@@ -424,7 +424,7 @@ int SUP::gM(){
 /**
  * @return dimension of tp space
  */
-int SUP::gn_tp(){
+int SUP::gn_tp() const{
 
    return n_tp;
 
@@ -435,7 +435,7 @@ int SUP::gn_tp(){
 /**
  * @return dimension of ph space
  */
-int SUP::gn_ph(){
+int SUP::gn_ph() const{
 
    return n_ph;
 
@@ -448,7 +448,7 @@ int SUP::gn_ph(){
 /**
  * @return dimension of dp space
  */
-int SUP::gn_dp(){
+int SUP::gn_dp() const{
 
    return n_dp;
 
@@ -461,7 +461,7 @@ int SUP::gn_dp(){
 /**
  * @return dimension of pph space
  */
-int SUP::gn_pph(){
+int SUP::gn_pph() const{
 
    return n_pph;
 
@@ -472,7 +472,7 @@ int SUP::gn_pph(){
 /**
  * @return total dimension of SUP (carrier) space
  */
-int SUP::gdim(){
+int SUP::gdim() const{
 
    return dim;
 
@@ -482,7 +482,7 @@ int SUP::gdim(){
  * @param SZ_i input SUP_PQ SZ_i
  * @return inproduct between this and input matrix SZ_i, defined as Tr(this SZ_i)
  */
-double SUP::ddot(SUP &SZ_i){
+double SUP::ddot(const SUP &SZ_i){
 
    double ward = 0.0;
 
@@ -598,7 +598,7 @@ void SUP::proj_U(){
  * is valid.
  * @param tpm input TPM (mostly the hamiltonian of the problem)
  */
-void SUP::proj_C(TPM &tpm){
+void SUP::proj_C(const TPM &tpm){
 
    TPM hulp(M,N);
 
@@ -627,7 +627,7 @@ void SUP::proj_C(TPM &tpm){
  * @param S The primal SUP matrix S
  * @param Z The dual SUP matrix Z
  */
-void SUP::D(SUP &S,SUP &Z){
+void SUP::D(const SUP &S,const SUP &Z){
 
    //positieve vierkantswortel uit Z
    SUP Z_copy(Z);
@@ -686,7 +686,7 @@ void SUP::sqrt(int option){
  * @param map SUP that will be multiplied to the left en to the right of matrix object
  * @param object central SUP
  */
-void SUP::L_map(SUP &map,SUP &object){
+void SUP::L_map(const SUP &map,const SUP &object){
 
    for(int i = 0;i < 2;++i)
       SZ_tp[i]->L_map(map.tpm(i),object.tpm(i));
@@ -716,7 +716,7 @@ void SUP::L_map(SUP &map,SUP &object){
  * @param alpha the constant to multiply the SZ_p with
  * @param SZ_p the SUP to be multiplied by alpha and added to (*this)
  */
-void SUP::daxpy(double alpha,SUP &SZ_p){
+void SUP::daxpy(double alpha,const SUP &SZ_p){
 
    for(int i = 0;i < 2;++i)
       SZ_tp[i]->daxpy(alpha,SZ_p.tpm(i));
@@ -796,7 +796,7 @@ void SUP::proj_C(){
  * @param B right hand matrix
  * @return The product AB
  */
-SUP &SUP::mprod(SUP &A,SUP &B){
+SUP &SUP::mprod(const SUP &A,const SUP &B){
 
    for(int i= 0;i < 2;++i)
       SZ_tp[i]->mprod(A.tpm(i),B.tpm(i));
@@ -827,7 +827,7 @@ SUP &SUP::mprod(SUP &A,SUP &B){
  * Fill the SUP matrix (*this) with a TPM matrix like: this = diag[tpm  Q(tpm)  ( G(tpm) T1(tpm) T2(tpm) ) ]
  * @param tpm input TPM
  */
-void SUP::fill(TPM &tpm){
+void SUP::fill(const TPM &tpm){
 
    *SZ_tp[0] = tpm;
    SZ_tp[1]->Q(1,tpm);
@@ -887,7 +887,7 @@ void SUP::fill(){
  * @param D SUP matrix that defines the structure of the hessian map (the metric) (inverse of the primal Newton equation hessian)
  * @return return the number of iteration required to converge
  */
-int SUP::solve(SUP &B,SUP &D){
+int SUP::solve(SUP &B,const SUP &D){
 
    SUP HB(M,N);
    HB.H(*this,D);
@@ -938,7 +938,7 @@ int SUP::solve(SUP &B,SUP &D){
  * @param B SUP matrix onto which the hessian works.
  * @param D SUP matrix that defines the structure of the map (metric)
  */
-void SUP::H(SUP &B,SUP &D){
+void SUP::H(const SUP &B,const SUP &D){
 
    this->L_map(D,B);
 
@@ -1060,103 +1060,5 @@ double SUP::U_trace(){
 #endif
 
    return ward;
-
-}
-
-/**
- * @return Deviation from the central path measured through the logarithmic potential, it's a measure for
- * the deviation of the product of the primal with the dual matrix (SZ) from the unit matrix.\n
- * Usage of the function: S.center_dev(Z) gives returns the deviation.\n\n
- * (*this) = S = primal matrix of the problem
- * @param Z = dual matrix of the problem
- */
-double SUP::center_dev(SUP &Z){
-
-   SUP sqrt_S(*this);
-
-   sqrt_S.sqrt(1);
-
-   SUP SZ(M,N);
-   SZ.L_map(sqrt_S,Z);
-
-   EIG eig(SZ);
-
-   return eig.center_dev();
-
-}
-
-/**
- * Line search function that checks how large a step you can take in a given primal dual predictor direction (DS,DZ), starting from 
- * the current primal dual point (S,Z), before deviating beyond max_dev from the central path.\n\n
- * (*this) = DS --> primal search direction
- * @param DZ dual search direction
- * @param S Current primal point
- * @param Z Current dual point
- * @param max_dev number (double) input by which you can tell the function how far you want to deviate from the central path after the step.
- */
-double SUP::line_search(SUP &DZ,SUP &S,SUP &Z,double max_dev){
-
-   //eerst de huidige deviatie van het centraal pad nemen:
-   double center_dev = S.center_dev(Z);
-
-   //eigenwaarden zoeken van S^{-1/2} DS S^{-1/2} en Z^{-1/2} DZ Z^{-1/2}
-
-   //kopieer S in de zogeheten wortel:
-   SUP wortel(S);
-
-   //maak negatieve vierkantswortel uit S
-   wortel.sqrt(-1);
-
-   //de L_map
-   SUP hulp(M,N);
-   hulp.L_map(wortel,*this);
-
-   //eigenwaarden in eigen_S stoppen
-   EIG eigen_S(hulp);
-
-   //nu idem voor Z
-   wortel = Z;
-
-   wortel.sqrt(-1);
-
-   hulp.L_map(wortel,DZ);
-
-   EIG eigen_Z(hulp);
-
-   //nog c_S en c_Z uitrekenen:
-   double pd_gap = S.ddot(Z);
-
-   //c_S = Tr (DS Z)/Tr (SZ)
-   double c_S = this->ddot(Z)/pd_gap;
-
-   //c_Z = Tr (S DZ)/Tr (SZ)
-   double c_Z = S.ddot(DZ)/pd_gap;
-
-   //waar zitten de singulariteiten: tot waar mag ik zoeken?
-   double a_max = -1.0/eigen_S.min();
-   double b_max = -1.0/eigen_Z.min();
-
-   //a_max is de waarde tot waar ik zal zoeken:
-   if(b_max < a_max)
-      a_max = b_max;
-
-   double a = 0.0;
-   double b = a_max;
-
-   double c = (a + b)/2.0;
-
-   //bissectiemethode om stapgrootte te bepalen:
-   while(b - a > 1.0e-5){
-
-      c = (a + b)/2.0;
-
-      if( (center_dev + eigen_S.centerpot(c,eigen_Z,c_S,c_Z) - max_dev) < 0.0 )
-         a = c;
-      else
-         b = c;
-
-   }
-
-   return c;
 
 }

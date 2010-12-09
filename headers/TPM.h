@@ -33,7 +33,7 @@ class TPM : public Matrix {
     * @param output The stream to which you are writing (e.g. cout)
     * @param tpm_p the TPM you want to print
     */
-   friend ostream &operator<<(ostream &output,TPM &tpm_p);
+   friend ostream &operator<<(ostream &output,const TPM &tpm_p);
 
    public:
       
@@ -41,7 +41,7 @@ class TPM : public Matrix {
       TPM(int M,int N);
 
       //copy constructor
-      TPM(TPM &);
+      TPM(const TPM &);
 
       //file constructor
       TPM(const char *);
@@ -57,47 +57,47 @@ class TPM : public Matrix {
       double operator()(int a,int b,int c,int d) const;
 
       //geef N terug
-      int gN();
+      int gN() const;
 
       //geef N terug
-      int gM();
+      int gM() const;
 
       //geef n terug
-      int gn();
+      int gn() const;
 
       void hubbard(int option,double U);
 
       //Q afbeelding en zijn inverse
-      void Q(int option,TPM &);
+      void Q(int option,const TPM &);
 
       //Q like afbeelding Q(A,B,C,tpm_d)
-      void Q(int option,double A,double B,double C,TPM &);
+      void Q(int option,double A,double B,double C,const TPM &);
 
       //overlapmatrix afbeelding en zijn inverse
-      void S(int option,TPM &);
+      void S(int option,const TPM &);
 
       void unit();
 
       void proj_Tr();
 
       //de hessiaan afbeelding:
-      void H(TPM &b,SUP &D);
+      void H(const TPM &b,SUP &D);
 
       //los het stelsel op
       //de G down en inverse G up
-      void G(int option,PHM &);
+      void G(int option,const PHM &);
 
       //trace one pair of indices of DPM
-      void bar(DPM &);
+      void bar(const DPM &);
 
       //trace one pair of indices of PPHM
-      void bar(PPHM &);
+      void bar(const PPHM &);
 
       //T1 down
-      void T(int option,DPM &);
+      void T(int option,const DPM &);
 
       //T2 down
-      void T(PPHM &);
+      void T(const PPHM &);
 
       void min_unit(double scale);
 
@@ -111,15 +111,15 @@ class TPM : public Matrix {
 
       void in_sp(const char *);
 
-      void constr_grad(double t,TPM &,SUP &);
+      void constr_grad(double t,const TPM &,SUP &);
 
       int solve(double t,SUP &,TPM &);
 
-      double line_search(double t,SUP &P,TPM &ham);
+      double line_search(double t,SUP &P,const TPM &ham);
 
-      double line_search(double t,TPM &,TPM &);
+      double line_search(double t,const TPM &,const TPM &);
 
-      void H(double t,TPM &b,SUP &P);
+      void H(double t,const TPM &b,SUP &P);
 
       double S_2();
 

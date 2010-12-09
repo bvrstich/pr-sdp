@@ -75,7 +75,7 @@ EIG::EIG(SUP &SZ){
  * allocates the memory for the eigenvalues of a SUP object and copies the content of eig_c into it.
  * @param eig_c The input EIG that will be copied into this.
  */
-EIG::EIG(EIG &eig_c){
+EIG::EIG(const EIG &eig_c){
 
    flag = 1;
 
@@ -127,7 +127,7 @@ EIG::EIG(EIG &eig_c){
  * overload equality operator
  * @param eig_c object that will be copied into this.
  */
-EIG &EIG::operator=(EIG &eig_c){
+EIG &EIG::operator=(const EIG &eig_c){
 
    for(int i = 0;i < 2;++i)
       *v_tp[i] = *eig_c.v_tp[i];
@@ -188,7 +188,7 @@ EIG::~EIG(){
 
 }
 
-ostream &operator<<(ostream &output,EIG &eig_p){
+ostream &operator<<(ostream &output,const EIG &eig_p){
 
    for(int i = 0;i < 2;++i)
       std::cout << eig_p.tpv(i) << std::endl;
@@ -218,7 +218,7 @@ ostream &operator<<(ostream &output,EIG &eig_p){
 /**
  * @return nr of particles
  */
-int EIG::gN(){
+int EIG::gN() const{
 
    return N;
 
@@ -227,7 +227,7 @@ int EIG::gN(){
 /**
  * @return dimension of sp space
  */
-int EIG::gM(){
+int EIG::gM() const{
 
    return M;
 
@@ -236,7 +236,7 @@ int EIG::gM(){
 /**
  * @return dimension of tp space
  */
-int EIG::gn_tp(){
+int EIG::gn_tp() const{
 
    return n_tp;
 
@@ -277,7 +277,7 @@ void EIG::diagonalize(SUP &sup){
  * @param i == 0, the eigenvalues of the P block will be returned, i == 1, the eigenvalues of the Q block will be returned
  * @return a Vector<TPM> object containing the desired eigenvalues
  */
-Vector<TPM> &EIG::tpv(int i){
+Vector<TPM> &EIG::tpv(int i) const{
 
    return *v_tp[i];
 
@@ -289,7 +289,7 @@ Vector<TPM> &EIG::tpv(int i){
 /**
  * @return dimension of ph space
  */
-int EIG::gn_ph(){
+int EIG::gn_ph() const{
 
    return n_ph;
 
@@ -299,7 +299,7 @@ int EIG::gn_ph(){
  * get the Vector<PHM> object containing the eigenvalues of the PHM block G
  * @return a Vector<PHM> object containing the desired eigenvalues
  */
-Vector<PHM> &EIG::phv(){
+Vector<PHM> &EIG::phv() const{
 
    return *v_ph;
 
@@ -312,7 +312,7 @@ Vector<PHM> &EIG::phv(){
 /**
  * @return dimension of dp space
  */
-int EIG::gn_dp(){
+int EIG::gn_dp() const{
 
    return n_dp;
 
@@ -322,7 +322,7 @@ int EIG::gn_dp(){
  * get the Vector<DPM> object containing the eigenvalues of the DPM block T1
  * @return a Vector<DPM> object containing the desired eigenvalues
  */
-Vector<DPM> &EIG::dpv(){
+Vector<DPM> &EIG::dpv() const{
 
    return *v_dp;
 
@@ -335,7 +335,7 @@ Vector<DPM> &EIG::dpv(){
 /**
  * @return dimension of pph space
  */
-int EIG::gn_pph(){
+int EIG::gn_pph() const{
 
    return n_pph;
 
@@ -345,7 +345,7 @@ int EIG::gn_pph(){
  * get the Vector<PPHM> object containing the eigenvalues of the PPHM block T2
  * @return a Vector<PPHM> object containing the desired eigenvalues
  */
-Vector<PPHM> &EIG::pphv(){
+Vector<PPHM> &EIG::pphv() const{
 
    return *v_pph;
 
@@ -356,7 +356,7 @@ Vector<PPHM> &EIG::pphv(){
 /**
  * @return total dimension of the EIG object
  */
-int EIG::gdim(){
+int EIG::gdim() const{
 
    return dim;
 
@@ -492,7 +492,7 @@ double EIG::center_dev(){
  * @param c_S = Tr (DS Z)/Tr (SZ): parameter calculated in SUP::line_search
  * @param c_Z = Tr (S DZ)/Tr (SZ): parameter calculated in SUP::line_search
  */
-double EIG::centerpot(double alpha,EIG &eigen_Z,double c_S,double c_Z){
+double EIG::centerpot(double alpha,const EIG &eigen_Z,double c_S,double c_Z){
 
    double ward = dim*log(1.0 + alpha*(c_S + c_Z));
 
