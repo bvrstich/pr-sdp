@@ -3,10 +3,8 @@
 
 #include <iostream>
 #include <cstdlib>
-#include <vector>
 
 using std::ostream;
-using std::vector;
 
 #include "LinCon.h"
 
@@ -28,7 +26,7 @@ class LinIneq{
    public:
 
       //constructor
-      LinIneq(int,int);
+      LinIneq(int,int,int);
 
       //copy constructor
       LinIneq(const LinIneq &);
@@ -36,16 +34,15 @@ class LinIneq{
       //destructor
       virtual ~LinIneq();
 
-      void add(const LinCon &);
-
-      void rm(int);
-
       int gnr();
 
    private:
 
-      //!std::vector object containing the different LinCon objects
-      vector<LinCon> li;
+      //!LinCon array containing the different LinCon objects
+      LinCon **li;
+
+      //!nr of linear constraints
+      int nr;
 
       //!nr of sp orbitals
       int M;

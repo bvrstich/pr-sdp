@@ -10,24 +10,17 @@ using std::ifstream;
 
 #include "include.h"
 
-
 /**
- * constructor of a LinCon object
+ * Constructor of a LinCon object
  * @param I The constraint matrix
  * @param i the minimal projection
  */
-LinCon::LinCon(const TPM &I,double i){
+LinCon::LinCon(int M,int N){
 
-   I_c = new TPM(I);
+   I_c = new TPM(M,N);
 
-   i_c = i;
-
-}
-
-/**
- * empty constructor
- */
-LinCon::LinCon(){
+   this->M = M;
+   this->N = N;
 
 }
 
@@ -40,6 +33,11 @@ LinCon::LinCon(const LinCon &lc_copy){
    I_c = new TPM(lc_copy.gI());
 
    i_c = lc_copy.gi();
+
+   tpm_I = lc_copy.gtpm_I();
+
+   this->M = lc_copy.gM();
+   this->N = lc_copy.gN();
 
 }
 
@@ -70,7 +68,31 @@ double LinCon::gi() const{
 
 }
 
-void LinCon::init(const TPM &tpm){
+/**
+ * set the constraint value
+ * @param i the value that the minimal projection will be set to.
+ */
+void LinCon::si(double i){
+
+   i_c = i;
+
+}
+
+/**
+ * set the constraint Matrix
+ * @param I the input constraint Matrix
+ */
+void LinCon::sI(const TPM &I){
+
+   *I_c = I;
+
+}
+
+/**
+ * Initialize the tpm_I value to a TPM object
+ * @param tpm input TPM object
+ */
+void LinCon::stpm_I(const TPM &tpm){
 
    tpm_I = tpm.ddot(*I_c);
 
@@ -97,5 +119,23 @@ ostream &operator<<(ostream &output,const LinCon &lc_p){
    cout << lc_p.gI() << endl;
 
    return output;
+
+}
+
+/**
+ * @return nr of sp orbitals
+ */
+int LinCon::gM() const{
+
+   return M;
+
+}
+
+/**
+ * @return nr of particles
+ */
+int LinCon::gN() const{
+
+   return N;
 
 }

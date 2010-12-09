@@ -25,11 +25,8 @@ class LinCon{
 
    public:
 
-      //empty constructor
-      LinCon();
-
       //constructor
-      LinCon(const TPM &,double);
+      LinCon(int,int);
 
       //copy constructor
       LinCon(const LinCon &);
@@ -41,9 +38,17 @@ class LinCon{
 
       double gi() const;
 
-      void init(const TPM &);
+      void sI(const TPM &);
+
+      void si(double);
+
+      void stpm_I(const TPM &);
 
       double gtpm_I() const;
+
+      int gM() const;
+
+      int gN() const;
 
    private:
 
@@ -55,6 +60,10 @@ class LinCon{
 
       //!projection of the tpm object with wich the LinCon has been initialized on the constraint matrix.
       double tpm_I;
+
+      int M;
+
+      int N;
 
 };
 

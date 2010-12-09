@@ -13,10 +13,17 @@ using std::ifstream;
 /**
  * constructor of a LinIneq object
  */
-LinIneq::LinIneq(int M,int N){
+LinIneq::LinIneq(int M,int N,int nr){
 
    this->M = M;
    this->N = N;
+
+   this->nr = nr;
+
+   li = new LinCon * [nr];
+
+   for(int i = 0;i < nr;++i)
+      li[i] = new LinCon(M,N);
 
 }
 
@@ -33,6 +40,11 @@ LinIneq::LinIneq(const LinIneq &lc_copy){
  */
 LinIneq::~LinIneq(){
 
+   for(int i = 0;i < nr;++i)
+      delete li[i];
+
+   delete [] li;
+
 }
 
 /**
@@ -40,26 +52,6 @@ LinIneq::~LinIneq(){
  */
 int LinIneq::gnr(){
 
-   return li.size();
-
-}
-
-/**
- * Add a LinCon object to the vector, so add a constraint to the program.
- * @param lc The LinCon object to be added
- */
-void LinIneq::add(const LinCon &lc){
-
-   li.push_back(lc);
-
-}
-
-/** 
- * remove a LinCon object from the array
- * @param index The index at which the object to be removed is located.
- */
-void LinIneq::rm(int index){
-
-   li.erase(li.begin() + index - 1);
+   return nr;
 
 }
