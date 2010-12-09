@@ -19,7 +19,7 @@ class LinCon{
    /**
     * output stream operator overloaded, will print the constraint matrix, the value of the minimal projection, and the current projection.
     * @param output The stream to which you are writing (e.g. cout)
-    * @param LinCon_p de LinCon object you want to print
+    * @param lc_p the LinCon object you want to print
     */
    friend ostream &operator<<(ostream &output,const LinCon &lc_p);
 
@@ -55,7 +55,7 @@ class LinCon{
       //!Constraint matrix
       TPM *I_c;
 
-      //!minimal projection on the constraint matrix, such that Tr(\Gamma I_C) \geq i_c
+      //!minimal projection on the constraint matrix, such that Tr(Gamma I_C) geq i_c
       double i_c;
 
       //!projection of the tpm object with wich the LinCon has been initialized on the constraint matrix.

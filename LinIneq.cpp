@@ -12,6 +12,9 @@ using std::ifstream;
 
 /**
  * constructor of a LinIneq object
+ * @param M nr of sp orbitals
+ * @param N nr of particles
+ * @param nr nr of constraints
  */
 LinIneq::LinIneq(int M,int N,int nr){
 
@@ -53,5 +56,16 @@ LinIneq::~LinIneq(){
 int LinIneq::gnr(){
 
    return nr;
+
+}
+
+/**
+ * read and write access to your LinCon object
+ * @param i row number
+ * @return the entry on index i
+ */
+LinCon &LinIneq::operator[](int i){
+
+   return *li[i];
 
 }

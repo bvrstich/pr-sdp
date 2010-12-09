@@ -19,7 +19,7 @@ class LinIneq{
    /**
     * output stream operator overloaded, will print all of the LinCon objects
     * @param output The stream to which you are writing (e.g. cout)
-    * @param LinIneq_p de LinIneq object you want to print
+    * @param li_p the LinIneq object you want to print
     */
    friend ostream &operator<<(ostream &output,const LinIneq &li_p);
 
@@ -35,6 +35,9 @@ class LinIneq{
       virtual ~LinIneq();
 
       int gnr();
+
+      //easy to access and change the LinCon objects
+      LinCon &operator[](int i);
 
    private:
 

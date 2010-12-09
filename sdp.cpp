@@ -52,9 +52,10 @@ int main(void){
    double t = 1.0;
    double tolerance = 1.0e-5;
 
-   LinCon lc(M,N);
-
    LinIneq li(M,N,1);
+
+   li[0].sI(ham);
+   li[0].si(-3.0);
 
    //outer iteration: scaling of the potential barrier
    //while(t > 1.0e-12){
