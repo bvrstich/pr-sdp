@@ -130,7 +130,7 @@ class EIG{
 
       double center_dev();
 
-      double lsfunc(double);
+      double lsfunc(double) const;
 
    private:
 

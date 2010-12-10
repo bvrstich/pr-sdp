@@ -42,10 +42,6 @@ class LinCon{
 
       void si(double);
 
-      void stpm_I(const TPM &);
-
-      double gtpm_I() const;
-
       int gM() const;
 
       int gN() const;
@@ -57,9 +53,6 @@ class LinCon{
 
       //!minimal projection on the constraint matrix, such that Tr(Gamma I_C) geq i_c
       double i_c;
-
-      //!projection of the tpm object with wich the LinCon has been initialized on the constraint matrix.
-      double tpm_I;
 
       int M;
 

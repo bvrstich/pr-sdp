@@ -949,8 +949,9 @@ void TPM::in_sp(const char *filename){
  * @param t scaling factor of the potential
  * @param ham Hamiltonian of the current problem
  * @param P SUP matrix containing the inverse of the constraint matrices (carrier space matrices).
+ * @param li object containing the info about all the linear constraints
  */
-void TPM::constr_grad(double t,const TPM &ham,SUP &P){
+void TPM::constr_grad(double t,const TPM &ham,const SUP &P,const LinIneq &li){
 
    //eerst P conditie 
    *this = P.tpm(0);
@@ -993,6 +994,10 @@ void TPM::constr_grad(double t,const TPM &ham,SUP &P){
 
    *this +=hulp;
 #endif
+   
+   //and the linear constraints
+   for(int i = 0;i < li.gnr();++i)
+      this->daxpy(1.0/li.constraint(i),li[i].gI());
 
    this->dscal(t);
 
@@ -1007,9 +1012,10 @@ void TPM::constr_grad(double t,const TPM &ham,SUP &P){
  * @param t scaling factor of the potential
  * @param P SUP matrix containing the inverse of the constraint matrices (carrier space matrices).
  * @param b right hand side (the gradient constructed int TPM::constr_grad)
+ * @param li object containing the information about the linear constraints
  * @return nr of iterations needed to converge to the desired accuracy
  */
-int TPM::solve(double t,SUP &P,TPM &b){
+int TPM::solve(double t,const SUP &P,TPM &b,const LinIneq &li){
 
    int iter = 0;
 
@@ -1029,7 +1035,7 @@ int TPM::solve(double t,SUP &P,TPM &b){
 
    while(rr > 1.0e-7){ 
 
-      Hb.H(t,b,P);
+      Hb.H(t,b,P,li);
 
       ward = rr/b.ddot(Hb);
 
@@ -1061,9 +1067,10 @@ int TPM::solve(double t,SUP &P,TPM &b){
  * @param t potential scaling factor
  * @param P SUP matrix containing the inverse of the constraints (carrier space matrices)
  * @param ham Hamiltonian of the problem
+ * @param li The object containing all of the linear constraint info.
  * @return the steplength
  */
-double TPM::line_search(double t,SUP &P,const TPM &ham){
+double TPM::line_search(double t,SUP &P,const TPM &ham,const LinIneq &li){
 
    double tolerance = 1.0e-5*t;
 
@@ -1093,11 +1100,19 @@ double TPM::line_search(double t,SUP &P,const TPM &ham){
 
    double ham_delta = this->ddot(ham);
 
+   LinIneq li_epsi(M,N,li.gnr());
+   li_epsi.fill(*this);
+
+   double lin_end = li.min_end(li_epsi);
+
+   if(lin_end < b)
+      b = lin_end;
+
    while(b - a > tolerance){
 
       c = (b + a)/2.0;
 
-      if( (ham_delta - t*eigen.lsfunc(c)) < 0.0)
+      if( (ham_delta - t*eigen.lsfunc(c) - t*li.lsfunc(c,li_epsi)) < 0.0)
          a = c;
       else
          b = c;
@@ -1113,11 +1128,11 @@ double TPM::line_search(double t,SUP &P,const TPM &ham){
  * @param t potential scaling factor
  * @param b the TPM on which the hamiltonian will work, the image will be put in (*this)
  * @param P the SUP matrix containing the constraints, (can be seen as the metric).
+ * @param li The object containing all the information about the linear constraints.
  */
-void TPM::H(double t,const TPM &b,SUP &P){
+void TPM::H(double t,const TPM &b,const SUP &P,const LinIneq &li){
 
    //eerst de P conditie:
-
    this->L_map(P.tpm(0),b);
 
    //de Q conditie toevoegen:
@@ -1197,6 +1212,10 @@ void TPM::H(double t,const TPM &b,SUP &P){
 
 #endif
 
+   //linear constraints
+   for(int i = 0;i < li.gnr();++i)
+      this->daxpy( b.ddot(li[i].gI()) / (li.constraint(i)*li.constraint(i)) , li[i].gI() );
+
    //nog schalen met t:
    this->dscal(t);
 
@@ -1212,7 +1231,7 @@ void TPM::H(double t,const TPM &b,SUP &P){
  * @param ham Hamiltonian of the problem
  * @return the steplength
  */
-double TPM::line_search(double t,const TPM &rdm,const TPM &ham){
+double TPM::line_search(double t,const TPM &rdm,const TPM &ham,const LinIneq &li){
 
    SUP P(M,N);
 
@@ -1220,7 +1239,7 @@ double TPM::line_search(double t,const TPM &rdm,const TPM &ham){
 
    P.invert();
 
-   return this->line_search(t,P,ham);
+   return this->line_search(t,P,ham,li);
 
 }
 

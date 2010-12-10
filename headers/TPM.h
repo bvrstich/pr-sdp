@@ -13,6 +13,7 @@ class SUP;
 class PHM;
 class DPM;
 class PPHM;
+class LinIneq;
 
 /**
  * @author Brecht Verstichel
@@ -111,15 +112,15 @@ class TPM : public Matrix {
 
       void in_sp(const char *);
 
-      void constr_grad(double t,const TPM &,SUP &);
+      void constr_grad(double t,const TPM &,const SUP &,const LinIneq &);
 
-      int solve(double t,SUP &,TPM &);
+      int solve(double t,const SUP &,TPM &,const LinIneq &);
 
-      double line_search(double t,SUP &P,const TPM &ham);
+      double line_search(double t,SUP &P,const TPM &ham,const LinIneq &);
 
-      double line_search(double t,const TPM &,const TPM &);
+      double line_search(double t,const TPM &,const TPM &,const LinIneq &);
 
-      void H(double t,const TPM &b,SUP &P);
+      void H(double t,const TPM &b,const SUP &P,const LinIneq &);
 
       double S_2();
 

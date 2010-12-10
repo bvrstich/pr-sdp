@@ -34,8 +34,6 @@ LinCon::LinCon(const LinCon &lc_copy){
 
    i_c = lc_copy.gi();
 
-   tpm_I = lc_copy.gtpm_I();
-
    this->M = lc_copy.gM();
    this->N = lc_copy.gN();
 
@@ -88,29 +86,9 @@ void LinCon::sI(const TPM &I){
 
 }
 
-/**
- * Initialize the tpm_I value to a TPM object
- * @param tpm input TPM object
- */
-void LinCon::stpm_I(const TPM &tpm){
-
-   tpm_I = tpm.ddot(*I_c);
-
-}
-
-/**
- * @return the projection of the input (LinCon::init) TPM on the constraint matrix
- */
-double LinCon::gtpm_I() const{
-
-   return tpm_I;
-
-}
-
 ostream &operator<<(ostream &output,const LinCon &lc_p){
 
-   cout << "The current projection and the minimal projection" << endl;
-   cout << lc_p.gtpm_I() << "\t" << lc_p.gi() << endl;
+   cout << "The minimal projection:\t" << lc_p.gi() << endl;
    cout << endl;
 
    cout << "The Constraint matrix:" << endl;

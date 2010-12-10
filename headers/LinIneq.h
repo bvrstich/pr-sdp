@@ -34,15 +34,45 @@ class LinIneq{
       //destructor
       virtual ~LinIneq();
 
-      int gnr();
+      int gnr() const;
+
+      //easy to access the LinCon objects
+      const LinCon &operator[](int i) const;
 
       //easy to access and change the LinCon objects
       LinCon &operator[](int i);
 
+      int gM() const;
+
+      int gN() const;
+
+      double min_end(const LinIneq &) const;
+
+      void fill(const TPM &);
+
+      double gproj(int) const;
+
+      double *gproj();
+
+      double constraint(int) const;
+
+      double gtr() const;
+
+      double lsfunc(double c,const LinIneq &) const;
+
    private:
 
       //!LinCon array containing the different LinCon objects
-      LinCon **li;
+      static LinCon **li;
+
+      //!counter of the nr of objects in the program
+      static int counter;
+
+      //!array containing the projections on the constraint
+      double *proj;
+
+      //!variable needed for the constraint function, Tr (tpm)*2/N(N-1)
+      double tr;
 
       //!nr of linear constraints
       int nr;

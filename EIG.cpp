@@ -525,7 +525,7 @@ double EIG::centerpot(double alpha,const EIG &eigen_Z,double c_S,double c_Z){
  * @param alpha step length along the Newton direction
  * @return The line search function, gradient of the potential in the Newton direction as a function of the step length alpha
  */
-double EIG::lsfunc(double alpha){
+double EIG::lsfunc(double alpha) const{
 
    double ward = v_tp[0]->lsfunc(alpha);
 

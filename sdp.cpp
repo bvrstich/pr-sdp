@@ -58,7 +58,7 @@ int main(void){
    li[0].si(-3.0);
 
    //outer iteration: scaling of the potential barrier
-   //while(t > 1.0e-12){
+   while(t > 1.0e-12){
 
       cout << t << "\t" << rdm.trace() << "\t" << rdm.ddot(ham) << "\t";
 
@@ -77,21 +77,23 @@ int main(void){
 
          P.fill(rdm);
 
+         li.fill(rdm);
+
          P.invert();
 
          //eerst -gradient aanmaken:
          TPM grad(M,N);
 
-         grad.constr_grad(t,ham,P);
+         grad.constr_grad(t,ham,P,li);
 
          //dit wordt de stap:
          TPM delta(M,N);
 
          //los het hessiaan stelsel op:
-         nr_cg_iter += delta.solve(t,P,grad);
+         nr_cg_iter += delta.solve(t,P,grad,li);
 
          //line search
-         double a = delta.line_search(t,P,ham);
+         double a = delta.line_search(t,P,ham,li);
 
          //rdm += a*delta;
          rdm.daxpy(a,delta);
@@ -118,11 +120,11 @@ int main(void){
       //overzetten voor volgende stap
       backup_rdm = rdm;
 
-      double a = extrapol.line_search(t,rdm,ham);
+      double a = extrapol.line_search(t,rdm,ham,li);
 
       rdm.daxpy(a,extrapol);
 
-//   }
+   }
 
    cout << endl;
    
