@@ -143,7 +143,7 @@ int LinIneq::gM() const{
 }
 
 /**
- * @param epsilon the Newton direction found by the cg loop.
+ * @param li_epsi the LinIneq object filled with the Newton direction found by the cg loop.
  * @return the first singularity in the potential along the "epsilon" direction.
  */
 double LinIneq::min_end(const LinIneq &li_epsi) const{

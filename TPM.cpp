@@ -1229,6 +1229,7 @@ void TPM::H(double t,const TPM &b,const SUP &P,const LinIneq &li){
  * @param t potential scaling factor
  * @param rdm TPM containing the current approximation of the rdm.
  * @param ham Hamiltonian of the problem
+ * @param li The object containing all the information about the linear constraints.
  * @return the steplength
  */
 double TPM::line_search(double t,const TPM &rdm,const TPM &ham,const LinIneq &li){
