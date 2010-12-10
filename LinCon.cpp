@@ -135,7 +135,6 @@ void LinCon::diag_T(int index){
 
 /**
  * construct the spin matrix as the spin matrix
- * @param index the index of the diagonal element for which the constraint matrix will be constructed
  */
 void LinCon::spincon(){
 
