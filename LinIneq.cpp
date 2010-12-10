@@ -150,9 +150,15 @@ double LinIneq::min_end(const LinIneq &li_epsi) const{
 
    double min_end = -constraint(0)/li_epsi.constraint(0);
 
+   if(min_end < 0.0)
+      min_end = 1.0e+15;
+
    for(int i = 1;i < nr;++i){
 
       double tmp = -constraint(i)/li_epsi.constraint(i);
+
+      if(tmp < 0.0)
+         tmp = 1.0e+15;
 
       if(tmp < min_end)
          min_end = tmp;

@@ -35,14 +35,14 @@ int main(void){
 
    cout.precision(10);
 
-   const int M = 8;//dim sp hilbert space
-   const int N = 4;//nr of particles
+   const int M = 6;//dim sp hilbert space
+   const int N = 3;//nr of particles
 
    //hamiltoniaan
    TPM ham(M,N);
 
    //the zero is for pbc's
-   ham.hubbard(0,1.0);
+   ham.hubbard(0,100.0);
 
    TPM rdm(M,N);
    rdm.unit();
@@ -54,13 +54,13 @@ int main(void){
 
    LinIneq li(M,N,1);
 
-   li[0].sI(ham);
-   li[0].si(-3.0);
+   li[0].diag_T(21);
+   li[0].si(0.0);
 
    //outer iteration: scaling of the potential barrier
    while(t > 1.0e-12){
 
-      cout << t << "\t" << rdm.trace() << "\t" << rdm.ddot(ham) << "\t";
+      cout << t << "\t" << rdm.trace() << "\t" << rdm.ddot(ham) << "\t" << rdm.S_2() << "\t";
 
       int nr_cg_iter = 0;
       int nr_newton_iter = 0;
@@ -102,7 +102,7 @@ int main(void){
 
       }
 
-      cout << nr_newton_iter << "\t" << nr_cg_iter << endl;
+      cout << nr_newton_iter << "\t" << nr_cg_iter << "\t" << li.constraint(0) << endl;
 
       t /= 2.0;
 

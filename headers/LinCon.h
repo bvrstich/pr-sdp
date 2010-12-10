@@ -46,6 +46,10 @@ class LinCon{
 
       int gN() const;
 
+      void diag_T(int);
+
+      void spincon();
+
    private:
 
       //!Constraint matrix

@@ -117,3 +117,28 @@ int LinCon::gN() const{
    return N;
 
 }
+
+/**
+ * construct a diagonal T constraint for diagonal element index
+ * @param index the index of the diagonal element for which the constraint matrix will be constructed
+ */
+void LinCon::diag_T(int index){
+
+   PPHM lincon(M,N);
+
+   lincon = 0.0;
+   lincon(index,index) = 1.0;
+
+   I_c->T(lincon);
+
+}
+
+/**
+ * construct the spin matrix as the spin matrix
+ * @param index the index of the diagonal element for which the constraint matrix will be constructed
+ */
+void LinCon::spincon(){
+
+   I_c->set_S_2();
+
+}
