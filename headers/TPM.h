@@ -125,6 +125,8 @@ class TPM : public Matrix {
 
       void set_S_2();
 
+      void constr_sp_diag(int);
+
    private:
 
       //!static list of dimension [n_tp][2] that takes in a tp index i and returns two sp indices: a = t2s[i][0] and b = t2s[i][1]

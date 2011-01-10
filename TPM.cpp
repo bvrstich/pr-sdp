@@ -1302,3 +1302,29 @@ void TPM::set_S_2(){
    this->symmetrize();
 
 }
+
+/**
+ * Construct the operator P for which Tr (P Gamma) = rho_{lambda lambda}
+ * @param lambda the diagonal element of the SPM we want.
+ */
+void TPM::constr_sp_diag(int lambda){
+
+   (*this) = 0.0;
+
+   double ward = 1.0/(N - 1.0);
+
+   int a,b;
+
+   for(int i = 0;i < n;++i){
+
+      a = t2s[i][0];
+      b = t2s[i][1];
+
+      if(a == lambda || b == lambda)
+         (*this)(i,i) += ward;
+
+   }
+
+   this->symmetrize();
+
+}

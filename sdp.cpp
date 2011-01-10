@@ -123,6 +123,6 @@ int main(void){
    cout << "Final Energy:\t" << ham.ddot(rdm) << endl;
    cout << endl;
    cout << "Final Spin:\t" << rdm.S_2() << endl;
-
+*/
    return 0;
 }
