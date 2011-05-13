@@ -74,7 +74,7 @@ DPM::DPM(int M,int N) : Matrix(M*(M - 1)*(M - 2)/6) {
  * if counter == 0, allocates and constructs the lists containing the relationship between sp and dp basis.
  * @param dpm_c input DPM to be copied
  */
-DPM::DPM(DPM &dpm_c) : Matrix(dpm_c){
+DPM::DPM(const DPM &dpm_c) : Matrix(dpm_c){
 
    this->N = dpm_c.N;
    this->M = dpm_c.M;
@@ -252,7 +252,7 @@ double DPM::operator()(int a,int b,int c,int d,int e,int z) const{
 
 }
 
-ostream &operator<<(ostream &output,DPM &dpm_p){
+ostream &operator<<(ostream &output,const DPM &dpm_p){
 
    for(int i = 0;i < dpm_p.n;++i)
       for(int j = 0;j < dpm_p.n;++j){
@@ -270,7 +270,7 @@ ostream &operator<<(ostream &output,DPM &dpm_p){
 /**
  * @return nr of particles
  */
-int DPM::gN(){
+int DPM::gN() const{
 
    return N;
 
@@ -279,18 +279,9 @@ int DPM::gN(){
 /**
  * @return dimension of sp space
  */
-int DPM::gM(){
+int DPM::gM() const{
 
    return M;
-
-}
-
-/**
- * @return dimension of dp space and of Matrix
- */
-int DPM::gn(){
-
-   return n;
 
 }
 
@@ -301,7 +292,7 @@ int DPM::gn(){
  * @param C term before the sp part of the map
  * @param tpm input TPM
  */
-void DPM::T(double A,double B,double C,TPM &tpm){
+void DPM::T(double A,double B,double C,const TPM &tpm){
 
    SPM spm(C,tpm);
 
@@ -392,13 +383,14 @@ void DPM::T(double A,double B,double C,TPM &tpm){
    this->symmetrize();
 
 }
+
 /**
  * The T1-map: maps a TPM object (tpm) on a DPM object (*this). Watch out, like with the TPM::T with option = -1, when M = 2N the Q-like map is singular and the
  * inverse map is undefined, so don't use it.
  * @param option == +1 T1_up map, == -1, inverse T1_down map
  * @param tpm input TPM
  */
-void DPM::T(int option, TPM &tpm){
+void DPM::T(int option,const TPM &tpm){
 
    if(option == 1){
 
@@ -433,30 +425,13 @@ void DPM::T(int option, TPM &tpm){
  * The inverse of the TPM::bar function. It is a T1-like map.
  * @param tpm input TPM
  */
-void DPM::hat(TPM &tpm){
+void DPM::hat(const TPM &tpm){
 
    double a = 1.0/(M - 4.0);
    double b = 1.0/((M - 4.0)*(M - 3.0)*(M - 2.0));
    double c = 1.0/((M - 4.0)*(M - 3.0));
 
    this->T(a,b,c,tpm);
-
-}
-
-/**
- * Deduct from (*this) the T1-map of the unit matrix times a constant (scale)\n\n
- * this -= scale* T1(1) \n\n
- * see notes primal_dual.pdf for more information.
- * @param scale the constant
- */
-void DPM::min_tunit(double scale){
-
-   double t = (M*(M - 1.0) - 3.0*N*(M - N))/(N*(N - 1.0));
-
-   scale *= t;
-
-   for(int i = 0;i < n;++i)
-      (*this)(i,i) -= scale;
 
 }
 

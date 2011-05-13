@@ -10,7 +10,7 @@ extern "C" {
    void dorglq_(int *m,int *n, int *k,double *A,int  *LDA,double *tau,double *WORK,int *LWORK,int *INFO);
    void dcopy_(int *n,double *x,int *incx,double *y,int *incy);
    void daxpy_(int *n,double *alpha,double *x,int *incx,double *y,int *incy);
-   void dscal_(int *n,double *alpha,double *x,int *incx);
+   void dscal_(int *n,const double *alpha,double *x,int *incx);
    void dgemm_(char *transA,char *transB,int *m,int *n,int *k,double *alpha,double *A,int *lda,double *B,int *ldb,double *beta,double *C,int *ldc);
    void dsymm_(char *side,char *uplo,int *m,int *n,double *alpha,double *A,int *lda,double *B,int *ldb,double *beta,double *C,int *ldc);
    void dgemv_(char *trans,int *m,int *n,double *alpha,double *A,int *lda,double *x,int *incx,double *beta,double *y,int *incy);

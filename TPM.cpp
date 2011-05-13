@@ -72,7 +72,7 @@ TPM::TPM(int M,int N) : Matrix(M*(M - 1)/2) {
  * if counter == 0, the lists containing the relationship between sp and tp basis.
  * @param tpm_c object that will be copied into this.
  */
-TPM::TPM(TPM &tpm_c) : Matrix(tpm_c){
+TPM::TPM(const TPM &tpm_c) : Matrix(tpm_c){
 
    this->N = tpm_c.N;
    this->M = tpm_c.M;
@@ -232,7 +232,7 @@ double TPM::operator()(int a,int b,int c,int d) const{
 
 }
 
-ostream &operator<<(ostream &output,TPM &tpm_p){
+ostream &operator<<(ostream &output,const TPM &tpm_p){
 
    for(int i = 0;i < tpm_p.n;++i)
       for(int j = 0;j < tpm_p.n;++j){
@@ -250,7 +250,7 @@ ostream &operator<<(ostream &output,TPM &tpm_p){
 /**
  * @return number of particles
  */
-int TPM::gN(){
+int TPM::gN() const{
 
    return N;
 
@@ -259,18 +259,9 @@ int TPM::gN(){
 /**
  * @return number of sp orbitals
  */
-int TPM::gM(){
+int TPM::gM() const{
 
    return M;
-
-}
-
-/**
- * @return de dimensie of the tp matrix space
- */
-int TPM::gn(){
-
-   return n;
 
 }
 
@@ -342,7 +333,7 @@ void TPM::hubbard(int option,double U){
  * @param option = 1, regular Q map , = -1 inverse Q map
  * @param tpm_d the TPM of which the Q map is taken and saved in this.
  */
-void TPM::Q(int option,TPM &tpm_d){
+void TPM::Q(int option,const TPM &tpm_d){
 
    double a = 1;
    double b = 1.0/(N*(N - 1.0));
@@ -360,7 +351,7 @@ void TPM::Q(int option,TPM &tpm_d){
  * @param C factor in front of the single particle piece of the map
  * @param tpm_d the TPM of which the Q-like map is taken and saved in this.
  */
-void TPM::Q(int option,double A,double B,double C,TPM &tpm_d){
+void TPM::Q(int option,double A,double B,double C,const TPM &tpm_d){
 
    if(option == -1){
 
@@ -439,88 +430,11 @@ void TPM::proj_Tr(){
 }
 
 /**
- * Primal hessian map:\n\n
- * Hb = D_1 b D_1 + D_2 Q(b) D_2 + D_3 G(b) D_3 + D_4 T1(b) D_4 + D_5 T2(b) D5 \n\n
- * with D_1, D_2, D_3 and D_3 the P, Q, G, T1 and T2 blocks of the SUP D. 
- * @param b TPM domain matrix, hessian will act on it and the image will be put in this
- * @param D SUP matrix that defines the structure of the hessian map. (see primal-dual.pdf for more info)
- */
-void TPM::H(TPM &b,SUP &D){
-
-   this->L_map(D.tpm(0),b);
-
-#ifdef __Q_CON
-
-   //maak Q(b)
-   TPM Qb(M,N);
-   Qb.Q(1,b);
-
-   TPM hulp(M,N);
-
-   hulp.L_map(D.tpm(1),Qb);
-
-   Qb.Q(1,hulp);
-
-   *this += Qb;
-
-#endif
-
-#ifdef __G_CON
-
-   //maak G(b)
-   PHM Gb(M,N);
-   Gb.G(1,b);
-
-   PHM hulpje(M,N);
-
-   hulpje.L_map(D.phm(),Gb);
-
-   hulp.G(1,hulpje);
-
-   *this += hulp;
-
-#endif
-
-#ifdef __T1_CON
-
-   DPM T1b(M,N);
-   T1b.T(1,b);
-
-   DPM hulp_T1(M,N);
-
-   hulp_T1.L_map(D.dpm(),T1b);
-
-   hulp.T(1,hulp_T1);
-
-   *this += hulp;
-
-#endif
-
-#ifdef __T2_CON
-
-   PPHM T2b(M,N);
-   T2b.T(0,b);
-
-   PPHM hulp_T2(M,N);
-
-   hulp_T2.L_map(D.pphm(),T2b);
-
-   hulp.T(hulp_T2);
-
-   *this += hulp;
-
-#endif
-
-   this->proj_Tr();
-
-}
-
-/**
  * The G-map that maps a PHM object onto a TPM object.
  * @param option = 1, G_down - map is used, = -1 G^{-1}_up - map is used.
  * @param phm input PHM 
  */
-void TPM::G(int option,PHM &phm){
+void TPM::G(int option,const PHM &phm){
 
    SPM spm(M,N);
 
@@ -571,7 +485,7 @@ void TPM::G(int option,PHM &phm){
  * @param option = 1 direct overlapmatrix-map is used , = -1 inverse overlapmatrix map is used
  * @param tpm_d the input TPM
  */
-void TPM::S(int option,TPM &tpm_d){
+void TPM::S(int option,const TPM &tpm_d){
 
    double a = 1.0;
    double b = 0.0;
@@ -625,27 +539,11 @@ void TPM::min_unit(double scale){
 }
 
 /**
- * Deduct from this - de Q-map of the unit-matrix  times a constante (scale):\n\n
- * this -= scale* Q(1)
- * @param scale the constant
- */
-void TPM::min_qunit(double scale){
-
-   double q = 1.0 + (M - 2*N)*(M - 1.0)/(N*(N - 1.0));
-
-   scale *= q;
-
-   for(int i = 0;i < n;++i)
-      (*this)(i,i) -= scale;
-
-}
-
-/**
  * calculate the trace of one pair of sp indices of a DPM an put in (*this):\n\n
  * TPM(a,b,d,e) = sum_{c} DPM(a,b,c,d,e,c)
  * @param dpm input DPM
  */
-void TPM::bar(DPM &dpm){
+void TPM::bar(const DPM &dpm){
 
    int a,b,c,d;
 
@@ -677,7 +575,7 @@ void TPM::bar(DPM &dpm){
  * @param option = +1 T1_down , =-1 inverse T1_up
  * @param dpm The input DPM
  */
-void TPM::T(int option,DPM &dpm){
+void TPM::T(int option,const DPM &dpm){
 
    TPM tpm(M,N);
    tpm.bar(dpm);
@@ -707,7 +605,7 @@ void TPM::T(int option,DPM &dpm){
  * Map a PPHM (pphm) object on a TPM (*this) object by tracing one pair of indices from the pphm (for more info, see primal_dual.pdf)
  * @param pphm input PPHM
  */
-void TPM::bar(PPHM &pphm){
+void TPM::bar(const PPHM &pphm){
 
    int a,b,c,d;
 
@@ -737,7 +635,7 @@ void TPM::bar(PPHM &pphm){
  * Map a PPHM (pphm) onto a TPM object (*this) with a T2 down map, see primal_dual.pdf for more information
  * @param pphm input PPHM
  */
-void TPM::T(PPHM &pphm){
+void TPM::T(const PPHM &pphm){
 
    //first make some necessary derivate matrices of pphm
    TPM bar(M,N);
@@ -802,7 +700,7 @@ void TPM::T(PPHM &pphm){
  * @param option = 0, project onto full symmetric matrix space, = 1 project onto traceless symmetric matrix space
  * @param S input SUP
  */
-void TPM::collaps(int option,SUP &S){
+void TPM::collaps(int option,const SUP &S){
 
    *this = S.tpm(0);
 
@@ -950,24 +848,17 @@ void TPM::in_sp(const char *filename){
  * @param ham Hamiltonian of the current problem
  * @param P SUP matrix containing the inverse of the constraint matrices (carrier space matrices).
  */
-void TPM::constr_grad(double t,TPM &ham,SUP &P){
+void TPM::constr_grad(double t,const TPM &ham,const SUP &P){
 
    //eerst P conditie 
    *this = P.tpm(0);
 
    //de Q conditie toevoegen
-
-#ifdef __Q_CON
-
    TPM hulp(M,N);
 
    hulp.Q(1,P.tpm(1));
 
    *this += hulp;
-
-#endif
-
-   //de G conditie indien nodig
 
 #ifdef __G_CON
 
@@ -976,8 +867,6 @@ void TPM::constr_grad(double t,TPM &ham,SUP &P){
    *this += hulp;
 
 #endif
-
-   //de T_1 conditie toevoegen indien nodig
 
 #ifdef __T1_CON
 
@@ -992,6 +881,7 @@ void TPM::constr_grad(double t,TPM &ham,SUP &P){
    hulp.T(P.pphm());
 
    *this +=hulp;
+
 #endif
 
    this->dscal(t);
@@ -1009,7 +899,7 @@ void TPM::constr_grad(double t,TPM &ham,SUP &P){
  * @param b right hand side (the gradient constructed int TPM::constr_grad)
  * @return nr of iterations needed to converge to the desired accuracy
  */
-int TPM::solve(double t,SUP &P,TPM &b){
+int TPM::solve(double t,const SUP &P,TPM &b){
 
    int iter = 0;
 
@@ -1063,7 +953,7 @@ int TPM::solve(double t,SUP &P,TPM &b){
  * @param ham Hamiltonian of the problem
  * @return the steplength
  */
-double TPM::line_search(double t,SUP &P,TPM &ham){
+double TPM::line_search(double t,SUP &P,const TPM &ham){
 
    double tolerance = 1.0e-5*t;
 
@@ -1114,16 +1004,12 @@ double TPM::line_search(double t,SUP &P,TPM &ham){
  * @param b the TPM on which the hamiltonian will work, the image will be put in (*this)
  * @param P the SUP matrix containing the constraints, (can be seen as the metric).
  */
-void TPM::H(double t,TPM &b,SUP &P){
+void TPM::H(double t,const TPM &b,const SUP &P){
 
    //eerst de P conditie:
 
    this->L_map(P.tpm(0),b);
 
-   //de Q conditie toevoegen:
-#ifdef __Q_CON
-
-   //hulpje
    TPM hulp(M,N);
 
    //maak Q(b)
@@ -1139,10 +1025,6 @@ void TPM::H(double t,TPM &b,SUP &P){
    //en tel op bij this
    *this += Q_b;
 
-#endif
-
-   //de G conditie toevoegen:
-   
 #ifdef __G_CON
 
    //hulpje voor het PHM stuk
@@ -1163,8 +1045,6 @@ void TPM::H(double t,TPM &b,SUP &P){
 
 #endif
    
-   //de T_1 conditie toevoegen
-
 #ifdef __T1_CON
 
    //hulpjes voor het DPM stuk
@@ -1212,7 +1092,7 @@ void TPM::H(double t,TPM &b,SUP &P){
  * @param ham Hamiltonian of the problem
  * @return the steplength
  */
-double TPM::line_search(double t,TPM &rdm,TPM &ham){
+double TPM::line_search(double t,const TPM &rdm,const TPM &ham){
 
    SUP P(M,N);
 
@@ -1227,7 +1107,7 @@ double TPM::line_search(double t,TPM &rdm,TPM &ham){
 /**
  * @return the expectation value of the size of the spin: S^2
  */
-double TPM::S_2(){
+double TPM::S_2() const{
 
    //first diagonal elements:
    int a,b;

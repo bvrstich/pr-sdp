@@ -22,7 +22,7 @@ class Vector;
  * @param vector_p de Vector you want to print
  */
 template<class MatrixType>
-ostream &operator<<(ostream &output,Vector<MatrixType> &vector_p);
+ostream &operator<<(ostream &output,const Vector<MatrixType> &vector_p);
 
 /**
  * @author Brecht Verstichel
@@ -40,23 +40,23 @@ class Vector{
       Vector(MatrixType& );
 
       //copy constructor
-      Vector(Vector<MatrixType> &);
+      Vector(const Vector<MatrixType> &);
 
       //destructor
       virtual ~Vector();
 
       //overload equality operator
-      Vector &operator=(Vector<MatrixType> &);
+      Vector &operator=(const Vector<MatrixType> &);
 
       Vector &operator=(double );
 
       //overload += operator
-      Vector &operator+=(Vector<MatrixType> &);
+      Vector &operator+=(const Vector<MatrixType> &);
 
       //overload -= operator
-      Vector &operator-=(Vector<MatrixType> &);
+      Vector &operator-=(const Vector<MatrixType> &);
 
-      Vector &daxpy(double alpha,Vector<MatrixType> &);
+      Vector &daxpy(double alpha,const Vector<MatrixType> &);
 
       Vector &operator/=(double );
 
@@ -69,25 +69,25 @@ class Vector{
       //get the pointer to the vector
       double *gVector();
 
-      int gn();
+      int gn() const;
 
-      double sum();
+      double sum() const;
 
-      double log_product();
+      double log_product() const;
 
       void diagonalize(MatrixType &);
 
-      double ddot(Vector<MatrixType> &);
+      double ddot(const Vector<MatrixType> &) const;
 
       void dscal(double alpha);
 
-      double min();
+      double min() const;
       
-      double max();
+      double max() const;
 
-      double centerpot(double );
+      double centerpot(double ) const;
 
-      double lsfunc(double);
+      double lsfunc(double) const;
 
    private:
 
@@ -131,7 +131,7 @@ Vector<MatrixType>::Vector(MatrixType &MT){
  * @param vec_copy The vector you want to be copied into the object you are constructing, make sure that it is an allocated and filled vector!
  */
 template<class MatrixType>
-Vector<MatrixType>::Vector(Vector<MatrixType> &vec_copy){
+Vector<MatrixType>::Vector(const Vector<MatrixType> &vec_copy){
 
    this->n = vec_copy.n;
 
@@ -158,7 +158,7 @@ Vector<MatrixType>::~Vector(){
  * @param vector_copy The vector you want to be copied into this
  */
 template<class MatrixType>
-Vector<MatrixType> &Vector<MatrixType>::operator=(Vector<MatrixType> &vector_copy){
+Vector<MatrixType> &Vector<MatrixType>::operator=(const Vector<MatrixType> &vector_copy){
 
    int inc = 1;
 
@@ -187,7 +187,7 @@ Vector<MatrixType> &Vector<MatrixType>::operator=(double a){
  * @param vector_pl The vector you want to add to this
  */
 template<class MatrixType>
-Vector<MatrixType> &Vector<MatrixType>::operator+=(Vector<MatrixType> &vector_pl){
+Vector<MatrixType> &Vector<MatrixType>::operator+=(const Vector<MatrixType> &vector_pl){
 
    int inc = 1;
    double alpha = 1.0;
@@ -203,7 +203,7 @@ Vector<MatrixType> &Vector<MatrixType>::operator+=(Vector<MatrixType> &vector_pl
  * @param vector_pl The vector you want to deduct from this
  */
 template<class MatrixType>
-Vector<MatrixType> &Vector<MatrixType>::operator-=(Vector<MatrixType> &vector_pl){
+Vector<MatrixType> &Vector<MatrixType>::operator-=(const Vector<MatrixType> &vector_pl){
 
    int inc = 1;
    double alpha = -1.0;
@@ -220,7 +220,7 @@ Vector<MatrixType> &Vector<MatrixType>::operator-=(Vector<MatrixType> &vector_pl
  * @param vector_pl the Vector to be multiplied by alpha and added to this
  */
 template<class MatrixType>
-Vector<MatrixType> &Vector<MatrixType>::daxpy(double alpha,Vector<MatrixType> &vector_pl){
+Vector<MatrixType> &Vector<MatrixType>::daxpy(double alpha,const Vector<MatrixType> &vector_pl){
 
    int inc = 1;
 
@@ -285,7 +285,7 @@ double *Vector<MatrixType>::gVector(){
  * @return the dimension of the vector
  */
 template<class MatrixType>
-int Vector<MatrixType>::gn(){
+int Vector<MatrixType>::gn() const{
 
    return n;
 
@@ -295,7 +295,7 @@ int Vector<MatrixType>::gn(){
  * @return the sum of all the elements in the vector
  */
 template<class MatrixType>
-double Vector<MatrixType>::sum(){
+double Vector<MatrixType>::sum() const{
 
    double ward = 0;
 
@@ -310,7 +310,7 @@ double Vector<MatrixType>::sum(){
  * @return the logarithm of the product of all the elements in the vector (so the sum of all the logarithms)
  */
 template<class MatrixType>
-double Vector<MatrixType>::log_product(){
+double Vector<MatrixType>::log_product() const{
 
    double ward = 0;
 
@@ -349,7 +349,7 @@ void Vector<MatrixType>::diagonalize(MatrixType &MT){
  * @param vector_i input vector
  */
 template<class MatrixType>
-double Vector<MatrixType>::ddot(Vector &vector_i){
+double Vector<MatrixType>::ddot(const Vector &vector_i) const{
 
    int inc = 1;
 
@@ -371,7 +371,7 @@ void Vector<MatrixType>::dscal(double alpha){
 }
 
 template<class MatrixType>
-ostream &operator<<(ostream &output,Vector<MatrixType> &vector_p){
+ostream &operator<<(ostream &output,const Vector<MatrixType> &vector_p){
 
    for(int i = 0;i < vector_p.gn();++i)
       output << i << "\t" << vector_p[i] << std::endl;
@@ -385,7 +385,7 @@ ostream &operator<<(ostream &output,Vector<MatrixType> &vector_p){
  * watch out, only works when Vector is filled with the eigenvalues of a diagonalized Matrix object
  */
 template<class MatrixType>
-double Vector<MatrixType>::min(){
+double Vector<MatrixType>::min() const{
 
    return vector[0];
 
@@ -396,7 +396,7 @@ double Vector<MatrixType>::min(){
  * watch out, only works when Vector is filled with the eigenvalues of a diagonalized Matrix object
  */
 template<class MatrixType>
-double Vector<MatrixType>::max(){
+double Vector<MatrixType>::max() const{
 
    return vector[n - 1];
 
@@ -407,7 +407,7 @@ double Vector<MatrixType>::max(){
  * @param alpha steplength
  */
 template<class MatrixType>
-double Vector<MatrixType>::centerpot(double alpha){
+double Vector<MatrixType>::centerpot(double alpha) const{
 
    double ward = 0.0;
 
@@ -423,7 +423,7 @@ double Vector<MatrixType>::centerpot(double alpha){
  * @param alpha steplenght in the search direction.
  */
 template<class MatrixType>
-double Vector<MatrixType>::lsfunc(double alpha){
+double Vector<MatrixType>::lsfunc(double alpha) const{
 
    double ward = 0.0;
 

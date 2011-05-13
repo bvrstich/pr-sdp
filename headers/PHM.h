@@ -26,7 +26,7 @@ class PHM : public Matrix {
     * @param output The stream to which you are writing (e.g. cout)
     * @param phm_p the TPM you want to print
     */
-   friend ostream &operator<<(ostream &output,PHM &phm_p);
+   friend ostream &operator<<(ostream &output,const PHM &phm_p);
 
    public:
       
@@ -34,7 +34,7 @@ class PHM : public Matrix {
       PHM(int M,int N);
 
       //copy constructor
-      PHM(PHM &);
+      PHM(const PHM &);
 
       //destructor
       virtual ~PHM();
@@ -46,25 +46,22 @@ class PHM : public Matrix {
       //easy to access the numbers, in sp mode
       //double operator()(int a,int b,int c,int d) const;
 
-      //change the numbers in sp mode
-      double &operator()(int a,int b,int c,int d);
+      //access the numbers in sp mode
+      double operator()(int a,int b,int c,int d) const;
 
       //geef N terug
-      int gN();
+      int gN() const;
 
       //geef N terug
-      int gM();
+      int gM() const;
 
-      //geef dim terug
-      int gn();
+      void G(int option,const TPM &);
 
-      void G(int option,TPM &);
-
-      double skew_trace();
+      double skew_trace() const;
 
       void min_gunit(double scale);
 
-      void bar(PPHM &);
+      void bar(const PPHM &);
 
       void in_sp(const char *filename);
 

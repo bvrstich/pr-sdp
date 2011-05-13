@@ -67,7 +67,7 @@ PHM::PHM(int M,int N) : Matrix(M*M) {
  * if counter == 0, allocates and constructs the lists containing the relationship between sp and ph basis.
  * @param phm_c PHM to be copied into (*this)
  */
-PHM::PHM(PHM &phm_c) : Matrix(phm_c){
+PHM::PHM(const PHM &phm_c) : Matrix(phm_c){
 
    this->N = phm_c.N;
    this->M = phm_c.M;
@@ -138,7 +138,7 @@ PHM::~PHM(){
  * @param d second sp index that forms the ph column index j together with c
  * @return the number on place PHM(i,j)
  */
-double &PHM::operator()(int a,int b,int c,int d){
+double PHM::operator()(int a,int b,int c,int d) const{
 
    int i = s2ph[a][b];
    int j = s2ph[c][d];
@@ -147,7 +147,7 @@ double &PHM::operator()(int a,int b,int c,int d){
 
 }
 
-ostream &operator<<(ostream &output,PHM &phm_p){
+ostream &operator<<(ostream &output,const PHM &phm_p){
 
    for(int i = 0;i < phm_p.n;++i)
       for(int j = 0;j < phm_p.n;++j){
@@ -165,7 +165,7 @@ ostream &operator<<(ostream &output,PHM &phm_p){
 /**
  * @return number of particles
  */
-int PHM::gN(){
+int PHM::gN() const{
 
    return N;
 
@@ -174,18 +174,9 @@ int PHM::gN(){
 /**
  * @return number of single particle oribals
  */
-int PHM::gM(){
+int PHM::gM() const{
 
    return M;
-
-}
-
-/**
- * @return dimension of the particle hole space, which is also the dimension of the matrix
- */
-int PHM::gn(){
-
-   return n;
 
 }
 
@@ -194,7 +185,7 @@ int PHM::gn(){
  * @param option = 1 G_up map is used, = -1 G^{-1}_down map is used
  * @param tpm input TPM
  */
-void PHM::G(int option,TPM &tpm){
+void PHM::G(int option,const TPM &tpm){
 
    SPM spm(M,N);
 
@@ -232,48 +223,10 @@ void PHM::G(int option,TPM &tpm){
 }
 
 /**
- * Calculate the skew trace, defined as:\n\n
- * sum_{ab} PHM(a,a,b,b)
- * @return the skew trace
- */
-double PHM::skew_trace(){
-
-   double ward = 0.0;
-
-   for(int a = 0;a < M;++a)
-      for(int b = 0;b < M;++b)
-         ward += (*this)(a,a,b,b);
-
-   return ward;
-
-}
-
-/**
- * Deduct from this the G-map of the unit matrix times a constant (scale)\n\n
- * this -= scale* G(1) \n\n
- * see notes primal_dual.pdf for more information.
- * @param scale the constant
- */
-void PHM::min_gunit(double scale){
-
-   for(int a = 0;a < M;++a)
-      for(int b = 0;b < M;++b)
-         (*this)(a,a,b,b) -= scale;
-
-   double g = (M - N)/(N - 1.0);
-
-   scale *= g;
-
-   for(int i = 0;i < n;++i)
-      (*this)(i,i) -= scale;
-
-}
-
-/**
  * Map a PPHM (pphm) object onto a PHM (*this) object by tracing one pair of indices (see primal_dual.pdf for more info)
  * @param pphm Input PPHM
  */
-void PHM::bar(PPHM &pphm){
+void PHM::bar(const PPHM &pphm){
 
    int a,b,c,d;
 
@@ -311,8 +264,14 @@ void PHM::in_sp(const char *filename){
 
    int a,b,c,d;
 
-   while(input >> a >> b >> c >> d >> value)
-      (*this)(a,b,c,d) = value;
+   while(input >> a >> b >> c >> d >> value){
+
+      int i = s2ph[a][b];
+      int j = s2ph[c][d];
+
+      (*this)(i,j) = value;
+
+   }
 
    this->symmetrize();
 
