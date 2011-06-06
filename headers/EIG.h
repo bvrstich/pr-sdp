@@ -116,6 +116,8 @@ class EIG{
 
       int gn_pph() const;
 
+      Vector<PPHM> &pphv();
+
       const Vector<PPHM> &pphv() const;
 
 #endif

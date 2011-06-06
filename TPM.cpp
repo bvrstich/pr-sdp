@@ -491,13 +491,9 @@ void TPM::S(int option,const TPM &tpm_d){
    double b = 0.0;
    double c = 0.0;
 
-#ifdef __Q_CON
-
    a += 1.0;
    b += (4.0*N*N + 2.0*N - 4.0*N*M + M*M - M)/(N*N*(N - 1.0)*(N - 1.0));
    c += (2.0*N - M)/((N - 1.0)*(N - 1.0));
-
-#endif
 
 #ifdef __G_CON
 
