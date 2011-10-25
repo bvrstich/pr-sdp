@@ -10,4 +10,3 @@ callgrind.out.*
 sdp
 tags
 docs/
-Makefile
