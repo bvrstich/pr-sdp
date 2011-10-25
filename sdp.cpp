@@ -34,8 +34,8 @@ int main(void){
 
    cout.precision(10);
 
-   const int M = 8;//dim sp hilbert space
-   const int N = 4;//nr of particles
+   const int M = 12;//dim sp hilbert space
+   const int N = 7;//nr of particles
 
    //hamiltoniaan
    TPM ham(M,N);
@@ -123,6 +123,12 @@ int main(void){
    cout << "Final Energy:\t" << ham.ddot(rdm) << endl;
    cout << endl;
    cout << "Final Spin:\t" << rdm.S_2() << endl;
+
+   PHM phm(M,N);
+   phm.G2(rdm);
+
+   Vector<PHM> v(phm);
+   cout << v;
 
    return 0;
 }
