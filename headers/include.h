@@ -36,6 +36,24 @@
 
 #endif
 
+#ifdef PQGT2P
+
+#define __Q_CON
+#define __G_CON
+#define __T1_CON
+#define __T2_CON
+
+#endif
+
+#ifdef PQGTP
+
+#define __Q_CON
+#define __G_CON
+#define __T1_CON
+#define __T2P_CON
+
+#endif
+
 #include "lapack.h"
 #include "Matrix.h"
 #include "TPM.h"

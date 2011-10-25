@@ -104,7 +104,7 @@ PQGT2:
 	@if test $?; then \
 	   echo; echo '*************** FAILED! ***************' ; echo; \
 	 else \
-	   echo; echo '  +++ $(BINNAME) has been built with P, Q, G and T_1 conditions successfully!'; \
+	   echo; echo '  +++ $(BINNAME) has been built with P, Q, G and T_2 conditions successfully!'; \
 	   echo; \
 	 fi
 
@@ -117,6 +117,30 @@ PQGT:
 	   echo; echo '*************** FAILED! ***************' ; echo; \
 	 else \
 	   echo; echo '  +++ $(BINNAME) has been built with P, Q, G, T1 and T2 conditions successfully!'; \
+	   echo; \
+	 fi
+
+PQGT2P:
+	@echo
+	@echo '  +++ Building $(BINNAME) with P, Q, G and T_2P conditions'
+	@echo	
+	$(MAKE) $(BRIGHT_ROOT)/$(BINNAME) DEFS="-DPQGTP"
+	@if test $?; then \
+	   echo; echo '*************** FAILED! ***************' ; echo; \
+	 else \
+	   echo; echo '  +++ $(BINNAME) has been built with P, Q, G and T_2P conditions successfully!'; \
+	   echo; \
+	 fi
+
+PQGTP:
+	@echo
+	@echo '  +++ Building $(BINNAME) with P, Q, G, T_1 and T_2P conditions'
+	@echo	
+	$(MAKE) $(BRIGHT_ROOT)/$(BINNAME) DEFS="-DPQGTP"
+	@if test $?; then \
+	   echo; echo '*************** FAILED! ***************' ; echo; \
+	 else \
+	   echo; echo '  +++ $(BINNAME) has been built with P, Q, G, T_1 and T_2P conditions successfully!'; \
 	   echo; \
 	 fi
 
