@@ -399,6 +399,7 @@ void TPM::Q(int option,double A,double B,double C,const TPM &tpm_d){
    this->symmetrize();
 
 }
+
 /**
  * initialize this onto the unitmatrix with trace N*(N - 1)/2
  */
