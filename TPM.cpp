@@ -5,6 +5,7 @@
 using std::ostream;
 using std::ofstream;
 using std::ifstream;
+using std::cout;
 using std::endl;
 using std::ios;
 

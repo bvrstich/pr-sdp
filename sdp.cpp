@@ -124,11 +124,5 @@ int main(void){
    cout << endl;
    cout << "Final Spin:\t" << rdm.S_2() << endl;
 
-   PHM phm(M,N);
-   phm.G2(rdm);
-
-   Vector<PHM> v(phm);
-   cout << v;
-
    return 0;
 }
