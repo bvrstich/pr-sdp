@@ -34,6 +34,8 @@
 #include "PHM.h"
 #include "DPM.h"
 #include "PPHM.h"
+#include "TPTPM.h"
+#include "Basis.h"
 
 #include "SUP.h"
 #include "EIG.h"

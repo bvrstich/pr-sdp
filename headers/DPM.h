@@ -66,6 +66,8 @@ class DPM : public Matrix {
       //input from file with sp indices
       void in_sp(const char *);
 
+      void convert(double *dparray) const;
+
    private:
 
       //!static counter that counts the number of DPM objects running in the program

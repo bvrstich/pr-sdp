@@ -11,10 +11,64 @@ using std::ios;
 
 #include "include.h"
 
-int TPM::counter = 0;
-
 int **TPM::t2s;
 int **TPM::s2t;
+
+int TPM::n;
+int TPM::N;
+int TPM::M;
+
+void TPM::init(int M_in,int N_in){
+
+   N = N_in;
+   M = M_in;
+   n = M*(M - 1)/2;
+
+   //allocatie van sp2tp
+   s2t = new int * [M];
+   s2t[0] = new int [M*M];
+
+   for(int i = 1;i < M;++i)
+      s2t[i] = s2t[i - 1] + M;
+
+   //allocatie van tp2sp
+   t2s = new int * [n];
+
+   for(int i = 0;i < n;++i)
+      t2s[i] = new int [2];
+
+   //initialisatie van de twee arrays
+   int teller = 0;
+
+   for(int i = 0;i < M;++i)
+      for(int j = i + 1;j < M;++j){
+
+         s2t[i][j] = teller;
+
+         t2s[teller][0] = i;
+         t2s[teller][1] = j;
+
+         ++teller;
+
+      }
+
+   for(int i = 0;i < M;++i)
+      for(int j = i + 1;j < M;++j)
+         s2t[j][i] = s2t[i][j];
+
+}
+
+void TPM::clear(){
+
+   delete [] s2t[0];
+   delete [] s2t;
+
+   for(int i = 0;i < n;++i)
+      delete [] t2s[i];
+
+   delete [] t2s;
+
+}
 
 /**
  * standard constructor: constructs Matrix object of dimension M*(M - 1)/2 and
@@ -22,185 +76,19 @@ int **TPM::s2t;
  * @param M nr of sp orbitals
  * @param N nr of particles
  */
-TPM::TPM(int M,int N) : Matrix(M*(M - 1)/2) {
-
-   this->N = N;
-   this->M = M;
-   this->n = M*(M - 1)/2;
-
-   if(counter == 0){
-
-      //allocatie van sp2tp
-      s2t = new int * [M];
-      s2t[0] = new int [M*M];
-
-      for(int i = 1;i < M;++i)
-         s2t[i] = s2t[i - 1] + M;
-
-      //allocatie van tp2sp
-      t2s = new int * [n];
-
-      for(int i = 0;i < n;++i)
-         t2s[i] = new int [2];
-
-      //initialisatie van de twee arrays
-      int teller = 0;
-
-      for(int i = 0;i < M;++i)
-         for(int j = i + 1;j < M;++j){
-
-            s2t[i][j] = teller;
-
-            t2s[teller][0] = i;
-            t2s[teller][1] = j;
-
-            ++teller;
-
-         }
-
-      for(int i = 0;i < M;++i)
-         for(int j = i + 1;j < M;++j)
-            s2t[j][i] = s2t[i][j];
-
-   }
-
-   ++counter;
-
-}
+TPM::TPM(int M,int N) : Matrix(M*(M - 1)/2) { }
 
 /**
  * copy constructor: constructs Matrix object of dimension M*(M - 1)/2 and fills it with the content of matrix tpm_c
  * if counter == 0, the lists containing the relationship between sp and tp basis.
  * @param tpm_c object that will be copied into this.
  */
-TPM::TPM(const TPM &tpm_c) : Matrix(tpm_c){
-
-   this->N = tpm_c.N;
-   this->M = tpm_c.M;
-   this->n = M*(M - 1)/2;
-
-   if(counter == 0){
-
-      //allocatie van sp2tp
-      s2t = new int * [M];
-      s2t[0] = new int [M*M];
-
-      for(int i = 1;i < M;++i)
-         s2t[i] = s2t[i - 1] + M;
-
-      //allocatie van tp2sp
-      t2s = new int * [n];
-
-      for(int i = 0;i < n;++i)
-         t2s[i] = new int [2];
-
-      //initialisatie van de twee arrays
-      int teller = 0;
-
-      for(int i = 0;i < M;++i)
-         for(int j = i + 1;j < M;++j){
-
-            s2t[i][j] = teller;
-
-            t2s[teller][0] = i;
-            t2s[teller][1] = j;
-
-            ++teller;
-
-         }
-
-      for(int i = 0;i < M;++i)
-         for(int j = i + 1;j < M;++j)
-            s2t[j][i] = s2t[i][j];
-
-   }
-
-   ++counter;
-
-}
-
-/**
- * construct from file: constructs Matrix object of dimension M*(M - 1)/2 and fills it with the content of the file
- * if counter == 0, the lists containing the relationship between sp and tp basis.
- * @param filename name of the input file
- */
-TPM::TPM(const char *filename) : Matrix(filename){
-
-   ifstream input(filename);
-
-   input >> this->n;
-
-   int I,J;
-   double value;
-
-   //inefficient way of going to the last line of the file:
-   for(int i = 0;i < n;++i)
-      for(int j = 0;j < n;++j)
-         input >> I >> J >> value;
-
-   input >> this->M >> this->N;
-
-  if(counter == 0){
-
-      //allocatie van sp2tp
-      s2t = new int * [M];
-      s2t[0] = new int [M*M];
-
-      for(int i = 1;i < M;++i)
-         s2t[i] = s2t[i - 1] + M;
-
-      //allocatie van tp2sp
-      t2s = new int * [n];
-
-      for(int i = 0;i < n;++i)
-         t2s[i] = new int [2];
-
-      //initialisatie van de twee arrays
-      int teller = 0;
-
-      for(int i = 0;i < M;++i)
-         for(int j = i + 1;j < M;++j){
-
-            s2t[i][j] = teller;
-
-            t2s[teller][0] = i;
-            t2s[teller][1] = j;
-
-            ++teller;
-
-         }
-
-      for(int i = 0;i < M;++i)
-         for(int j = i + 1;j < M;++j)
-            s2t[j][i] = s2t[i][j];
-
-   }
-
-   ++counter;
-
-}
+TPM::TPM(const TPM &tpm_c) : Matrix(tpm_c){ }
 
 /**
  * destructor: if counter == 1 the memory for the static lists t2s en s2t will be deleted.
- * 
  */
-TPM::~TPM(){
-
-   if(counter == 1){
-
-      delete [] s2t[0];
-      delete [] s2t;
-
-      for(int i = 0;i < n;++i)
-         delete [] t2s[i];
-
-      delete [] t2s;
-
-   }
-
-   --counter;
-
-}
+TPM::~TPM(){ }
 
 /**
  * access the elements of the matrix in sp mode, antisymmetry is automatically accounted for:\n\n
@@ -513,7 +401,7 @@ void TPM::S(int option,const TPM &tpm_d){
 #endif
 
 #ifdef __T2_CON
-   
+
    a += 5.0*M - 8.0;
    b += 2.0/(N - 1.0);
    c += (2.0*N*N + (M - 2.0)*(4.0*N - 3.0) - M*M)/(2.0*(N - 1.0)*(N - 1.0));
@@ -725,7 +613,7 @@ void TPM::collaps(int option,const SUP &S){
 #endif
 
 #ifdef __T2_CON
-   
+
    hulp.T(S.pphm());
 
    *this += hulp;
@@ -1042,7 +930,7 @@ void TPM::H(double t,const TPM &b,const SUP &P){
    *this += hulp;
 
 #endif
-   
+
 #ifdef __T1_CON
 
    //hulpjes voor het DPM stuk
@@ -1204,5 +1092,23 @@ void TPM::constr_sp_diag(int lambda){
    }
 
    this->symmetrize();
+
+}
+
+int TPM::gs2t(int a,int b){
+
+   return s2t[a][b];
+
+}
+
+int TPM::gt2s(int i,int option){
+
+   return t2s[i][option];
+
+}
+
+int TPM::gn(){
+
+   return n;
 
 }

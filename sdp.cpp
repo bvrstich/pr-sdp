@@ -34,9 +34,28 @@ int main(void){
 
    cout.precision(10);
 
-   const int M = 12;//dim sp hilbert space
-   const int N = 7;//nr of particles
+   const int M = 8;//dim sp hilbert space
+   const int N = 4;//nr of particles
+   
+   TPM::init(M,N);
+   TPTPM::init(M,N);
 
+   PPHM pphm(M,N);
+
+   ifstream in("pphm.in");
+
+   for(int i = 0;i < pphm.gn();++i)
+      for(int j = i;j < pphm.gn();++j)
+         in >> i >> j >> pphm(i,j);
+
+   pphm.symmetrize();
+
+   TPTPM tpmm;
+   tpmm.T(pphm);
+
+   cout << tpmm;
+
+/*
    //hamiltoniaan
    TPM ham(M,N);
 
@@ -52,7 +71,7 @@ int main(void){
    double tolerance = 1.0e-5;
 
    //outer iteration: scaling of the potential barrier
-   while(t > 1.0e-12){
+   //while(t > 1.0e-12){
 
       cout << t << "\t" << rdm.trace() << "\t" << rdm.ddot(ham) << "\t";
 
@@ -63,7 +82,7 @@ int main(void){
 
       //inner iteration: 
       //Newton's method for finding the minimum of the current potential
-      while(convergence > tolerance){
+      //while(convergence > tolerance){
 
          ++nr_newton_iter;
 
@@ -92,7 +111,7 @@ int main(void){
 
          convergence = a*a*delta.ddot(delta);
 
-      }
+ //     }
 
       cout << nr_newton_iter << "\t" << nr_cg_iter << endl;
 
@@ -116,13 +135,16 @@ int main(void){
 
       rdm.daxpy(a,extrapol);
 
-   }
+//   }
 
    cout << endl;
    
    cout << "Final Energy:\t" << ham.ddot(rdm) << endl;
    cout << endl;
    cout << "Final Spin:\t" << rdm.S_2() << endl;
+*/
+   TPTPM::clear();
+   TPM::clear();
 
    return 0;
 }

@@ -58,6 +58,8 @@ class PPHM : public Matrix {
 
       double skew_trace() const;
 
+      void convert(double *ppharray) const;
+
    private:
 
       //!static counter that counts the number of PPHM objects running in the program

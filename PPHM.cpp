@@ -284,7 +284,7 @@ void PPHM::T(int option,const TPM &tpm){
          }
       }
    }
-   else{
+   else if(option == 1){
 
       TPM Q(M,N);
       Q.Q(1,tpm);
@@ -318,8 +318,77 @@ void PPHM::T(int option,const TPM &tpm){
       }
 
    }
+   else{
+
+      
+      //construct the spm
+      SPM spm(1.0/(N - 1.0),tpm);
+
+      int a,b,c,d,e,z;
+
+      for(int i = 0;i < n;++i){
+
+         a = pph2s[i][0];
+         b = pph2s[i][1];
+         c = pph2s[i][2];
+
+         for(int j = i;j < n;++j){
+
+            d = pph2s[j][0];
+            e = pph2s[j][1];
+            z = pph2s[j][2];
+
+            //initialize
+            (*this)(i,j) = 0.0;
+
+            if(a == d){
+
+               //sp part
+               if(b == e)
+                  (*this)(i,j) += spm(c,z);
+
+               //tp part
+               (*this)(i,j) -= tpm(c,e,z,b);
+
+            }
+
+            //now only tp parts left:
+            if(c == z)
+               (*this)(i,j) += tpm(a,b,d,e);
+
+            if(b == d)
+               (*this)(i,j) += tpm(c,e,z,a);
+
+            if(b == e)
+               (*this)(i,j) -= tpm(c,d,z,a);
+
+         }
+      }
+
+   }
 
    //and symmetrize
    this->symmetrize();
+
+}
+
+/** 
+ * yet another way to avoid the very slow access operator with the ordering
+ */
+void PPHM::convert(double *ppharray) const{
+
+   int M2 = M*M;
+   int M3 = M2*M;
+   int M4 = M3*M;
+   int M5 = M4*M;
+
+   for(int a = 0;a < M;++a)
+      for(int b = 0;b < M;++b)
+         for(int c = 0;c < M;++c)
+            for(int d = 0;d < M;++d)
+               for(int e = 0;e < M;++e)
+                  for(int z = 0;z < M;++z)
+                     ppharray[a*M5 + b*M4 + c*M3 + d*M2 + e*M + z] = (*this)(a,b,c,d,e,z);
+
 
 }

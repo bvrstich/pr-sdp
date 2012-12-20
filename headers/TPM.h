@@ -38,7 +38,7 @@ class TPM : public Matrix {
    public:
       
       //constructor
-      TPM(int M,int N);
+      TPM(int,int);
 
       //copy constructor
       TPM(const TPM &);
@@ -118,6 +118,16 @@ class TPM : public Matrix {
 
       void set_S_2();
 
+      static int gn();
+
+      static int gs2t(int,int);
+
+      static int gt2s(int,int);
+
+      static void init(int,int);
+
+      static void clear();
+
       void constr_sp_diag(int);
 
    private:
@@ -128,17 +138,14 @@ class TPM : public Matrix {
       //!static list of dimension [M][M] that takes two sp indices a,b and returns a tp index i: i = s2t[a][b]
       static int **s2t;
 
-      //!static counter that counts the number of TPM objects running in the program
-      static int counter;
-
       //!nr of particles
-      int N;
+      static int N;
 
       //!dimension of sp hilbert space
-      int M;
+      static int M;
 
       //!dimension of tp hilbert space and of the matrix
-      int n;
+      static int n;
 
 };
 
