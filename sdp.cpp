@@ -41,7 +41,7 @@ int main(void){
    TPM ham(M,N);
 
    //the zero is for pbc's
-   ham.hubbard(0,1.0);
+   ham.hubbard(0,4.0);
 
    TPM rdm(M,N);
    rdm.unit();
