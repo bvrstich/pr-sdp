@@ -34,15 +34,35 @@ int main(void){
 
    cout.precision(10);
 
-   const int M = 12;//dim sp hilbert space
-   const int N = 7;//nr of particles
+   const int M = 20;//dim sp hilbert space
+   const int N = 10;//nr of particles
 
    //hamiltoniaan
    TPM ham(M,N);
 
    //the zero is for pbc's
-   ham.hubbard(0,1.0);
+   ham.hubbard(0,4.0);
 
+   TPM tpm(M,N);
+
+   ifstream in("tpm.in");
+
+   for(int i = 0;i < tpm.gn();++i)
+      for(int j = i;j < tpm.gn();++j)
+         in >> i >> j >> tpm(i,j);
+
+   tpm.symmetrize();
+
+   PHM phm(M,N);
+   phm.G(1,tpm);
+
+   cPHM cphm(4);
+   cphm.fill(phm);
+
+   Vector<cPHM> v(cphm);
+   cout << v;
+
+/*
    TPM rdm(M,N);
    rdm.unit();
 
@@ -123,6 +143,6 @@ int main(void){
    cout << "Final Energy:\t" << ham.ddot(rdm) << endl;
    cout << endl;
    cout << "Final Spin:\t" << rdm.S_2() << endl;
-
+*/
    return 0;
 }
