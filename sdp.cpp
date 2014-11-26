@@ -32,16 +32,14 @@ using std::ofstream;
  */
 int main(void){
 
-   cout.precision(10);
+   cout.precision(15);
 
-   const int M = 12;//dim sp hilbert space
-   const int N = 7;//nr of particles
+   const int M = 8;//dim sp hilbert space
+   const int N = 4;//nr of particles
 
    //hamiltoniaan
    TPM ham(M,N);
-
-   //the zero is for pbc's
-   ham.hubbard(0,4.0);
+   ham.hubbard(0,1.0);
 
    TPM rdm(M,N);
    rdm.unit();
@@ -119,6 +117,10 @@ int main(void){
    }
 
    cout << endl;
+
+   for(int i = 0;i < rdm.gn();++i)
+      for(int j = i;j < rdm.gn();++j)
+         cout << i << "\t" << j << "\t" << rdm(i,j) << endl;
    
    cout << "Final Energy:\t" << ham.ddot(rdm) << endl;
    cout << endl;
